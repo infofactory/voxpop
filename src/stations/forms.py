@@ -4,15 +4,22 @@ from .models import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Field, Submit,Row, Column
 from crispy_forms.bootstrap import StrictButton
+from django.forms.widgets import HiddenInput
 
 class StopForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if self.instance.location_type in [0,1,2]:
+            self.fields['lat'].required =True
+        if self.instance.location_type == 2:
+            del self.fields['wifi']
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Row(
-                Column('parent_station')
+                Column('parent_station'),
+                Column('location_type')
             ),
             Row(
                 Column('code', css_class='col-sm-1 col-3'),
@@ -22,16 +29,17 @@ class StopForm(ModelForm):
                 Column('desc', css_class='col-12')
             ),
             Row(
-                Column('wheelchair_boarding', css_class='col-sm-2 col-12'),
-                Column('visually_impaired_path', css_class='col-sm-2 col-12')
+                'lat','lon'
             ),
             Row(
-                Column('platform_code', css_class='col-sm-2 col-12'),
-                Column('cardinal_direction', css_class='col-sm-2 col-12')
-            ),
-            Row(
-                Column('accessible_entrance_id', css_class='col-sm-2 col-12'),
-                Column('accessible_exit_id', css_class='col-sm-2 col-12')
+                Column('wheelchair_boarding', css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                Column('visually_impaired_path', css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+      
+                Column('platform_code', css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                Column('cardinal_direction', css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+
+                Column('accessible_entrance_id', css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                Column('accessible_exit_id', css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
             ),
             Row(
                 Column('outside_station_unique_id')
@@ -49,4 +57,4 @@ class StopForm(ModelForm):
 
     class Meta:
         model = Stop
-        fields = '__all__'
+        exclude = ['parent_station', 'location_type']

@@ -19,7 +19,7 @@ def station_detail(request, id):
 
     locations = [
         {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
-        for type_id, type_name in Stop.LOCATION_TYPES if type_id != 1
+        for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1]
     ]
 
 
@@ -35,10 +35,10 @@ def station_edit(request, id=None, parent=None):
         station = Stop.objects.get(pk=id)
     elif parent:
         station = Stop(parent_station_id=parent)
+        station.location_type = int(request.GET.get('loc_type'))
     else:
         station = None
 
-    print(station)
     form = StopForm(request.POST or None, instance=station)
 
     if request.method == 'POST':

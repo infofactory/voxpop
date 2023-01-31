@@ -7,7 +7,7 @@
 
 <div class="row justify-content-between py-4">
     <div class="col d-flex align-items-center">
-        <h4>{{station}}</h4>
+        <h4 class="fw-bold">{{station}}</h4>
     </div>
     <div class="col d-flex justify-content-end align-items-center">
         <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
@@ -17,27 +17,45 @@
     </div>
 </div>
 
-
 {% for location_group in locations %}
-    <h2>{{location_group.name}}</h2>
 
-    <ul>
-        {% for item in location_group.items %}
-        <li><a href="{% url 'station_detail' item.pk %}"><strong>{{item}}</a> ({{item.get_location_type_display}})</li>
-        {% endfor %}
-    </ul>
+<div class="mb-5">
+    <div class="d-flex align-items-center btn_add">
+        <a class="btn btn-success me-3 mb-1" href="{% url 'station_add_child' parent=station.pk %}?loc_type={{location_group.type}}">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+        <h4>{{location_group.name}}</h4>
+    </div>
+    {% if location_group.items %}
+    <table class="table table-striped">
+        <thead class="text-light">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in location_group.items %}
+            <tr>
+                <td>
+                    {{item.code}}
+                </td>
+                <td>
+                    <a href="{% url 'station_detail' item.pk %}">{{ item }}</a>
+                </td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
 {% endfor %}
 
-<hr>
 
 
-<ul class="mt-5">
-    <li><a href="{% url 'station_add_child' station.pk %}">Aggiungi</a></li>
-    {% for item in station.children.all %}
 
-    <li><a href="{% url 'station_detail' item.pk %}"><strong>{{item}}</a> ({{item.get_location_type_display}})</li>
 
-    {% endfor %}
-</ul>
 
 {%endblock content%}
