@@ -3,14 +3,16 @@
 {%block page_title%}Lisbona - Stations{%endblock%}
 
 {%block content%}
-<h4 class="py-4">{{station}}</h4>
+{%if station.name%}
+<h4 class="py-4">Edit <strong>{{station}}</strong></h4>
+{%else%}
+<h4 class="pt-3">Create a new {{station.get_location_type_display}}</h4>
+{%endif%}
 
-{{form.errors}}
 
-{% crispy form %}
-{% comment %} <input type="submit" name="save" class="btn btn-success" value="Salva">
-{% if form.instance.pk %}
-<input type="submit" name="delete" onclick="return confirm('Sei sicuro?')" class="ms-5 btn btn-danger" value="Elimina">
-{% endif %} {% endcomment %}
+<div class="pt-4">
+    {{form.errors}}
+    {% crispy form %}
+</div>
 
 {%endblock content%}

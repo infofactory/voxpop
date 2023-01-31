@@ -10,10 +10,27 @@ class StopForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # location_types:
+            # 0=stop/platform 
+            # 1=station
+            # 2=entrace/exit
+            # 3=generic mode
+            # 4=boarding area
+            # 5=area
+        if self.instance.location_type == 0:
+            self.fields['platform_code'].required=True
+            self.fields['cardinal_direction'].required=True
+        if self.instance.location_type != 0:
+            del self.fields['accessible_entrance_id']
+            del self.fields['accessible_exit_id']
+            del self.fields['step_free_route_information_available']
         if self.instance.location_type in [0,1,2]:
-            self.fields['lat'].required =True
+            self.fields['lat'].required=True
+            self.fields['lon'].required=True
         if self.instance.location_type == 2:
             del self.fields['wifi']
+        if self.instance.location_type not in [0,2]:
+            del self.fields['outside_station_unique_id']
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -45,6 +62,7 @@ class StopForm(ModelForm):
                 Column('outside_station_unique_id')
             ),
             Field('wifi', css_class="form-check-input", wrapper_class="form-check form-switch"),
+            Field('step_free_route_information_available', css_class="form-check-input", wrapper_class="form-check form-switch"),
             Field('blue_badge_car_parking', css_class="form-check-input", wrapper_class="form-check form-switch"),
             Field('blue_badge_car_park_spaces', css_class="form-check-input", wrapper_class="form-check form-switch"),
             Field('taxi_ranks_outside_station', css_class="form-check-input", wrapper_class="form-check form-switch"),
