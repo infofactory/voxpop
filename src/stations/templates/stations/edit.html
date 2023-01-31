@@ -1,0 +1,15 @@
+{% extends 'base.html'%}
+{% load crispy_forms_tags %}
+{%block page_title%}Lisbona - Stations{%endblock%}
+
+{%block content%}
+<h4 class="py-4">{{station}}</h4>
+
+
+{% crispy form %}
+{% comment %} <input type="submit" name="save" class="btn btn-success" value="Salva">
+{% if form.instance.pk %}
+<input type="submit" name="delete" onclick="return confirm('Sei sicuro?')" class="ms-5 btn btn-danger" value="Elimina">
+{% endif %} {% endcomment %}
+
+{%endblock content%}

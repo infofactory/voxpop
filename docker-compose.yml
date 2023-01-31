@@ -1,0 +1,32 @@
+version: "3.7"
+
+x-service-volumes: &service-volumes
+  - ./src:/app/:rw,cached
+
+services:
+  website:
+    image: lisbona:latest # Nome del progetto
+    container_name: website_lisbona
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=lisbona.settings.dev
+    volumes: *service-volumes
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:11.17-bullseye
+    container_name: postgres_lisbona
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_lisbona:/var/lib/postgresql/data/ 
+
+volumes:
+  pg_lisbona: 

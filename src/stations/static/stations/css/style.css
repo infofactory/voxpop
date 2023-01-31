@@ -1,0 +1,38 @@
+body {
+    font-family: 'Montserrat';
+}
+
+:root{
+    --brand: rgb(0,29,80)
+}
+
+p{
+    margin-bottom: 0 !important;
+}
+
+.navbar{ 
+    background-color: var(--brand);
+}
+
+thead:first-child{
+    background-color: var(--brand) !important;
+}
+
+.add_btn{
+    color: var(--brand);
+    width: fit-content;
+    padding: 8px 24px;
+    border-radius: 999px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: all 300ms ease-out;
+}
+
+.add_btn:hover{
+    background-color: var(--brand);
+    color: white;
+    transform: scale(1.05);
+}

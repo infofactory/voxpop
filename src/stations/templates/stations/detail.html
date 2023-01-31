@@ -1,0 +1,43 @@
+{% extends 'base.html'%}
+{%block page_title%}Lisbona - Stations{%endblock%}
+
+{%block content%}
+<!-- <h4><a href="{% url 'station_edit' station.pk %}">Modifica</a>    {{station}}</h4> -->
+
+
+<div class="row justify-content-between py-4">
+    <div class="col d-flex align-items-center">
+        <h4>{{station}}</h4>
+    </div>
+    <div class="col d-flex justify-content-end align-items-center">
+        <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
+            <i class="fa-solid fa-pencil"></i> 
+            <p>Edit Station</p>
+        </a>
+    </div>
+</div>
+
+
+{% for location_group in locations %}
+    <h2>{{location_group.name}}</h2>
+
+    <ul>
+        {% for item in location_group.items %}
+        <li><a href="{% url 'station_detail' item.pk %}"><strong>{{item}}</a> ({{item.get_location_type_display}})</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+
+<hr>
+
+
+<ul class="mt-5">
+    <li><a href="{% url 'station_add_child' station.pk %}">Aggiungi</a></li>
+    {% for item in station.children.all %}
+
+    <li><a href="{% url 'station_detail' item.pk %}"><strong>{{item}}</a> ({{item.get_location_type_display}})</li>
+
+    {% endfor %}
+</ul>
+
+{%endblock content%}

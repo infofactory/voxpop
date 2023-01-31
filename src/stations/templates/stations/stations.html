@@ -1,0 +1,55 @@
+{% extends 'base.html'%}
+{%block page_title%}Lisbona - Stations{%endblock%}
+
+{%block content%}
+
+<div class="row justify-content-between py-4">
+    <div class="col">
+        <h1>Stations</h1>
+    </div>
+    <div class="col d-flex justify-content-end align-items-center">
+        <a class="add_btn shadow-sm" href="{% url 'station_add' %}">
+            <i class="fa-solid fa-plus"></i> 
+            <p>Add Station</p>
+        </a>
+    </div>
+</div>
+
+
+<table class="table table-striped ">
+    <thead>
+        <tr class="text-light">
+            <th>
+                Code
+            </th>
+            <th>
+                Name
+            </th>
+            <th class="text-center">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for station in stations %}
+        <tr>
+            <td>
+                {{station.code}}
+            </td>
+            <td>
+                <a href="{% url 'station_detail' station.pk %}">{{station}}</a>
+            </td>
+            <td class="d-flex justify-content-center">
+                <a href="{% url 'station_edit' station.pk %}">
+                    <button class="btn btn-outline-primary">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+{%endblock content%}
