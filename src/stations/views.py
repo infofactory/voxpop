@@ -15,24 +15,35 @@ def station_detail(request, id):
     from .forms import StopForm
     station = Stop.objects.get(pk=id)
     children = station.children.all()
+    lifts = station.lifts.all()
 
+    if station.location_type == 1:
+        locations = [
+            {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
+            for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1]
+        ]
 
-    locations = [
-        {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
-        for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1]
-    ]
+        lift_list = [
+            {'type':type_id, 'name':type_name, 'items':lifts.filter(type=type_id)}
+            for type_id, type_name in Lift.LIFT_TYPES
+        ]
+    elif station.location_type == 0:
+        locations = [
+            {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
+            for type_id, type_name in Stop.LOCATION_TYPES if type_id == 4
+        ]
+    else:
+        locations = []
+        lift_list = []
 
-
-
-    context = {'station':station, 'locations':locations}
-    return render(request, 'stations/detail.html', context)
+    context = {'station':station, 'locations':locations, 'lift_list':lift_list}
+    return render(request, 'stations/details.html', context)
 
 
 def station_edit(request, id=None, parent=None):
     from .forms import StopForm
     if id:
         station = Stop.objects.get(pk=id)
-        lifts = station.lifts
     elif parent:
         station = Stop(parent_station_id=parent)
         station.location_type = int(request.GET.get('loc_type'))
@@ -64,8 +75,12 @@ def lift_edit(request, id=None, parent=None):
     from .forms import LiftForm
     if id:
         lift = Lift.objects.get(pk=id)
+    elif parent:
+        lift = Lift(stop_id_id=parent)
     else:
         lift = None
+
+    print({'parent':lift.stop_id})
     form = LiftForm(request.POST or None, instance=lift)
 
     if request.POST:

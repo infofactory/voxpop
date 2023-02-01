@@ -24,6 +24,7 @@ class StopForm(ModelForm):
             doors = Stop.objects.filter(location_type = 2, parent_station = self.instance.parent_station)
             if doors:
                 self.fields['accessible_entrance_id'].queryset = doors
+                self.fields['accessible_exit_id'].queryset = doors
             else:
                 del self.fields['accessible_entrance_id']
                 
@@ -105,7 +106,17 @@ class LiftForm(ModelForm):
         self.helper = FormHelper()
         self.helper.add_input(Submit('save', 'Save', css_class='btn btn-success me-4'))
         self.helper.add_input(Submit('delete', 'Delete', css_class='btn btn-danger'))
+        
+        areas = Stop.objects.filter(location_type = 5)
+        if areas:
+            self.fields['from_areas'].queryset = areas
+            self.fields['intermediate_areas'].queryset = areas
+            self.fields['intermediate_areas_two'].queryset = areas
+        # else:
+        #     self.fields['from_areas'].disabled = True
+        #     self.fields['to_areas'].disabled = True
+
 
     class Meta:
         model = Lift
-        fields = '__all__'
+        exclude = ['stop_id']

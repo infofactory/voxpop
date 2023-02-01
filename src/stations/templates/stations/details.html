@@ -1,12 +1,8 @@
 {% extends 'base.html'%}
-{%block page_title%}Lisbona - Stations{%endblock%}
+{%block page_title%}Voxpop - Stations{%endblock%}
 
 {%block content%}
-<!-- <h4><a href="{% url 'station_edit' station.pk %}">Modifica</a>    {{station}}</h4> -->
 
-{% for item in station.ancestors reversed %}
-<a href="">{{item}}</a> ›
-{% endfor %}
 
 <div class="row justify-content-between py-4">
     <div class="col d-flex align-items-center">
@@ -48,9 +44,9 @@
                     <a href="{% url 'station_detail' item.pk %}">{{ item }}</a>
                 </td>
                 <td>
-                    <a class="btn btn-outline-primary me-1" href="{% url 'station_detail' item.pk %}">
+                    <a class="btn btn-outline-primary me-1" href="{% url 'station_edit' item.pk %}">
                         <i class="fa-solid fa-pencil"></i>
-                    <a class="btn btn-primary me-1" href="{% url 'station_edit' item.pk %}">
+                    <a class="btn btn-primary me-1" href="{% url 'station_detail' item.pk %}">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     </a>
                 </td>
@@ -62,20 +58,26 @@
 </div>
 {% endfor %}
 
-<div class="mb-5">
+
+<!-- lifts list -->
+{% if station.location_type == 1 %}
+<!-- <div class="mb-5">
     <div>
         <a class="btn btn-primary mb-1" href="{% url 'lift_add' station.pk %}">
             <i class="fa-solid fa-plus"></i>
         </a>
         <h4 class="d-inline-block">Lifts</h4>
     </div>
-
-    {%if station.lifts.all%}
+{% endif %}
+    {%if station.lifts.all %}
     <table class="table table-striped">
         <thead class="text-light">
             <tr>
                 <th>
                     Name
+                </th>
+                <th>
+                    Type
                 </th>
                 <th>
                     From
@@ -96,13 +98,15 @@
                 </a>
             </td>
             <td>
+                {{lift.type}} - 
+                {{lift.get_type_display}}
+            <td>
                 {{lift.from_areas}}
             </td>
             <td>
                 {{lift.to_areas}}
             </td>
             <td>
-                <!-- Creare edit url -->
                 <a class="btn btn-outline-primary" href="{% url 'lift_edit' lift.pk %}">
                     <i class="fa-solid fa-pencil"></i>
                 </a>
@@ -114,7 +118,13 @@
         {% endfor %}
     </table>
     {%endif%}
-</div>
+</div> -->
 
+{% for lift_group in lift_list %}
 
+  <h4>
+    {{lift_group.name}}
+  </h4>
+
+{% endfor %}
 {%endblock content%}

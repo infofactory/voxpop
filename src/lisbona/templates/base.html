@@ -21,19 +21,29 @@
 <body>
     <header>
         <nav class="navbar navbar-extend-lg py-4">
-            <div class="container">
-                <p class="mb-0 text-light fs-4 fw-bold navbar-brand">VOXPOP</p>
-                <div class=" text-light">
-                    {% if station.parent_station %}
-                    <a class="text-white" href="{% url 'station_detail' station.parent_station.pk %}"> &larr;
-                        {{station.parent_station}}</a>
-                    {% else%}
-                    <a href="{% url 'home' %}" class="text-light"> Stations list</a>
-                    {% endif %}
-                </div>
+            <div class="container d-flex justify-content-center">
+                <figure class="logo mb-0">
+                    <a href="{% url 'home' %}">
+                        <img src="{% static 'stations/img/logo.png' %}" alt="">
+                    </a>
+                </figure>
             </div>
         </nav>
     </header>
+{% with stop=station %}
+    {% if stop %}
+    <div id="breadcrumbs" class="py-3 bg-light">
+        <div class="container">
+
+            <a href="{% url 'home' %}">Home</a> ›
+            {% for item in stop.ancestors reversed %}
+            <a href="{{item.url}}">{{item}}</a> ›
+            {% endfor %}
+            <strong>{{stop.name|default:'New element'}}</strong>
+        </div>
+    </div>
+    {% endif%}
+{% endwith %}
 
     <div class="container">
         {% block content %}

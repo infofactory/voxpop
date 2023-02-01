@@ -25,6 +25,7 @@
             <th>
                 Name
             </th>
+            <th>Elements</th>
             <th class="text-center">
                 Actions
             </th>
@@ -40,7 +41,11 @@
             <td>
                 <a href="{% url 'station_detail' station.pk %}">{{station}}</a>
             </td>
-            <td class="d-flex justify-content-center">
+            <td>
+                {% if station.children.count %}
+                 <span class="badge bg-success">{{station.children.count}}</span></td>
+                {% endif %}
+                 <td class="d-flex justify-content-center">
                 <a href="{% url 'station_edit' station.pk %}">
                     <button class="btn btn-outline-primary">
                         <i class="fa-solid fa-pencil"></i>

@@ -10,6 +10,10 @@ p{
     margin-bottom: 0 !important;
 }
 
+img{
+    width: 100% !important;
+}
+
 .navbar{ 
     background-color: var(--brand);
 }
@@ -35,4 +39,8 @@ thead:first-child{
     background-color: var(--brand);
     color: white;
     transform: scale(1.05);
+}
+
+.logo{
+    width: 14vw !important;
 }

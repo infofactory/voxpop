@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Stop(models.Model):
@@ -64,7 +65,13 @@ class Stop(models.Model):
             ancestors.append(current.parent_station)
             current = current.parent_station
         return ancestors
-    
+
+    @property
+    def url(self):
+        if self.pk:
+            return reverse('station_detail', args=[self.pk])
+        else:
+            return reverse('home')
     class Meta:
         ordering=('name',)
     
@@ -84,11 +91,11 @@ class Lift(models.Model):
     LIFT_TYPES = (
         (0, 'Lift'),
         (1, 'Stairlift'),
-        (0, 'Stair'),
-        (0, 'Escalator'),
+        (2, 'Stair'),
+        (3, 'Escalator'),
     )
 
-    lift_type = models.IntegerField(choices=LIFT_TYPES)
+    type = models.IntegerField(choices=LIFT_TYPES)
     stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
     name = models.CharField(max_length=100)
     friendly_name = models.CharField(max_length=100, blank=True, null=True)
@@ -113,7 +120,7 @@ class Lift(models.Model):
     #     current = self
 
     def __str__(self) -> str:
-        return self.name
+        return  self.name
 
 # class Stairlift(models.Model):
 #     stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='Stairlifts')
