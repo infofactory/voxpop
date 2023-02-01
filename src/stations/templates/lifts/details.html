@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block page_title %} Voxpop - Lift {{lift.pk}} {% endblock page_title %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center">
+    <h2 class="fw-bold pt-4">
+        {{lift}}
+    </h2>
+    <a class="add_btn shadow-sm" href="{% url 'lift_edit' lift.pk %}">
+        <i class="fa-solid fa-pencil"></i>
+        Edit
+    </a>
+</div>
+
+--{{lift.from_areas}}--
+    
+
+{% endblock content %}

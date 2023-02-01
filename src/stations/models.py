@@ -55,38 +55,23 @@ class Stop(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    @property
+    def ancestors(self):
+        ancestors = []
+        current = self
+        while current.parent_station:
+            ancestors.append(current.parent_station)
+            current = current.parent_station
+        return ancestors
     
     class Meta:
         ordering=('name',)
     
+
+
+
 class Lift(models.Model):
-    stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
-    name = models.CharField(max_length=100)
-    friendly_name = models.CharField(max_length=100, blank=True, null=True)
-    from_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
-    intermediate_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    intermediate_areas_two = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE)
-    lift_width = models.FloatField()
-    lift_heigth = models.FloatField()
-    visually_impaired_ok = models.BooleanField(default=False)
-    lift_notes = models.TextField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return self.name
-
-class Stairlift(models.Model):
-    stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='Stairlifts')
-    name = models.CharField(max_length=100)
-    friendly_name = models.CharField(max_length=100, blank=True, null=True)
-    from_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
-    to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
-    assistance_requested = models.BooleanField(default=False)
-
-    def __str__(self) -> str:
-        return self.name
-
-class Stair(Stairlift):
     HANDRAIL = (
         (0, 'no'),
         (1, 'right'),
@@ -94,12 +79,67 @@ class Stair(Stairlift):
         (3, 'both'),
     )
 
-    number_of_steps = models.PositiveIntegerField(default=1)
-    steps_height = models.FloatField()
-    handrail = models.IntegerField(choices=HANDRAIL, default=0)
-    handrail_height = models.FloatField()
+    STEPS = ((0, 'No'), (1, 'tapis roulant'))
 
-class Escalator(Stairlift):
+    LIFT_TYPES = (
+        (0, 'Lift'),
+        (1, 'Stairlift'),
+        (0, 'Stair'),
+        (0, 'Escalator'),
+    )
+
+    lift_type = models.IntegerField(choices=LIFT_TYPES)
+    stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
+    name = models.CharField(max_length=100)
+    friendly_name = models.CharField(max_length=100, blank=True, null=True)
+    from_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
+    intermediate_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+    intermediate_areas_two = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+    to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE)
+    lift_width = models.FloatField()    #solo per lift
+    lift_heigth = models.FloatField()   #solo per lift
+    visually_impaired_ok = models.BooleanField(default=False)
+    assistance_requested = models.BooleanField(default=False) #solo per stairlift
+    number_of_steps = models.PositiveIntegerField(default=1)    #solo per stair
+    steps_height = models.FloatField()                          #solo per stair
+    handrail = models.IntegerField(choices=HANDRAIL, default=0) #solo per stair
+    handrail_height = models.FloatField(default=False)                       #solo per stair
+    steps = models.IntegerField(choices=STEPS, default=0)       #solo per escalator
+    lift_notes = models.TextField(blank=True, null=True)
+
+    # @property
+    # def ancestor(self):
+    #     anestors = []
+    #     current = self
+
+    def __str__(self) -> str:
+        return self.name
+
+# class Stairlift(models.Model):
+#     stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='Stairlifts')
+#     name = models.CharField(max_length=100)
+#     friendly_name = models.CharField(max_length=100, blank=True, null=True)
+#     from_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
+#     to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
+#     assistance_requested = models.BooleanField(default=False)
+
+#     def __str__(self) -> str:
+#         return self.name
+
+# class Stair(Stairlift):
+#     HANDRAIL = (
+#         (0, 'no'),
+#         (1, 'right'),
+#         (2, 'left'),
+#         (3, 'both'),
+#     )
+
+#     number_of_steps = models.PositiveIntegerField(default=1)
+#     steps_height = models.FloatField()
+#     handrail = models.IntegerField(choices=HANDRAIL, default=0)
+#     handrail_height = models.FloatField()
+
+# class Escalator(Stairlift):
     STEPS = ((0, 'No'), (1, 'tapis roulant'))
 
     steps = models.IntegerField(choices=STEPS, default=0)

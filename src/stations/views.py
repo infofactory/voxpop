@@ -23,7 +23,6 @@ def station_detail(request, id):
     ]
 
 
-    print(locations)
 
     context = {'station':station, 'locations':locations}
     return render(request, 'stations/detail.html', context)
@@ -33,6 +32,7 @@ def station_edit(request, id=None, parent=None):
     from .forms import StopForm
     if id:
         station = Stop.objects.get(pk=id)
+        lifts = station.lifts
     elif parent:
         station = Stop(parent_station_id=parent)
         station.location_type = int(request.GET.get('loc_type'))
@@ -49,6 +49,33 @@ def station_edit(request, id=None, parent=None):
             station = form.save()
             return redirect(reverse('station_detail', args=[station.pk]))
             
-
+    
     context = {'station':station, 'form':form}
     return render(request, 'stations/edit.html', context)
+
+def lift_detail(request, id):
+    lift = Lift.objects.get(pk=id)
+
+    context= {'lift': lift}
+    return render(request, 'lifts/details.html', context)
+
+
+def lift_edit(request, id=None, parent=None):
+    from .forms import LiftForm
+    if id:
+        lift = Lift.objects.get(pk=id)
+    else:
+        lift = None
+    form = LiftForm(request.POST or None, instance=lift)
+
+    if request.POST:
+        if 'delete' in request.POST:
+            parent = lift.stop_id.pk
+            lift.delete()
+            return redirect(reverse('station_detail', args=[parent]))
+        if form.is_valid():
+            lift = form.save()
+            return redirect(reverse('lift_detail', args=[lift.pk]))
+
+    context={'form':form}
+    return render(request, 'lifts/edit.html',context)

@@ -4,6 +4,9 @@
 {%block content%}
 <!-- <h4><a href="{% url 'station_edit' station.pk %}">Modifica</a>    {{station}}</h4> -->
 
+{% for item in station.ancestors reversed %}
+<a href="">{{item}}</a> ›
+{% endfor %}
 
 <div class="row justify-content-between py-4">
     <div class="col d-flex align-items-center">
@@ -44,7 +47,13 @@
                 <td>
                     <a href="{% url 'station_detail' item.pk %}">{{ item }}</a>
                 </td>
-                <td></td>
+                <td>
+                    <a class="btn btn-outline-primary me-1" href="{% url 'station_detail' item.pk %}">
+                        <i class="fa-solid fa-pencil"></i>
+                    <a class="btn btn-primary me-1" href="{% url 'station_edit' item.pk %}">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -53,9 +62,59 @@
 </div>
 {% endfor %}
 
+<div class="mb-5">
+    <div>
+        <a class="btn btn-primary mb-1" href="{% url 'lift_add' station.pk %}">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+        <h4 class="d-inline-block">Lifts</h4>
+    </div>
 
-
-
+    {%if station.lifts.all%}
+    <table class="table table-striped">
+        <thead class="text-light">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    From
+                </th>
+                <th>
+                    To
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        {% for lift in station.lifts.all %}
+        <tr>
+            <td>
+                <a href="{% url 'lift_detail' lift.id %}">
+                    {{lift}}
+                </a>
+            </td>
+            <td>
+                {{lift.from_areas}}
+            </td>
+            <td>
+                {{lift.to_areas}}
+            </td>
+            <td>
+                <!-- Creare edit url -->
+                <a class="btn btn-outline-primary" href="{% url 'lift_edit' lift.pk %}">
+                    <i class="fa-solid fa-pencil"></i>
+                </a>
+                <a class="btn btn-primary" href="{% url 'lift_detail' lift.pk %}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {%endif%}
+</div>
 
 
 {%endblock content%}
