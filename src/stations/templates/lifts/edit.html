@@ -4,9 +4,20 @@
 
 {%block content%}
 
-<h2 class="fw-bold my-4">
-    Create a new Lift
+
+<h2 class="my-4">
+    {% if lift.name %}
+    Edit {{lift.name}} 
+    {% else %}
+    Create a new {{lift.get_type_display}} 
+    {%endif%}
 </h2>
+
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'station_detail' lift.stop_id.pk %}">
+        Cancel
+    </a>
+</div>
 
 {%crispy form%}
 

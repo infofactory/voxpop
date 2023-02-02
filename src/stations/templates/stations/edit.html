@@ -10,6 +10,13 @@
 {%endif%}
 
 
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'station_detail' station.parent_station.pk %}">
+        Cancel
+    </a>
+</div>
+
+
 <div class="pt-4">
     {{form.errors}}
     {% crispy form %}

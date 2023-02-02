@@ -25,7 +25,6 @@
             <th>
                 Name
             </th>
-            <th class="d-none d-md-block">Elements</th>
             <th class="text-center">
                 Actions
             </th>
@@ -41,20 +40,18 @@
             <td>
                 <a href="{% url 'station_detail' station.pk %}">{{station}}</a>
                 {% if station.children.count %}
-                <span class="badge bg-success d-inline d-md-none">{{station.children.count}}</span>
-            </td>
-            {% endif %}
-            </td>
-            <td class="d-none d-md-block">
-                {% if station.children.count %}
-                <span class="badge bg-success">{{station.children.count}}</span>
+                <span class="badge bg-success ms-1">{{station.children.count}}</span>
                 {% endif %}
             </td>
+            </td>
             <td class="d-flex justify-content-center">
-                <a href="{% url 'station_edit' station.pk %}">
+                <a class="me-md-2" href="{% url 'station_edit' station.pk %}">
                     <button class="btn btn-outline-primary">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
+                </a>
+                <a class="btn btn-primary d-none d-md-inline" href="{% url 'station_detail' station.pk%}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
             </td>
         </tr>

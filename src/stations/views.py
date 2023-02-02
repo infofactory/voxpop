@@ -92,5 +92,5 @@ def lift_edit(request, id=None, parent=None):
             lift = form.save()
             return redirect(reverse('lift_detail', args=[lift.pk]))
 
-    context={'form':form}
+    context={'form':form, 'lift': lift}
     return render(request, 'lifts/edit.html',context)

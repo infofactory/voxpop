@@ -87,3 +87,29 @@ thead:first-child{
     z-index: 9999;
     clip-path: polygon(30% 0, 100% 0%, 100% 100%, 30% 100%, 30% 61%, 14% 50%, 30% 38%);
 }
+
+.toolbar a{
+    color: currentColor !important;
+}
+
+
+.toolbar{
+    padding: 20px 10px;
+    background-color: rgb(217, 47, 47);
+    color: white !important;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    position: fixed;
+    bottom: 0;
+    right: 5%;
+    animation: slidein 500ms ease-in-out ;
+}
+
+@keyframes slidein {
+    from{
+        transform: translateY(100px);
+    }
+    to{
+        transform: translateY(0px);
+    }
+}

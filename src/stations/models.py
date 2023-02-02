@@ -38,6 +38,7 @@ class Stop(models.Model):
     lat = models.FloatField(verbose_name="Latitude", blank=True, null=True)
     lon = models.FloatField(blank=True, null=True)
     location_type = models.IntegerField(choices=LOCATION_TYPES)
+    level = models.IntegerField()
     parent_station = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
     wheelchair_boarding = models.IntegerField(choices=WHEELCHAIR_BOARDING, default=0)
     visually_impaired_path = models.IntegerField(choices=VISUALLY_IMPAIRED_PATH, default=0)
@@ -106,21 +107,18 @@ class Lift(models.Model):
     lift_width = models.FloatField()    #solo per lift
     lift_heigth = models.FloatField()   #solo per lift
     visually_impaired_ok = models.BooleanField(default=False)
-    assistance_requested = models.BooleanField(default=False) #solo per stairlift
-    number_of_steps = models.PositiveIntegerField(default=1)    #solo per stair
-    steps_height = models.FloatField()                          #solo per stair
+    assistance_requested = models.BooleanField(default=False) #solo per strair 
+    number_of_steps = models.PositiveIntegerField(default=0)    #solo per stair
+    steps_height = models.FloatField(default=0)                          #solo per stair
     handrail = models.IntegerField(choices=HANDRAIL, default=0) #solo per stair
     handrail_height = models.FloatField(default=False)                       #solo per stair
-    steps = models.IntegerField(choices=STEPS, default=0)       #solo per escalator
+    steps = models.IntegerField(choices=STEPS, default=0)       #solo per strair e escalator
     lift_notes = models.TextField(blank=True, null=True)
-
-    # @property
-    # def ancestor(self):
-    #     anestors = []
-    #     current = self
 
     def __str__(self) -> str:
         return  self.name
+
+        
 
 # class Stairlift(models.Model):
 #     stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='Stairlifts')

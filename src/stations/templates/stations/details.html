@@ -62,7 +62,7 @@
 <!-- lifts list -->
 
 {% for lift_group in lift_list %}
-<div class="d-flex align-items-center">
+<div class="d-flex align-items-center ">
     <a 
     class="lift_btn btn btn-primary me-2 mb-1 {% if locations.4.items.count == 0 %} custom_disabled {%endif%} " href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
         <i class="fa-solid fa-plus"></i> 
@@ -71,6 +71,35 @@
         {{lift_group.name}} 
     </h4>
 </div>
+
+    <table  class="table table-striped">
+        <thead class="text-light">
+            <tr>
+                <th>Name</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        {% for lift in lift_group.items %}
+        <tr>
+            <td>
+                {{lift}}
+            </td>
+            <td>
+                {{lift.from_areas}}
+            </td>
+            <td>
+                {{lift.to_areas}}
+            </td>
+            <td>
+                <a href="{% url 'lift_edit' lift.pk %}" class="btn btn-outline-primary" >
+                    <div class="fa-solid fa-pencil"></div>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 
 {% endfor %}
 {%endblock content%}

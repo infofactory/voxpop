@@ -21,13 +21,14 @@ class StopForm(ModelForm):
         if self.instance.location_type == 0:
             self.fields['platform_code'].required = True
             self.fields['cardinal_direction'].required = True
-            doors = Stop.objects.filter(location_type = 2, parent_station = self.instance.parent_station)
+            doors = Stop.objects.filter(
+                location_type=2, parent_station=self.instance.parent_station)
             if doors:
                 self.fields['accessible_entrance_id'].queryset = doors
                 self.fields['accessible_exit_id'].queryset = doors
             else:
                 del self.fields['accessible_entrance_id']
-                
+
         if self.instance.location_type != 0:
             del self.fields['accessible_entrance_id']
             del self.fields['accessible_exit_id']
@@ -51,10 +52,14 @@ class StopForm(ModelForm):
                 Column('name', css_class='col-sm-11 col-9')
             ),
             Row(
+                'level'
+            ),
+            Row(
                 Column('desc', css_class='col-12')
             ),
             Row(
-                'lat', 'lon'
+                Column('lat'),
+                Column('lon'),
             ),
             Row(
                 Column('wheelchair_boarding',
@@ -104,17 +109,32 @@ class LiftForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', 'Save', css_class='btn btn-success me-4'))
-        self.helper.add_input(Submit('delete', 'Delete', css_class='btn btn-danger'))
-        
-        areas = Stop.objects.filter(location_type = 5, parent_station = self.instance.stop_id.pk)
+        self.helper.add_input(
+            Submit('save', 'Save', css_class='btn btn-success me-4'))
+        self.helper.add_input(
+            Submit('delete', 'Delete', css_class='btn btn-danger'))
+
+        areas = Stop.objects.filter(
+            location_type=5, parent_station=self.instance.stop_id.pk)
         if areas:
             self.fields['from_areas'].queryset = areas
             self.fields['intermediate_areas'].queryset = areas
             self.fields['intermediate_areas_two'].queryset = areas
-        # else:
-        #     self.fields['from_areas'].disabled = True
-        #     self.fields['to_areas'].disabled = True
+            self.fields['to_areas'].queryset = areas
+
+        if self.instance.type != 0:
+            del self.fields['lift_width']
+            del self.fields['lift_heigth']
+        
+        if self.instance.type != 2:
+            del self.fields['number_of_steps']
+            del self.fields['steps_height']
+            del self.fields['handrail']
+            del self.fields['handrail_height']
+
+
+        if self.instance.type != 3:
+            del self.fields['steps']
 
 
     class Meta:
