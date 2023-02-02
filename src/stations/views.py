@@ -22,7 +22,6 @@ def station_detail(request, id):
             {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
             for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1]
         ]
-
         lift_list = [
             {'type':type_id, 'name':type_name, 'items':lifts.filter(type=type_id)}
             for type_id, type_name in Lift.LIFT_TYPES
@@ -32,6 +31,7 @@ def station_detail(request, id):
             {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
             for type_id, type_name in Stop.LOCATION_TYPES if type_id == 4
         ]
+        lift_list = []
     else:
         locations = []
         lift_list = []
@@ -76,11 +76,11 @@ def lift_edit(request, id=None, parent=None):
     if id:
         lift = Lift.objects.get(pk=id)
     elif parent:
-        lift = Lift(stop_id_id=parent)
+        lift_type = int(request.GET.get('type'))
+        lift = Lift(stop_id_id=parent, type = lift_type)
     else:
         lift = None
 
-    print({'parent':lift.stop_id})
     form = LiftForm(request.POST or None, instance=lift)
 
     if request.POST:

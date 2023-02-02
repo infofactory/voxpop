@@ -18,6 +18,10 @@ img{
     background-color: var(--brand);
 }
 
+table{
+    max-width: 100vw;
+}
+
 thead:first-child{
     background-color: var(--brand) !important;
 }
@@ -42,5 +46,44 @@ thead:first-child{
 }
 
 .logo{
-    width: 14vw !important;
+    width: calc(100px + 4vw)  !important;
+}
+
+.custom_disabled{
+    background-color: rgba(128, 128, 128, 0.622);
+    border: solid rgba(128, 128, 128, 0.61) 1px;
+    /* opacity: 0.7; */
+    cursor:not-allowed;
+    position: relative;
+    
+}
+
+.custom_disabled:hover{
+    background-color: gray;
+    border: solid gray 1px;
+}
+
+.custom_disabled:active{
+    background-color: gray !important;
+    border: solid gray 1px !important;
+}
+
+.custom_disabled_txt{
+    opacity: .5;
+}
+
+.custom_disabled:hover::after, 
+.custom_disabled:active::after{
+    content: 'Add at least 1 area before adding a Lift';
+    display: block;
+    position: absolute;
+    height: 50px;
+    padding: 5px 10px 5px 75px;
+    background-color: rgba(0, 0, 0, 0.806);
+    color: white;
+    right: -180px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    clip-path: polygon(30% 0, 100% 0%, 100% 100%, 30% 100%, 30% 61%, 14% 50%, 30% 38%);
 }

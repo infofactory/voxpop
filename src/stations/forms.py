@@ -107,7 +107,7 @@ class LiftForm(ModelForm):
         self.helper.add_input(Submit('save', 'Save', css_class='btn btn-success me-4'))
         self.helper.add_input(Submit('delete', 'Delete', css_class='btn btn-danger'))
         
-        areas = Stop.objects.filter(location_type = 5)
+        areas = Stop.objects.filter(location_type = 5, parent_station = self.instance.stop_id.pk)
         if areas:
             self.fields['from_areas'].queryset = areas
             self.fields['intermediate_areas'].queryset = areas
@@ -119,4 +119,4 @@ class LiftForm(ModelForm):
 
     class Meta:
         model = Lift
-        exclude = ['stop_id']
+        exclude = ['stop_id', 'type']
