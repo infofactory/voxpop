@@ -4,6 +4,7 @@
 {%block content%}
 
 <!-- header: title and edit button -->
+
 <div class="row justify-content-between py-4">
     <div class="col d-flex align-items-center">
         <h4 class="fw-bold">{{station}}</h4>
@@ -64,14 +65,15 @@
 {% for lift_group in lift_list %}
 <div class="d-flex align-items-center ">
     <a 
-    class="lift_btn btn btn-primary me-2 mb-1 {% if locations.4.items.count == 0 %} custom_disabled {%endif%} " href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
+    class="lift_btn btn btn-primary me-2 mb-1 {% if not areas %} custom_disabled {%endif%} " href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
         <i class="fa-solid fa-plus"></i> 
     </a>
-    <h4 class="{% if locations.4.items.count == 0 %} custom_disabled_txt {%endif%}">
+    <h4 class="{% if not areas %} custom_disabled_txt {%endif%}">
         {{lift_group.name}} 
     </h4>
 </div>
 
+    {% if lift_group.items %}
     <table  class="table table-striped">
         <thead class="text-light">
             <tr>
@@ -100,6 +102,28 @@
         </tr>
         {% endfor %}
     </table>
-
+    {% endif %}
 {% endfor %}
+
+{% if station.location_type == 0 %}
+<div class="d-flex align-items-center mb-1 me-2">
+
+    {%if station.services%}
+    <a class="btn btn-success" href="{% url 'services_edit' station.services.platform_id.pk %}">
+        <i class="fa-solid fa-pencil"></i>
+    </a>
+    {%else%}
+    <a class="btn btn-success" href="{% url 'services_add' station.pk %}">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+    {%endif%}
+    
+    <h4>
+        Services
+    </h4>
+</div>
+
+!!Da mostrare ma ci sono!!
+{% endif %}
+
 {%endblock content%}

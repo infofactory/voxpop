@@ -159,8 +159,8 @@ class RampLevelPath(RampRoutes):
 class StepFreeInterchangeInfo(RampRoutes):
     distance = models.IntegerField(blank=True, null=True)
 
-class PlatformService(models.Model):
-    platform_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='services')
+class Services(models.Model):
+    platform_id = models.OneToOneField('stations.Stop', on_delete=models.CASCADE, primary_key=True)
     # line = models.ForeignKey(RampRoutes, on_delete=models.CASCADE, related_name='lines')
     min_gap = models.IntegerField(null=True, blank=True)
     max_gap = models.IntegerField(null=True, blank=True)
@@ -169,10 +169,13 @@ class PlatformService(models.Model):
     max_step = models.IntegerField(null=True, blank=True)
     avarage_step = models.IntegerField(null=True, blank=True)
     designated_level_acces_point = models.BooleanField(default=False)
-    location_of_level_access = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+', null=True, blank=True)
+    location_of_level_access = models.ForeignKey('stations.Stop', on_delete=models.CASCADE, related_name='+', null=True, blank=True)
     level_access_by_manual_ramp = models.BooleanField(default=False)
     additional_accessibility_info = models.TextField(blank=True, null=True)
 
+    def __str__(self) -> str:
+        name = "%s %s" % (self.platform_id, 'services')
+        return name
 
 
     

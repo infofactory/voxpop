@@ -11,9 +11,15 @@
 
 
 <div class="toolbar d-flex justify-content-center">
+    {% if station.parent_station %}
     <a href="{% url 'station_detail' station.parent_station.pk %}">
         Cancel
     </a>
+    {% else %}
+    <a href="{% url 'station_detail' station.pk %}">
+        Cancel
+    </a>
+    {%endif%}
 </div>
 
 

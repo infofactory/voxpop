@@ -20,7 +20,7 @@ def station_detail(request, id):
     if station.location_type == 1:
         locations = [
             {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
-            for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1]
+            for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1 and 4]
         ]
         lift_list = [
             {'type':type_id, 'name':type_name, 'items':lifts.filter(type=type_id)}
@@ -36,7 +36,17 @@ def station_detail(request, id):
         locations = []
         lift_list = []
 
-    context = {'station':station, 'locations':locations, 'lift_list':lift_list}
+    if locations:
+        for group in locations:
+            if group['name'] == 'Area' and not group['items']:
+                areas = False
+            else:
+                areas = True
+    else:
+        areas = None
+
+
+    context = {'station':station, 'locations':locations, 'lift_list':lift_list, 'areas': areas}
     return render(request, 'stations/details.html', context)
 
 
@@ -59,7 +69,6 @@ def station_edit(request, id=None, parent=None):
         if form.is_valid():
             station = form.save()
             return redirect(reverse('station_detail', args=[station.pk]))
-            
     
     context = {'station':station, 'form':form}
     return render(request, 'stations/edit.html', context)
@@ -94,3 +103,28 @@ def lift_edit(request, id=None, parent=None):
 
     context={'form':form, 'lift': lift}
     return render(request, 'lifts/edit.html',context)
+
+
+def services_edit(request, platform=None, id=None):
+    from .forms import ServicesForm
+    # if platform add services
+    if platform:
+        parent = Stop.objects.get(id = platform)
+        services = Services(platform_id = parent)
+        form = ServicesForm(request.POST or None, instance=services)
+    # if id edit services
+    elif id:
+        services = Services.objects.get(pk = id)
+        form = ServicesForm(request.POST or None, instance=services)
+    
+    if request.POST:
+        if 'delete' in request.POST:
+            parent_platform = services.platform_id
+            services.delete()
+            return redirect(reverse('station_detail', args=[parent_platform]))
+        if form.is_valid():
+            services = form.save()
+            return redirect(reverse('station_detail', args=[services.platform_id.pk]))
+
+    context = {'form': form}
+    return render(request, 'stations/services/edit.html', context)

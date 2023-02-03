@@ -27,4 +27,6 @@ urlpatterns = [
     path('stops/lifts/<int:id>/', views.lift_detail, name="lift_detail"),
     path('stops/<int:parent>/lift/add', views.lift_edit, name="lift_add"),
     path('stops/lifts/<int:id>/edit', views.lift_edit, name="lift_edit"),
+    path('stops/<int:platform>/services/add', views.services_edit, name="services_add"),
+    path('stops/services/<int:id>/edit', views.services_edit, name="services_edit")
 ]

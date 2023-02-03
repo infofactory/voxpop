@@ -140,3 +140,15 @@ class LiftForm(ModelForm):
     class Meta:
         model = Lift
         exclude = ['stop_id', 'type']
+
+
+class ServicesForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('save', 'Save', css_class='btn btn-success me-4'))
+        self.helper.add_input(Submit('delete', 'Delete', css_class='btn btn-danger'))
+
+    class Meta:
+        model = Services
+        exclude = ['platform_id']
