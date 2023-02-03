@@ -1,0 +1,40 @@
+name: Butta su sul server!
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: Ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Copia codice via scp
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.SSHKEY }}
+        with:
+          source: "src/."
+          target: "/home/polesello/voxpop_env/lisbona"
+          strip_components: 1
+
+      - name: Esegui comandi
+        uses: appleboy/ssh-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.SSHKEY }}
+          script: | 
+            cd career_env/
+            . bin/activate
+            cd career/
+            pip install -r requirements.txt
+            python manage.py makemigrations --settings=lisbona.settings.production
+            python manage.py migrate --settings=lisbona.settings.production
+            python manage.py collectstatic --no-input
+            deactivate
+            sudo supervisorctl restart voxpop
