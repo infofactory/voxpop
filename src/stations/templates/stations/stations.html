@@ -7,12 +7,14 @@
     <div class="col">
         <h1>Stations</h1>
     </div>
+    {% if request.user.is_authenticated or 1%}
     <div class="col d-flex justify-content-end align-items-center">
         <a class="add_btn shadow-sm" href="{% url 'station_add' %}?loc_type=1">
             <i class="fa-solid fa-plus"></i>
             <p>Add Station</p>
         </a>
     </div>
+    {% endif %}
 </div>
 
 
@@ -45,11 +47,13 @@
             </td>
             </td>
             <td class="d-flex justify-content-center">
+                {% if request.user.is_authenticated %}
                 <a class="me-md-2" href="{% url 'station_edit' station.pk %}">
                     <button class="btn btn-outline-primary">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                 </a>
+                {% endif %}
                 <a class="btn btn-primary d-none d-md-inline" href="{% url 'station_detail' station.pk%}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>

@@ -4,6 +4,13 @@
 
 {% block content %}
 
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'station_detail' parent.pk %}">
+        Cancel
+    </a>
+    
+</div>
+
 {%crispy form%}
 
 {% endblock content %}

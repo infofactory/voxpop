@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.views.generic.list import ListView
 from .models import *
 
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 def index(request):
     stations = Stop.objects.filter(location_type=1)
@@ -36,22 +38,20 @@ def station_detail(request, id):
         locations = []
         lift_list = []
 
-    if locations:
-        for group in locations:
-            if group['name'] == 'Area' and not group['items']:
-                areas = False
-            else:
-                areas = True
-    else:
-        areas = None
 
+    areas = station.children.filter(location_type=5).exists()
 
     context = {'station':station, 'locations':locations, 'lift_list':lift_list, 'areas': areas}
     return render(request, 'stations/details.html', context)
 
 
+@login_required
 def station_edit(request, id=None, parent=None):
     from .forms import StopForm
+
+    # if request.user.is_anonymous:
+    #     return redirect('/stops')
+
     if id:
         station = Stop.objects.get(pk=id)
     elif parent:
@@ -60,7 +60,7 @@ def station_edit(request, id=None, parent=None):
     else:
         station = None
 
-    form = StopForm(request.POST or None, instance=station)
+    form = StopForm(request.POST or None, instance=station, initial= {'lat':45, 'lon':-9})
 
     if request.method == 'POST':
         if 'delete' in request.POST:
@@ -115,16 +115,17 @@ def services_edit(request, platform=None, id=None):
     # if id edit services
     elif id:
         services = Services.objects.get(pk = id)
+        parent = Stop.objects.get(id = services.platform_id.pk)
         form = ServicesForm(request.POST or None, instance=services)
     
     if request.POST:
         if 'delete' in request.POST:
             parent_platform = services.platform_id
             services.delete()
-            return redirect(reverse('station_detail', args=[parent_platform]))
+            return redirect(reverse('station_detail', args=[parent_platform.pk]))
         if form.is_valid():
             services = form.save()
             return redirect(reverse('station_detail', args=[services.platform_id.pk]))
 
-    context = {'form': form}
+    context = {'form': form, 'services': services, 'parent': parent}
     return render(request, 'stations/services/edit.html', context)

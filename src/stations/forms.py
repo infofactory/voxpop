@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from django import forms
 from .models import *
 
 from crispy_forms.helper import FormHelper
@@ -103,6 +104,11 @@ class StopForm(ModelForm):
     class Meta:
         model = Stop
         exclude = ['parent_station', 'location_type']
+        widgets = {
+            'desc': forms.Textarea(attrs={
+                'rows': 2
+            })
+        }
 
 
 class LiftForm(ModelForm):
@@ -125,17 +131,15 @@ class LiftForm(ModelForm):
         if self.instance.type != 0:
             del self.fields['lift_width']
             del self.fields['lift_heigth']
-        
+
         if self.instance.type != 2:
             del self.fields['number_of_steps']
             del self.fields['steps_height']
             del self.fields['handrail']
             del self.fields['handrail_height']
 
-
         if self.instance.type != 3:
             del self.fields['steps']
-
 
     class Meta:
         model = Lift
@@ -146,9 +150,18 @@ class ServicesForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', 'Save', css_class='btn btn-success me-4'))
-        self.helper.add_input(Submit('delete', 'Delete', css_class='btn btn-danger'))
+        self.helper.add_input(
+            Submit('save', 'Save', css_class='btn btn-success me-4'))
+        self.helper.add_input(
+            Submit('delete', 'Delete', css_class='btn btn-danger'))
 
+        locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform_id.pk)
+        self.fields['location_of_level_access'].queryset = locations
     class Meta:
         model = Services
         exclude = ['platform_id']
+        widgets = {
+            'additional_accessibility_info': forms.Textarea(attrs={
+                'rows': 2
+            })
+        }
