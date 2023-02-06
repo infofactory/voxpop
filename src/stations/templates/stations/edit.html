@@ -42,7 +42,7 @@
 }
 
 function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
+  console.warn(err);
 }
 
 navigator.geolocation.getCurrentPosition(success, error);
