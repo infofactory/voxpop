@@ -145,9 +145,9 @@ class Lift(models.Model):
 #     handrail_height = models.FloatField()
 
 # class Escalator(Stairlift):
-    STEPS = ((0, 'No'), (1, 'tapis roulant'))
+    # STEPS = ((0, 'No'), (1, 'tapis roulant'))
 
-    steps = models.IntegerField(choices=STEPS, default=0)
+    # steps = models.IntegerField(choices=STEPS, default=0)
 
 class RampRoutes(models.Model):
     from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='ramp_routes')

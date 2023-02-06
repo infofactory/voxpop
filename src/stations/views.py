@@ -131,7 +131,27 @@ def services_edit(request, platform=None, id=None):
     context = {'form': form, 'services': services, 'parent': parent}
     return render(request, 'stations/services/edit.html', context)
 
-def test_api(request):
+import csv
+from django.http import HttpResponse
 
-    print('this is the request: %r'%(request))
-    return JsonResponse({'res':'hello'})
+def download_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="somefilename.csv"'},
+    )
+
+    writer = csv.writer(response)
+    fields = Stop._meta.get_fields()
+
+    field_names = ['code', 'name']
+    print(fields)
+    header = [f.name for f in fields]
+    writer.writerow(field_names)
+
+    stops = Stop.objects.all()
+    for stop in stops:
+        row = [getattr(stop, f) for f in field_names]
+        writer.writerow(row)
+
+    return response

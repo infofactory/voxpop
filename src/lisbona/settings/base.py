@@ -7,10 +7,10 @@ SECRET_KEY = '#x(c^ufomd&%#_oj05ypva1u7l0ifh@wbt9352o*3k@4zogk+j'
 
 # Application definition
 INSTALLED_APPS = [
+    'users',
     'stations',
     "crispy_forms",
     "crispy_bootstrap5",
-    "corsheaders",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -21,7 +21,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -102,4 +101,4 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-LOGIN_URL = '/admin'
+LOGIN_URL = '/accounts/login'

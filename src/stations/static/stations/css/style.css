@@ -3,7 +3,8 @@ body {
 }
 
 :root{
-    --brand: rgb(0,29,80)
+    --brand: #001d50;
+    --second: #7a53ec
 }
 
 p{
@@ -24,6 +25,17 @@ table{
 
 thead:first-child{
     background-color: var(--brand) !important;
+}
+
+.badge{
+    background-color: var(--second) !important;
+}
+
+.custom-nav{
+    width: 100%;
+    background-color: var(--brand);
+    padding: 30px 0;
+    display: flex;
 }
 
 .add_btn{
@@ -121,4 +133,100 @@ thead:first-child{
     align-items: center;
     justify-content: center;
     margin-top: 10px;
+}
+
+
+.custom-table{
+    width: 100%;
+}
+
+.custom-table  th{
+    padding: 30px 5px;
+}
+
+.custom-table td{
+    padding: 10px 2px;
+}
+
+.custom-table tr:nth-child(even){
+    background-color: rgba(226, 224, 224, 0.1);
+}
+
+
+.second-btn{
+    color: rgb(243, 243, 243);
+    background-color: var(--second);
+    height: 27px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.second-btn:active,
+.second-btn:hover{
+    background-color: rgba(211, 211, 211, 0.5);
+}
+
+.lists-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.location_wrapper{
+    border: solid rgb(222, 221, 221) 1px;
+    padding: 25px 8px;
+}
+
+#user{
+    position: relative;
+    cursor: pointer;
+}
+
+#user_card{
+    color: var(--brand);
+    border-radius: 12px;
+    background-color: whitesmoke;
+    position: absolute;
+    left: -110%;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all ease-in-out 400ms;
+    width: 0px;
+}
+
+#user_card:hover{
+    font-weight: 700;
+}
+
+#user_card > a {
+    text-decoration: none;
+    color: currentColor;
+}
+
+#user:hover #user_card{
+    width: fit-content;
+    padding: 10px 30px;
+}
+
+.login-wrapper{
+    width: 80%;
+    padding: 50px 20px;
+    margin: 35px auto;
+    border-radius: 20px;
+}
+
+.login-btn {
+    background-color: var(--second) !important;
+    border-radius: 999999px;
+}
+
+@media (min-width: 640px){
+    .login-wrapper{
+        width: 50%
+    }
 }

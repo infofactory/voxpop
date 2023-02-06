@@ -19,49 +19,52 @@
 
 <!-- main nodes list -->
 
-{% if station.location_type == 1 %}
-<h5 class="w-25 border-bottom border-secondary mb-3"> Main Nodes </h5>
-{% endif %}
-<div class="mb-5">
+<div class="mb-5 lists-wrapper">
     {% for location_group in locations %}
 
-    <div class="d-flex align-items-center btn_add">
-        <a class="btn btn-success me-3 mb-1"
-            href="{% url 'station_add_child' parent=station.pk %}?loc_type={{location_group.type}}">
-            <i class="fa-solid fa-plus"></i>
-        </a>
-        <h4>{{location_group.name}}</h4>
+    <div class="location_wrapper shadow">
+
+        <div class="d-flex align-items-center btn_add">
+            <a class="second-btn "
+                href="{% url 'station_add_child' parent=station.pk %}?loc_type={{location_group.type}}">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+            <h4>{{location_group.name}}</h4>
+        </div>
+        {% if location_group.items %}
+        <table class="table table-striped  mb-4">
+            <thead class="text-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in location_group.items %}
+                <tr>
+                    <td>
+                        {{item.code}}
+                    </td>
+                    <td>
+                        <a href="{% url 'station_detail' item.pk %}">{{ item }}</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-primary me-1" href="{% url 'station_edit' item.pk %}">
+                            <i class="fa-solid fa-pencil"></i>
+                            <a class="btn d-none d-md-inline-block btn-primary me-1"
+                                href="{% url 'station_detail' item.pk %}">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
     </div>
-    {% if location_group.items %}
-    <table class="table table-striped  mb-4">
-        <thead class="text-light">
-            <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in location_group.items %}
-            <tr>
-                <td>
-                    {{item.code}}
-                </td>
-                <td>
-                    <a href="{% url 'station_detail' item.pk %}">{{ item }}</a>
-                </td>
-                <td>
-                    <a class="btn btn-outline-primary me-1" href="{% url 'station_edit' item.pk %}">
-                        <i class="fa-solid fa-pencil"></i>
-                        <a class="btn d-none d-md-inline-block btn-primary me-1" href="{% url 'station_detail' item.pk %}">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+
+
     {% endfor %}
 </div>
 

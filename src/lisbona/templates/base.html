@@ -20,14 +20,31 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-extend-lg py-4">
-            <div class="container d-flex justify-content-center">
+        <nav class="custom-nav">
+            <div class="container d-flex ">
                 <figure class="logo mb-0">
                     <a href="{% url 'home' %}">
                         <img src="{% static 'stations/img/logo.png' %}" alt="">
                     </a>
                 </figure>
             </div>
+
+
+        {% if request.user.is_authenticated %}
+            <div id="user">
+                <div class="d-flex align-items-center px-3">
+                    <i class="fa-solid fa-user text-light"></i>
+                    <p class="text-light ps-1">
+                        {{request.user}}
+                    </p>
+                </div>
+                <div id="user_card">
+                    <a href="{% url 'logout' %}">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        {% endif %}
         </nav>
     </header>
 {% with stop=station %}
