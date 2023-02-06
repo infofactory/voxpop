@@ -3,7 +3,7 @@ from django import forms
 from .models import *
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Field, Submit, Row, Column
+from crispy_forms.layout import Layout, Fieldset, Field, Submit, Row, Column, HTML
 from crispy_forms.bootstrap import StrictButton
 from django.forms.widgets import HiddenInput
 
@@ -34,7 +34,7 @@ class StopForm(ModelForm):
         if self.instance.location_type != 0:
             del self.fields['accessible_entrance_id']
             del self.fields['accessible_exit_id']
-            del self.fields['step_free_route_information_available']
+            # del self.fields['step_free_route_information_available']
         if self.instance.location_type in [0, 1, 2]:
             self.fields['lat'].required = True
             self.fields['lon'].required = True
@@ -60,8 +60,9 @@ class StopForm(ModelForm):
                 Column('desc', css_class='col-12')
             ),
             Row(
-                Column('lat'),
-                Column('lon'),
+                Column('lat', css_class='col-5'),
+                Column('lon', css_class='col-5'),
+                HTML('<div class="wrapper-btn col-2" ><button type="button" class="btn btn-primary" id="auto-locate"><i class="fa-solid fa-map-pin"></i></button></div>'),
             ),
             Row(
                 Column('wheelchair_boarding',
@@ -84,8 +85,8 @@ class StopForm(ModelForm):
             ),
             Field('wifi', css_class="form-check-input",
                   wrapper_class="form-check form-switch"),
-            Field('step_free_route_information_available',
-                  css_class="form-check-input", wrapper_class="form-check form-switch"),
+            # Field('step_free_route_information_available',
+            #       css_class="form-check-input", wrapper_class="form-check form-switch"),
             Field('blue_badge_car_parking', css_class="form-check-input",
                   wrapper_class="form-check form-switch"),
             Field('blue_badge_car_park_spaces', css_class="form-check-input",

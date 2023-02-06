@@ -135,13 +135,13 @@ visibili solo se il modello è di tipo "Platform"-->
 {%if station.services%}
 
 <!-- alerts and additional platform info -->
-<div class="card mb-4">
+<div class="card shadow border-0 mb-4">
     <div class="card-body">
         <h4 class="cart-title">
             Level Access Info
         </h4>
         <div
-            class="col alert {% if station.services.designated_level_acces_point %} alert-success {%else%} alert-danger {% endif %}">
+            class="col alert border-0 {% if station.services.designated_level_acces_point %} alert-success {%else%} alert-danger {% endif %}">
             <p>
                 {% if station.services.designated_level_acces_point %}
                 <i class="fa-solid fa-check me-1"></i>This platform has a designed level access point
@@ -151,7 +151,7 @@ visibili solo se il modello è di tipo "Platform"-->
             </p>
         </div>
         <div
-            class="col alert {% if station.services.designated_level_acces_point %} alert-success {%else%} alert-danger {% endif %}">
+            class="col alert border-0 {% if station.services.designated_level_acces_point %} alert-success {%else%} alert-danger {% endif %}">
             <p>
                 {% if station.services.level_access_by_manual_ramp %}
                 <i class="fa-solid fa-check me-1"></i>This platform has a level access by manual ramp
@@ -160,7 +160,7 @@ visibili solo se il modello è di tipo "Platform"-->
                 {% endif %}
             </p>
         </div>
-        <div class="col {% if station.services.location_of_level_access %} alert alert-primary {% endif %} ">
+        <div class="col border-0 {% if station.services.location_of_level_access %} alert alert-primary {% endif %} ">
             {% if station.services.location_of_level_access %}
             <i class="fa-solid fa-location-dot me-1"></i>
             {{station.services.location_of_level_access}}
@@ -218,7 +218,7 @@ visibili solo se il modello è di tipo "Platform"-->
 <!-- additional notes -->
 
 {% if station.services.additional_accessibility_info %}
-<div class="card mb-3">
+<div class="card border-0 shadow mb-3">
     <div class="card-body">
         <p class="card-title fw-bold">Additional notes</p>
         <p class="">

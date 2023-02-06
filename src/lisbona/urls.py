@@ -28,5 +28,6 @@ urlpatterns = [
     path('stops/<int:parent>/lift/add', views.lift_edit, name="lift_add"),
     path('stops/lifts/<int:id>/edit', views.lift_edit, name="lift_edit"),
     path('stops/<int:platform>/services/add', views.services_edit, name="services_add"),
-    path('stops/services/<int:id>/edit', views.services_edit, name="services_edit")
+    path('stops/services/<int:id>/edit', views.services_edit, name="services_edit"),
+    path('stops/api/test', views.test_api, name="test_api"),
 ]

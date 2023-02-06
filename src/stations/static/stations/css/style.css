@@ -113,3 +113,12 @@ thead:first-child{
         transform: translateY(0px);
     }
 }
+
+
+.wrapper-btn{
+    display: flex;
+    flex-basis: 10%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}

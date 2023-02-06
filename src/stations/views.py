@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic.list import ListView
 from .models import *
 
@@ -130,3 +130,8 @@ def services_edit(request, platform=None, id=None):
 
     context = {'form': form, 'services': services, 'parent': parent}
     return render(request, 'stations/services/edit.html', context)
+
+def test_api(request):
+
+    print('this is the request: %r'%(request))
+    return JsonResponse({'res':'hello'})
