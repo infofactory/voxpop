@@ -3,6 +3,8 @@
 {%block page_title%}Lisbona - Stations{%endblock%}
 
 {%block content%}
+<p id="coords"></p>
+
 {%if station.pk%}
 <h4 class="py-4">Edit <strong>{{station}}</strong></h4>
 {%else%}
@@ -32,20 +34,31 @@
 </div>
 
 <script>
+let lat = ''
+    lon = ''
+    accuracy = ''
+    container = document.getElementById('coords')
+
     function success(pos) {
-  const crd = pos.coords;
+        const {coords} = pos
 
-  console.log('Your current position is:');
-  console.log(`Latitude : ${crd.latitude}`);
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
+        const crd = {
+            lat: coords.latitude,
+            lon: coords.longitude,
+            accuracy: coords.accuracy
+        }
 
-function error(err) {
-  console.warn(err);
-}
+        for (const key in crd) {
+            container.append(`${key}: ${crd[key]} `)
+        }
 
-navigator.geolocation.getCurrentPosition(success, error);
+    }
+
+    function error(err) {
+        console.warn(err);
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error);
 </script>
 
 {%endblock content%}
