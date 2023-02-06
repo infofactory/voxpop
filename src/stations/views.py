@@ -54,11 +54,12 @@ def station_edit(request, id=None, parent=None):
 
     if id:
         station = Stop.objects.get(pk=id)
-    elif parent:
-        station = Stop(parent_station_id=parent)
-        station.location_type = int(request.GET.get('loc_type'))
     else:
-        station = None
+        station = Stop(parent_station_id=parent)
+    
+    station.location_type = int(request.GET.get('loc_type', 1))
+    #else:
+     #   station = None
 
     form = StopForm(request.POST or None, instance=station, initial= {'lat':45, 'lon':-9})
 

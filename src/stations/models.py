@@ -37,7 +37,7 @@ class Stop(models.Model):
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
     lat = models.FloatField(verbose_name="Latitude", blank=True, null=True)
     lon = models.FloatField(blank=True, null=True)
-    location_type = models.IntegerField(choices=LOCATION_TYPES)
+    location_type = models.IntegerField(choices=LOCATION_TYPES, default=1)
     level = models.IntegerField(blank=True, null=True)
     parent_station = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
     wheelchair_boarding = models.IntegerField(choices=WHEELCHAIR_BOARDING, default=0)

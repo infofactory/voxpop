@@ -24,11 +24,12 @@ class StopForm(ModelForm):
             self.fields['cardinal_direction'].required = True
             doors = Stop.objects.filter(
                 location_type=2, parent_station=self.instance.parent_station)
-            if doors:
-                self.fields['accessible_entrance_id'].queryset = doors
-                self.fields['accessible_exit_id'].queryset = doors
-            else:
-                del self.fields['accessible_entrance_id']
+
+            self.fields['accessible_entrance_id'].queryset = doors
+            self.fields['accessible_exit_id'].queryset = doors
+            # else:
+                # self.fields['accessible_entrance_id'].disabled = True
+                # self.fields['accessible_exit_id'].disabled = True
 
         if self.instance.location_type != 0:
             del self.fields['accessible_entrance_id']
