@@ -50,10 +50,29 @@ thead:first-child{
     text-decoration: none;
     transition: all 300ms ease-out;
 }
+.add_btn_reverse{
+    background-color: var(--brand);
+    color: whitesmoke;
+    height: 42px;
+    width: 42px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: all 300ms ease-out;
+    margin-left: 1rem;
+}
 
 .add_btn:hover{
+    color: whitesmoke;
     background-color: var(--brand);
-    color: white;
+    transform: scale(1.05);
+}
+.add_btn_reverse:hover{
+    color: var(--brand);
+    background-color: white;
     transform: scale(1.05);
 }
 

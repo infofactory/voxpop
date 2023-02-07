@@ -135,23 +135,21 @@ import csv
 from django.http import HttpResponse
 
 def download_csv(request):
-    # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(
         content_type='text/csv',
-        headers={'Content-Disposition': 'attachment; filename="somefilename.csv"'},
+        headers={'Content-Disposition': 'attachment; filename="stations.csv"'},
     )
 
     writer = csv.writer(response)
     fields = Stop._meta.get_fields()
 
-    field_names = ['code', 'name']
-    print(fields)
-    header = [f.name for f in fields]
-    writer.writerow(field_names)
-
-    stops = Stop.objects.all()
-    for stop in stops:
-        row = [getattr(stop, f) for f in field_names]
-        writer.writerow(row)
+    stations = Stop.objects.filter(location_type = 1)
+    fields_name = ['name', 'location_type', 'level', 'parent_station']
+    writer.writerow(fields_name)
+    for station in stations:
+        children = Stop.objects.filter(parent_station = station.pk)
+        for child in children:
+            row = [getattr(child, f) for f in fields_name]
+            writer.writerow(row)
 
     return response
