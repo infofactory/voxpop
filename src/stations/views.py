@@ -49,15 +49,13 @@ def station_detail(request, id):
 def station_edit(request, id=None, parent=None):
     from .forms import StopForm
 
-    # if request.user.is_anonymous:
-    #     return redirect('/stops')
-
     if id:
         station = Stop.objects.get(pk=id)
+    elif parent:
+        loc_type = request.GET.get('loc_type')
+        station = Stop(parent_station_id=parent, location_type = loc_type)
     else:
-        station = Stop(parent_station_id=parent)
-    
-    station.location_type = int(request.GET.get('loc_type', 1))
+        station.location_type = int(request.GET.get('loc_type', 1))
     #else:
      #   station = None
 
@@ -65,11 +63,22 @@ def station_edit(request, id=None, parent=None):
 
     if request.method == 'POST':
         if 'delete' in request.POST:
+            if station.parent_station:
+                parent = station.parent_station
             station.delete()
-            return redirect(reverse('station_detail', args=[station.parent_station.pk]))
+            if parent:
+                return redirect(reverse('station_detail', args=[station.parent_station.pk]))
+            else: 
+                return redirect(reverse('home'))
+
         if form.is_valid():
             station = form.save()
-            return redirect(reverse('station_detail', args=[station.pk]))
+            if station.location_type == 0:
+                return redirect(reverse('station_detail', args=[station.pk]))
+            elif station.parent_station:
+                return redirect(reverse('station_detail', args=[station.parent_station.pk]))
+            else:
+                return redirect(reverse('home'))
     
     context = {'station':station, 'form':form}
     return render(request, 'stations/edit.html', context)
@@ -100,7 +109,7 @@ def lift_edit(request, id=None, parent=None):
             return redirect(reverse('station_detail', args=[parent]))
         if form.is_valid():
             lift = form.save()
-            return redirect(reverse('lift_detail', args=[lift.pk]))
+            return redirect(reverse('station_detail', args=[parent]))
 
     context={'form':form, 'lift': lift}
     return render(request, 'lifts/edit.html',context)
@@ -143,13 +152,11 @@ def download_csv(request):
     writer = csv.writer(response)
     fields = Stop._meta.get_fields()
 
-    stations = Stop.objects.filter(location_type = 1)
     fields_name = ['name', 'location_type', 'level', 'parent_station']
     writer.writerow(fields_name)
+    stations = Stop.objects.all().order_by('parent_station')
     for station in stations:
-        children = Stop.objects.filter(parent_station = station.pk)
-        for child in children:
-            row = [getattr(child, f) for f in fields_name]
-            writer.writerow(row)
+        row = [getattr(station, f, 'null') for f in fields_name]
+        writer.writerow(row)
 
     return response

@@ -4,12 +4,34 @@
 
 {% block content %}
 
+<div id="breadcrumbs" class="py-3 bg-light">
+    <div class="container ">
+
+        <a href="{% url 'home' %}">Home</a> ›
+        {% for item in parent.ancestors reversed %}
+        <a href="{{item.url}}">{{item}}</a> ›
+        {% endfor %}
+        <a href="{% url 'station_detail' parent.pk %}">{{parent}}</a>›
+        <strong>Servizi</strong>
+    </div>
+</div>
+
+<h4 class="fw-bold py-4">
+    {% if services %}
+    Edit {{parent.name}} services
+    {% else %}
+    Add {{parent.name}} services
+    {% endif %}
+
+</h4>
+
 <div class="toolbar d-flex justify-content-center">
     <a href="{% url 'station_detail' parent.pk %}">
         Cancel
     </a>
     
 </div>
+
 
 {%crispy form%}
 

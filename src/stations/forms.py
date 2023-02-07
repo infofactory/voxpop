@@ -159,6 +159,25 @@ class ServicesForm(ModelForm):
 
         locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform_id.pk)
         self.fields['location_of_level_access'].queryset = locations
+
+        self.helper.layout = Layout(
+            Row(
+                Column('min_gap', css_class='col-6 col-sm-4 flex-grow-1'),
+                Column('max_gap', css_class='col-6 col-sm-4 flex-grow-1'), 
+                Column('avarage_gap', css_class='col-6 col-sm-4 flex-grow-1')
+            ),
+            Row(
+                Column('min_step', css_class='col-6 col-sm-4 flex-grow-1'), 
+                Column('max_step', css_class='col-6 col-sm-4 flex-grow-1'), 
+                Column('avarage_step', css_class='col-6 col-sm-4 flex-grow-1')
+            ),
+            Row(
+                Column('designated_level_acces_point', css_class='form-check form-switch'),
+                Column('level_access_by_manual_ramp', css_class='form-check form-switch'),
+            ),
+            Row('location_of_level_access'),
+            Row('additional_accessibility_info')
+        )
     class Meta:
         model = Services
         exclude = ['platform_id']
