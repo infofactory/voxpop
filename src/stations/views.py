@@ -55,9 +55,7 @@ def station_edit(request, id=None, parent=None):
         loc_type = request.GET.get('loc_type')
         station = Stop(parent_station_id=parent, location_type = loc_type)
     else:
-        station.location_type = int(request.GET.get('loc_type', 1))
-    #else:
-     #   station = None
+        station = Stop(location_type = request.GET.get('loc_type', 1))
 
     form = StopForm(request.POST or None, instance=station, initial= {'lat':45, 'lon':-9})
 
