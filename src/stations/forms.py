@@ -130,7 +130,10 @@ class LiftForm(ModelForm):
             self.fields['intermediate_areas_two'].queryset = areas
             self.fields['to_areas'].queryset = areas
 
-        if self.instance.type != 0:
+        if self.instance.type == 0:
+            self.fields['lift_width'].required = True
+            self.fields['lift_heigth'].required = True
+        else:
             del self.fields['lift_width']
             del self.fields['lift_heigth']
 

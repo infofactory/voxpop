@@ -104,14 +104,14 @@ class Lift(models.Model):
     intermediate_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
     intermediate_areas_two = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
     to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE)
-    lift_width = models.FloatField()    #solo per lift
-    lift_heigth = models.FloatField()   #solo per lift
+    lift_width = models.FloatField(blank=True, null=True, help_text='width in centimeters')    #solo per lift
+    lift_heigth = models.FloatField(blank=True, null=True, help_text='height in centimeters')   #solo per lift
     visually_impaired_ok = models.BooleanField(default=False)
     assistance_requested = models.BooleanField(default=False) #solo per strair 
     number_of_steps = models.PositiveIntegerField(default=0)    #solo per stair
-    steps_height = models.FloatField(default=0)                          #solo per stair
+    steps_height = models.FloatField(default=0, help_text='height in centimeters')                          #solo per stair
     handrail = models.IntegerField(choices=HANDRAIL, default=0) #solo per stair
-    handrail_height = models.FloatField(default=False)                       #solo per stair
+    handrail_height = models.FloatField(default=False, help_text='height in centimeters')                       #solo per stair
     steps = models.IntegerField(choices=STEPS, default=0)       #solo per strair e escalator
     lift_notes = models.TextField(blank=True, null=True)
 
