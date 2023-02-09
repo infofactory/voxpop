@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 
 
+
 class Stop(models.Model):
     LOCATION_TYPES = (
         (0, "Stop or platform"),
@@ -34,6 +35,7 @@ class Stop(models.Model):
 
     code = models.CharField(max_length=20, blank=True)
     name = models.CharField(max_length=100)
+    lines = models.ManyToManyField('stations.Line', related_name='lines')
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
     lat = models.FloatField(verbose_name="Latitude", blank=True, null=True)
     lon = models.FloatField(blank=True, null=True)
@@ -120,35 +122,6 @@ class Lift(models.Model):
 
         
 
-# class Stairlift(models.Model):
-#     stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='Stairlifts')
-#     name = models.CharField(max_length=100)
-#     friendly_name = models.CharField(max_length=100, blank=True, null=True)
-#     from_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
-#     to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
-#     assistance_requested = models.BooleanField(default=False)
-
-#     def __str__(self) -> str:
-#         return self.name
-
-# class Stair(Stairlift):
-#     HANDRAIL = (
-#         (0, 'no'),
-#         (1, 'right'),
-#         (2, 'left'),
-#         (3, 'both'),
-#     )
-
-#     number_of_steps = models.PositiveIntegerField(default=1)
-#     steps_height = models.FloatField()
-#     handrail = models.IntegerField(choices=HANDRAIL, default=0)
-#     handrail_height = models.FloatField()
-
-# class Escalator(Stairlift):
-    # STEPS = ((0, 'No'), (1, 'tapis roulant'))
-
-    # steps = models.IntegerField(choices=STEPS, default=0)
-
 class RampRoutes(models.Model):
     from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='ramp_routes')
     to_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
@@ -177,5 +150,12 @@ class Services(models.Model):
         name = "%s %s" % (self.platform_id, 'services')
         return name
 
+class Line(models.Model):
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=20, help_text='Insert the color code: es. #DF0101', blank=True, null=True)
 
+    def __str__(self) -> str:
+        return self.name
     
+    class Meta:
+        ordering = ('name',)

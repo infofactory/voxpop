@@ -345,3 +345,9 @@ thead:first-child{
     text-decoration: none;
     margin-right: 10px;
 }
+
+
+/* .debug{
+    max-height: 50px;
+    overflow-y: scroll;
+} */

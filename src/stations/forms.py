@@ -3,7 +3,7 @@ from django import forms
 from .models import *
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Field, Submit, Row, Column, HTML
+from crispy_forms.layout import Layout, Fieldset, Field,MultiField, Submit, Row, Column, HTML
 from crispy_forms.bootstrap import StrictButton
 from django.forms.widgets import HiddenInput
 
@@ -44,15 +44,12 @@ class StopForm(ModelForm):
             del self.fields['outside_station_unique_id']
 
         self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Row(
-                Column('parent_station'),
-                Column('location_type')
-            ),
+        self.helper.layout = Layout( 
             Row(
                 Column('code', css_class='col-sm-1 col-3'),
-                Column('name', css_class='col-sm-11 col-9')
+                Column('name', css_class='col-sm-11 col-6')
             ),
+            Field('lines', css_class='form-select'),
             Row(
                 'level'
             ),
@@ -189,3 +186,16 @@ class ServicesForm(ModelForm):
                 'rows': 2
             })
         }
+
+class LineForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('save', 'Save', css_class='btn btn-success me-4'))
+        self.helper.add_input(
+            Submit('delete', 'Delete', css_class='btn btn-danger'))
+
+    class Meta:
+        model = Line
+        fields = '__all__'

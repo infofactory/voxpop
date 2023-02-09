@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Voxpop - Lines{% endblock page_title %}
+{% block content %}
+
+<div id="breadcrumbs" class="py-3 bg-light">
+    <div class="container ">
+        <fa class="fa-solid fa-chevron-left"></fa>
+        <a href="{% url 'home' %}">Home</a>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row justify-content-between py-3">
+        <div class="col">
+            <h1>Lines</h1>
+        </div>
+        <div class="col d-flex justify-content-end">
+            <a class="add_btn shadow-sm " href="{% url 'line_add' %}">
+                <i class="fa-solid fa-plus"></i>
+                Add line
+            </a>
+        </div>
+    </div>
+
+    
+    {% for line in lines %}
+    <ul>
+        <li>
+            <a href="{% url 'line_edit' line.pk %}">
+                {{line}}
+            </a>
+        </li>
+    </ul>
+    {% endfor %}
+</div>
+
+{% endblock content %}

@@ -6,18 +6,25 @@
 <div class="row justify-content-between py-4">
     <div class="col">
         <h1>Stations</h1>
+        <a href="{%url 'lines' %}">
+            <p>View all the lines</p>
+        </a> 
     </div>
     {% if request.user.is_authenticated or 1%}
     <div class="col d-flex justify-content-end align-items-center">
-        <a class="add_btn shadow-sm" href="{% url 'station_add' %}?loc_type=1">
+        <a class="add_btn shadow-sm me-2" href="{% url 'station_add' %}?loc_type=1">
             <i class="fa-solid fa-plus"></i>
             <p>Add Station</p>
         </a>
-        <a class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
-            <i class="fa-solid fa-file-arrow-down"></i>
+        <a class="add_btn shadow-sm" href="{% url 'line_add' %}">
+            <i class="fa-solid fa-plus"></i>
+            <p>Add Line</p>
         </a>
     </div>
     {% endif %}
+    <a class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
+        <i class="fa-solid fa-file-arrow-down"></i>
+    </a>
 </div>
 
 

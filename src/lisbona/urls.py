@@ -32,4 +32,7 @@ urlpatterns = [
     path('stops/services/<int:id>/edit', views.services_edit, name="services_edit"),
     path('accounts/', include('users.urls')),
     path('download/', views.download_csv, name='download'),
+    path('lines/add', views.lines_edit, name='line_add'),
+    path('lines/', views.lines_index, name='lines'),
+    path('lines/<int:id>/edit', views.lines_edit, name='line_edit'),
 ]

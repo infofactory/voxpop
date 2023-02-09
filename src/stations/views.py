@@ -158,3 +158,34 @@ def download_csv(request):
         writer.writerow(row)
 
     return response
+
+def lines_index(request):
+    lines = Line.objects.all()
+    context = {'lines': lines}
+
+    return render(request, 'stations/lines/lines.html', context)
+
+def lines_edit(request, id=None):
+    from .forms import LineForm
+
+    if id:
+        line = Line.objects.get(pk = id)
+        print(line)
+        form = LineForm(request.POST or None, instance=line)
+    else:
+        line = None
+        form = LineForm(request.POST or None, instance=line)
+
+    if request.POST:
+        if 'delete' in request.POST:
+            line.delete()
+            return redirect(reverse('lines'))
+        
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('lines'))
+        else:
+            return redirect(reverse('home'))
+
+    context= {'form': form}
+    return render(request, 'stations/lines/edit.html', context)

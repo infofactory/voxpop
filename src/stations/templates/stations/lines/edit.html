@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block page_title %}Voxpop - Lines{% endblock page_title %}
+{% block content %}
+
+{% crispy form %}
+
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'lines' %}">
+        Cancel
+    </a>
+</div>
+
+
+{% endblock content %}
