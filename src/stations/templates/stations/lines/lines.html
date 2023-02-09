@@ -25,15 +25,34 @@
     </div>
 
     
+    <ul class="lines_row">
     {% for line in lines %}
-    <ul>
-        <li>
-            <a href="{% url 'line_edit' line.pk %}">
+        <li class="line_wrapper shadow">
+            <div style="background-color: {{line.color | default:"#d3d3d3"}};" class="color_badge"></div>
+            <i class="icon fa-solid fa-chevron-down"></i>
+            <a class="w-50" href="{% url 'line_edit' line.pk %}">
                 {{line}}
             </a>
+            <ul class="d-flex flex-column station_list ">
+                {% for station in line.stations.all %}
+                <li>
+                   {{station}}     
+                </li>
+                {% endfor %}
+            </ul>
         </li>
+        {% endfor %}
     </ul>
-    {% endfor %}
 </div>
+
+<script>
+    const icons = document.querySelectorAll('.icon')
+    const stationLists = document.querySelectorAll('.line_wrapper')
+
+    stationLists.forEach(list => {
+        console.dir(list s  )
+    })
+    
+</script>
 
 {% endblock content %}

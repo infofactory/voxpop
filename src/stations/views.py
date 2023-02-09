@@ -148,9 +148,9 @@ def download_csv(request):
     )
 
     writer = csv.writer(response)
-    fields = Stop._meta.get_fields()
-
-    fields_name = ['name', 'location_type', 'level', 'parent_station']
+    # fields = Stop._meta.get_fields()
+    fields_name = ['name','code' ,'location_type', 'level' ,'parent_station','line', 'platform_code', 'lat', 'lon', 'wheelchair_boarding','visually_impaired_path', 'cardinal_direction','accessible_entrance_id', 'accessible_exit_id','step_free_route_information_available','wifi', 'outside_station_unique_id','blue_badge_car_parking','blue_badge_car_park_spaces', 'taxi_ranks_outside_station','bus_stop_outside_station','train_station' ]
+    
     writer.writerow(fields_name)
     stations = Stop.objects.all().order_by('parent_station')
     for station in stations:
@@ -161,6 +161,8 @@ def download_csv(request):
 
 def lines_index(request):
     lines = Line.objects.all()
+
+        
     context = {'lines': lines}
 
     return render(request, 'stations/lines/lines.html', context)

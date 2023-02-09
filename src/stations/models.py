@@ -35,7 +35,7 @@ class Stop(models.Model):
 
     code = models.CharField(max_length=20, blank=True)
     name = models.CharField(max_length=100)
-    lines = models.ManyToManyField('stations.Line', related_name='lines')
+    lines = models.ManyToManyField('stations.Line', related_name='stations', blank=True, null=True)
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
     lat = models.FloatField(verbose_name="Latitude", blank=True, null=True)
     lon = models.FloatField(blank=True, null=True)

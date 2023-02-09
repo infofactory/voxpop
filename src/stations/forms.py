@@ -19,6 +19,9 @@ class StopForm(ModelForm):
         # 3=generic mode
         # 4=boarding area
         # 5=area
+        if self.instance.location_type != 1:
+            del self.fields['lines']
+
         if self.instance.location_type == 0:
             self.fields['platform_code'].required = True
             self.fields['cardinal_direction'].required = True
@@ -27,9 +30,6 @@ class StopForm(ModelForm):
 
             self.fields['accessible_entrance_id'].queryset = doors
             self.fields['accessible_exit_id'].queryset = doors
-            # else:
-                # self.fields['accessible_entrance_id'].disabled = True
-                # self.fields['accessible_exit_id'].disabled = True
 
         if self.instance.location_type != 0:
             del self.fields['accessible_entrance_id']
@@ -195,6 +195,15 @@ class LineForm(ModelForm):
             Submit('save', 'Save', css_class='btn btn-success me-4'))
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
+        
+        self.helper.layout = Layout(
+            Row(
+                Column('name', 'color')
+            ),
+            HTML(
+            '<div class="d-flex align-items-center "><label for="color_pick ">Pick a color</label><div class="" id="defaults"></div></div>'
+            )
+        )
 
     class Meta:
         model = Line

@@ -15,6 +15,7 @@ p{
 ul{
     padding: 0;
     margin: 0;
+    list-style: none;
 }
 
 img{
@@ -23,6 +24,11 @@ img{
 
 .navbar{ 
     background-color: var(--brand);
+}
+
+a{
+    text-decoration: none;
+    color: currentColor;
 }
 
 table{
@@ -284,6 +290,10 @@ thead:first-child{
     .titles > li {
         text-align: center;
     }
+
+    .line_wrapper{
+        flex-basis: 100%;
+    }
 }
 
 .titles{
@@ -351,3 +361,69 @@ thead:first-child{
     max-height: 50px;
     overflow-y: scroll;
 } */
+
+.box-color{
+    width: 40px;
+    aspect-ratio: 1;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 12px;
+    transition: all 300ms ease-in-out;
+}
+
+
+.box-color:hover{
+    transform: scale(1.1);
+}
+
+
+.lines_row{
+    flex-wrap: wrap;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+
+.line_wrapper{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    justify-content: center;
+    padding-left: 2.5rem;
+    color: var(--brand) !important;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-basis: 200px;
+    height: fit-content;
+    min-height: 90px;
+    border-radius: 30px;
+}
+
+
+.color_badge{
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 35px;
+}
+
+.station_list{
+    font-weight: 400;
+    font-size: 14px;
+    display: none !important;
+}
+
+.icon{
+    position: absolute;
+    right: 10px;
+    top: 45px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.active{
+    display: block !important;
+}
