@@ -201,14 +201,27 @@ def lines_edit(request, id=None):
     return render(request, 'stations/lines/edit.html', context)
 
 
-def ramps_edit(request, parent=None):
+def ramps_edit(request, parent=None, id=None):
     from .forms import SameLevelForm
     if parent:
         ramp_parent = Stop.objects.get(pk = parent)
         ramp = RampLevelPath(station = ramp_parent)
+
+    elif id:
+        ramp = RampLevelPath.objects.get(pk = id)
+
     else:
         ramp = None
+    
     form = SameLevelForm(request.POST or None, instance= ramp) 
+
+    if request.POST:
+        if 'delete' in request.POST:
+            ramp.delete()
+            return redirect(reverse('station_detail', args=[ramp.station.pk]))
+        if form.is_valid():
+            ramp = form.save()
+            return redirect(reverse('station_detail', args=[ramp.station.pk]))
 
     context = {'form': form}
     return render(request, 'stations/ramps/edit.html', context)

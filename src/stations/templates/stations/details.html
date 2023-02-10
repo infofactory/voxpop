@@ -3,6 +3,7 @@
 
 {%block content%}
 
+{{station.paths.all}}
 <!-- header: title and edit button -->
 
 <div class="row justify-content-between py-4">
@@ -26,7 +27,7 @@
             </a>
             {% endfor %}
         </div>
-    {% endif %}
+        {% endif %}
     </div>
 
     <div class="col d-flex justify-content-end align-items-center">
@@ -78,6 +79,34 @@
             </li>
             {% endfor %}
 
+            {% if location_group.type == 5 %}
+            <div class="d-flex align-items-center pt-4">
+                <a href="{% url 'ramp_add' station.pk %}">
+                    <div class="second-btn">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                </a>
+                    <h5 class="pb-0 mt-2">
+                        Same level paths
+                    </h5>
+            </div>
+            <ul class="titles">
+                <li>From</li>
+                <li>To</li>
+                <li>Actions</li>
+            </ul>
+            <ul class="children_list">
+                {% for path in station.ramps.all %}
+                <li>
+                    <p>{{path.from_area}}</p>
+                    <p>{{path.to_area}}</p>
+                    <a href="{% url 'ramp_edit' path.pk %}">
+                        <i class="fa-solid fa-pencil"></i>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {%endif%}
         </ul>
         {% endif %}
     </div>
@@ -85,9 +114,6 @@
     {% endfor %}
 </div>
 
-<a href="{% url 'ramp_add' station.pk %}">
-    Add a same level 
-</a>
 
 
 <!-- lifts list 

@@ -8,6 +8,11 @@ body {
     --third: #4fcf80
 }
 
+h1, h2, h3, h4, h4{
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
 p{
     margin-bottom: 0 !important;
 }

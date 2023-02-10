@@ -229,4 +229,4 @@ class SameLevelForm(ModelForm):
 
     class Meta:
         model = RampLevelPath
-        fields = '__all__'
+        exclude = ['station']
