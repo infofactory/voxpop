@@ -123,6 +123,7 @@ class Lift(models.Model):
         
 
 class RampRoutes(models.Model):
+    station = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='ramps')
     from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='ramp_routes')
     to_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
 

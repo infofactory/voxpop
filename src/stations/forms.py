@@ -19,6 +19,7 @@ class StopForm(ModelForm):
         # 3=generic mode
         # 4=boarding area
         # 5=area
+
         if self.instance.location_type != 1:
             del self.fields['lines']
 
@@ -106,7 +107,8 @@ class StopForm(ModelForm):
         widgets = {
             'desc': forms.Textarea(attrs={
                 'rows': 2
-            })
+            }),
+            'lines': forms.CheckboxSelectMultiple
         }
 
 
@@ -201,10 +203,30 @@ class LineForm(ModelForm):
                 Column('name', 'color')
             ),
             HTML(
-            '<div class="d-flex align-items-center "><label for="color_pick ">Pick a color</label><div class="" id="defaults"></div></div>'
+            '<div class="d-flex align-items-center "><label for="color_pick ">Pick a color</label><div class="" id="defaults"></div> <input class="form-control form-control-color" type="color" id="picker"/> </div>'
             )
         )
 
     class Meta:
         model = Line
+        fields = '__all__'
+
+
+
+class SameLevelForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('save', 'Save', css_class='btn btn-success me-4'))
+        self.helper.add_input(
+            Submit('delete', 'Delete', css_class='btn btn-danger'))
+        
+        areas = Stop.objects.filter(location_type = 5, parent_station = self.instance.station)
+
+        self.fields['from_area'].queryset = areas
+        self.fields['to_area'].queryset = areas
+
+    class Meta:
+        model = RampLevelPath
         fields = '__all__'

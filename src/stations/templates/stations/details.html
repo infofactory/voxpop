@@ -8,7 +8,27 @@
 <div class="row justify-content-between py-4">
     <div class="col d-flex align-items-center">
         <h4 class="fw-bold fs-2">{{station}}</h4>
+
+        {% if station.location_type == 1 %}
+        <div class="d-flex py-3">
+            {% for line in station.lines.all %}
+            <a href="{% url 'lines' %}">
+
+                <div class="mx-2">
+                    {% if line.color %}
+                    <div style="background-color: {{line.color}};" class="line_badge rounded-circle">
+                        <p>M</p>
+                    </div>
+                    {% else %}
+                    <p>Line {{ line }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% endif %}
     </div>
+
     <div class="col d-flex justify-content-end align-items-center">
         <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
             <i class="fa-solid fa-pencil"></i>
@@ -16,24 +36,6 @@
         </a>
     </div>
 </div>
-
-{% if station.lines.all and station.location_type == 1 %}
-<div class="row py-3">
-    <div class="col-4">
-        <h4>Station's lines</h4>
-
-        <ul class="list-group">
-            {% for line in station.lines.all %}
-            <li class="list-group-item">
-                <a href="{% url 'lines' %}">
-                    {{line}}
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
-{% endif %}
 
 
 <!-- main nodes list -->
@@ -75,13 +77,17 @@
                 </div>
             </li>
             {% endfor %}
+
         </ul>
         {% endif %}
     </div>
 
-
     {% endfor %}
 </div>
+
+<a href="{% url 'ramp_add' station.pk %}">
+    Add a same level 
+</a>
 
 
 <!-- lifts list 

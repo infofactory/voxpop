@@ -390,8 +390,8 @@ thead:first-child{
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    justify-content: center;
+    overflow: hidden;
+    justify-content: flex-start;
     padding-left: 2.5rem;
     color: var(--brand) !important;
     font-weight: 700;
@@ -400,6 +400,7 @@ thead:first-child{
     height: fit-content;
     min-height: 90px;
     border-radius: 30px;
+    transition: all 400ms ease-out;
 }
 
 
@@ -411,9 +412,13 @@ thead:first-child{
 }
 
 .station_list{
+    margin: 12px 0px;
     font-weight: 400;
     font-size: 14px;
-    display: none !important;
+    scale: 0;
+    height: 0px;
+    transition: all 400ms ease-out;
+    transform-origin: top center;
 }
 
 .icon{
@@ -426,4 +431,30 @@ thead:first-child{
 
 .active{
     display: block !important;
+    scale: 1;
+    height: fit-content;
+}
+
+.line_link{
+    line-height: 12px;
+}
+
+.station-name_wrapper{
+    height: 50px;
+    display: flex;
+    align-items: flex-end;
+}
+
+#picker{
+    height: 43px !important;
+}
+
+.line_badge{
+    width: 60px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+
 }

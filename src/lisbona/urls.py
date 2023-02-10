@@ -35,4 +35,5 @@ urlpatterns = [
     path('lines/add', views.lines_edit, name='line_add'),
     path('lines/', views.lines_index, name='lines'),
     path('lines/<int:id>/edit', views.lines_edit, name='line_edit'),
+    path('ramps/<int:parent>/add/', views.ramps_edit, name='ramp_add')
 ]

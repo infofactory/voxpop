@@ -30,14 +30,18 @@
         <li class="line_wrapper shadow">
             <div style="background-color: {{line.color | default:"#d3d3d3"}};" class="color_badge"></div>
             <i class="icon fa-solid fa-chevron-down"></i>
-            <a class="w-50" href="{% url 'line_edit' line.pk %}">
-                {{line}}
-            </a>
+            <div class="station-name_wrapper">
+                <a class="w-50 line_link" href="{% url 'line_edit' line.pk %}">
+                    {{line}}
+                </a>
+            </div>
             <ul class="d-flex flex-column station_list ">
                 {% for station in line.stations.all %}
-                <li>
-                   {{station}}     
-                </li>
+                <a href="{% url 'station_detail' station.pk %}">
+                    <li>
+                        {{station}}     
+                    </li>
+                </a>
                 {% endfor %}
             </ul>
         </li>
@@ -50,7 +54,23 @@
     const stationLists = document.querySelectorAll('.line_wrapper')
 
     stationLists.forEach(list => {
-        console.dir(list s  )
+        const children = list.childNodes
+
+        children.forEach(child => {
+            if(child.nodeName == 'I'){
+
+                child.addEventListener('click', function(){
+                    const parent = child.parentNode.childNodes
+
+                    parent.forEach(el => {
+                        if(el.nodeName == 'UL'){
+                            el.classList.toggle('active')
+                        }
+                    })
+                })
+            }
+        })
+       
     })
     
 </script>

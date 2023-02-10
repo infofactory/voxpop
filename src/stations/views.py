@@ -38,6 +38,13 @@ def station_detail(request, id):
         locations = []
         lift_list = []
 
+    #areas = station.children.filter(location_type=5)
+
+    #da rifinire e spostarkìla nei models: crea in automatico i level path
+    # same = [areas.filter(level = a.level) for a in areas]
+    # for area in same:
+    #     level_path = RampLevelPath(from_area = area[0], to_area = area[1])
+    #     level_path.save()
 
     areas = station.children.filter(location_type=5).exists()
 
@@ -57,7 +64,8 @@ def station_edit(request, id=None, parent=None):
     else:
         station = Stop(location_type = request.GET.get('loc_type', 1))
 
-    form = StopForm(request.POST or None, instance=station, initial= {'lat':45, 'lon':-9})
+    form = StopForm(request.POST or None, instance=station)
+
 
     if request.method == 'POST':
         if 'delete' in request.POST:
@@ -71,7 +79,7 @@ def station_edit(request, id=None, parent=None):
 
         if form.is_valid():
             station = form.save()
-            if station.location_type == 0:
+            if station.location_type in [0, 1]:
                 return redirect(reverse('station_detail', args=[station.pk]))
             elif station.parent_station:
                 return redirect(reverse('station_detail', args=[station.parent_station.pk]))
@@ -150,7 +158,7 @@ def download_csv(request):
     writer = csv.writer(response)
     # fields = Stop._meta.get_fields()
     fields_name = ['name','code' ,'location_type', 'level' ,'parent_station','line', 'platform_code', 'lat', 'lon', 'wheelchair_boarding','visually_impaired_path', 'cardinal_direction','accessible_entrance_id', 'accessible_exit_id','step_free_route_information_available','wifi', 'outside_station_unique_id','blue_badge_car_parking','blue_badge_car_park_spaces', 'taxi_ranks_outside_station','bus_stop_outside_station','train_station' ]
-    
+
     writer.writerow(fields_name)
     stations = Stop.objects.all().order_by('parent_station')
     for station in stations:
@@ -191,3 +199,17 @@ def lines_edit(request, id=None):
 
     context= {'form': form}
     return render(request, 'stations/lines/edit.html', context)
+
+
+def ramps_edit(request, parent=None):
+    from .forms import SameLevelForm
+    if parent:
+        ramp_parent = Stop.objects.get(pk = parent)
+        ramp = RampLevelPath(station = ramp_parent)
+    else:
+        ramp = None
+    form = SameLevelForm(request.POST or None, instance= ramp) 
+
+    context = {'form': form}
+    return render(request, 'stations/ramps/edit.html', context)
+

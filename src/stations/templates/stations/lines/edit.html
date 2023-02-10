@@ -36,8 +36,7 @@ colors.forEach(c => {
     defaults.append(box)
 })
 
-picker.addEventListener('blur', function(){
-    console.log(picker.value)
+picker.addEventListener('input', function(){
     colorTextInput.value = picker.value
 })
 
