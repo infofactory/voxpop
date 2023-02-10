@@ -21,7 +21,7 @@
 
 <body>
     <header>
-        <nav class="custom-nav">
+        <!-- {% comment %} <nav class="custom-nav">
             <div class="container d-flex ">
                 <figure class="logo mb-0">
                     <a href="{% url 'home' %}">
@@ -46,7 +46,40 @@
                 </div>
             </div>
         {% endif %}
-        </nav>
+        </nav> {% endcomment %} -->
+
+        <nav style="background-color: #001d50 !important; " class="navbar justify-content-between navbar-dark bg-dark sticky-top  navbar-expand-lg ">
+            <div class="container-fluid text-white">
+              <a class="navbar-brand" href="{% url 'home' %}">
+                <figure class="logo">
+
+                    <img src="{% static 'stations/img/logo.png' %}" alt="">
+                </figure>
+                </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav custom-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Stations</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'lines' %}">Lines</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user"></i>
+                       {{request.user}}
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
     </header>
 {% with stop=station %}
     {% if stop %}

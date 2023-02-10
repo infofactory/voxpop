@@ -135,7 +135,8 @@ class StepFreeInterchangeInfo(RampRoutes):
 
 class Services(models.Model):
     platform_id = models.OneToOneField('stations.Stop', on_delete=models.CASCADE, primary_key=True)
-    # line = models.ForeignKey(RampRoutes, on_delete=models.CASCADE, related_name='lines')
+    line = models.ForeignKey('stations.Line', on_delete=models.CASCADE, blank=True, null=True, related_name='platforms')
+    direction_towards = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
     min_gap = models.IntegerField(null=True, blank=True)
     max_gap = models.IntegerField(null=True, blank=True)
     avarage_gap = models.IntegerField(null=True, blank=True)

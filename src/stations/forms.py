@@ -158,17 +158,40 @@ class ServicesForm(ModelForm):
             Submit('save', 'Save', css_class='btn btn-success me-4'))
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
+        
+        self.fields['min_gap'].label = 'Min Gap(cm)'
+        self.fields['max_gap'].label = 'Max Gap(cm)'
+        self.fields['avarage_gap'].label = 'Avarage Gap(cm)'
+        self.fields['avarage_step'].label = 'Avarage step(cm)'
+        self.fields['min_step'].label = 'Min step(cm)'
+        self.fields['max_step'].label = 'Max step(cm)'
+        
+        lines = self.instance.platform_id.parent_station.lines.all()
+        stations = Stop.objects.filter(location_type = 1)
 
+        self.fields['line'].queryset = lines
+        self.fields['direction_towards'].queryset = stations
+    
         locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform_id.pk)
         self.fields['location_of_level_access'].queryset = locations
 
         self.helper.layout = Layout(
             Row(
+                Column('line', css_class='col-6 col-sm-4 flex-grow-1'),
+                Column('direction_towards', css_class='col-6 col-sm-4 flex-grow-1'),
+            ),
+            Row(
+                HTML(
+                    '<p class=" text-secondary pt-4 pb-2">Gap means distance between the platform and the train entrance</p>'
+                ),
                 Column('min_gap', css_class='col-6 col-sm-4 flex-grow-1'),
                 Column('max_gap', css_class='col-6 col-sm-4 flex-grow-1'), 
                 Column('avarage_gap', css_class='col-6 col-sm-4 flex-grow-1')
             ),
             Row(
+                HTML(
+                    '<p class="text-secondary pt-4 pb-2">Step means height between the platform and the train entrance</p>'
+                ),
                 Column('min_step', css_class='col-6 col-sm-4 flex-grow-1'), 
                 Column('max_step', css_class='col-6 col-sm-4 flex-grow-1'), 
                 Column('avarage_step', css_class='col-6 col-sm-4 flex-grow-1')

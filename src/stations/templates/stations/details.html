@@ -1,9 +1,8 @@
 {% extends 'base.html'%}
-{%block page_title%}Voxpop - Stations{%endblock%}
+{%block page_title %}Voxpop - Stations{%endblock%}
 
 {%block content%}
 
-{{station.paths.all}}
 <!-- header: title and edit button -->
 
 <div class="row justify-content-between py-4">
@@ -30,6 +29,7 @@
         {% endif %}
     </div>
 
+
     <div class="col d-flex justify-content-end align-items-center">
         <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
             <i class="fa-solid fa-pencil"></i>
@@ -37,6 +37,21 @@
         </a>
     </div>
 </div>
+
+    <!--Direzione binario  -->
+{% if station.location_type == 0 and station.services %}
+<div class="pb-4 d-flex align-items-center">
+    <p class="me-2">
+        Direction: <a  class="fw-bold" href="{% url 'station_detail' station.services.direction_towards.pk %}">
+            {{station.services.direction_towards}}
+        </a>
+    </p>
+
+    <div style="background-color: {{station.services.line.color}}" class="line_badge">
+        <p>M</p>
+    </div>
+</div>
+{% endif %}
 
 
 <!-- main nodes list -->
@@ -184,7 +199,7 @@ visibili solo se il modello è di tipo "Platform"-->
 
 <!-- alerts and additional platform info -->
 <div class="card shadow border-0 mb-4">
-    <div class="card-body">
+    <div class="card-body border-0 shadow-sm">
         <h4 class="cart-title">
             Level Access Info
         </h4>

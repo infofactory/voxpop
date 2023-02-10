@@ -8,6 +8,7 @@ body {
     --third: #4fcf80
 }
 
+
 h1, h2, h3, h4, h4{
     padding-bottom: 0px !important;
     margin-bottom: 0px !important;
@@ -48,12 +49,11 @@ thead:first-child{
     background-color: var(--second) !important;
 }
 
-.custom-nav{
-    width: 100%;
-    background-color: var(--brand);
-    padding: 30px 0;
-    display: flex;
+.text-light{
+    color: lightgray;
 }
+
+
 
 .add_btn{
     color: var(--brand);
@@ -461,5 +461,6 @@ thead:first-child{
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    border-radius: 50%;
 
 }

@@ -6,9 +6,6 @@
 <div class="row justify-content-between py-4">
     <div class="col">
         <h1>Stations</h1>
-        <a href="{%url 'lines' %}">
-            <p>View all the lines</p>
-        </a> 
     </div>
     {% if request.user.is_authenticated or 1%}
     <div class="col d-flex justify-content-end align-items-center">

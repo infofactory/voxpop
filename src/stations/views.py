@@ -134,6 +134,10 @@ def services_edit(request, platform=None, id=None):
         parent = Stop.objects.get(id = services.platform_id.pk)
         form = ServicesForm(request.POST or None, instance=services)
     
+    lines = services.platform_id.parent_station.lines.all()
+    for line in lines:
+        print(line.stations.all())
+
     if request.POST:
         if 'delete' in request.POST:
             parent_platform = services.platform_id
