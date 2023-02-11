@@ -6,7 +6,6 @@ from .models import *
 
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 def index(request):
     stations = Stop.objects.filter(location_type=1)
 
@@ -56,15 +55,16 @@ def station_detail(request, id):
 def station_edit(request, id=None, parent=None):
     from .forms import StopForm
 
+    loc_type = int(request.GET.get('loc_type', 1))
+
     if id:
         station = Stop.objects.get(pk=id)
     elif parent:
-        loc_type = request.GET.get('loc_type')
         station = Stop(parent_station_id=parent, location_type = loc_type)
     else:
-        station = Stop(location_type = request.GET.get('loc_type', 1))
+        station = Stop(location_type = loc_type)
 
-    form = StopForm(request.POST or None, instance=station)
+    form = StopForm(request.POST or None, request.FILES or None, instance=station)
 
 
     if request.method == 'POST':
@@ -104,9 +104,9 @@ def lift_edit(request, id=None, parent=None):
         lift_type = int(request.GET.get('type'))
         lift = Lift(stop_id_id=parent, type = lift_type)
     else:
-        lift = None
+        lift = Lift()
 
-    form = LiftForm(request.POST or None, instance=lift)
+    form = LiftForm(request.POST or None, request.FILES or None, instance=lift)
 
     if request.POST:
         if 'delete' in request.POST:
@@ -115,7 +115,7 @@ def lift_edit(request, id=None, parent=None):
             return redirect(reverse('station_detail', args=[parent]))
         if form.is_valid():
             lift = form.save()
-            return redirect(reverse('station_detail', args=[parent]))
+            return redirect(reverse('station_detail', kwargs={'id':lift.stop_id_id}))
 
     context={'form':form, 'lift': lift}
     return render(request, 'lifts/edit.html',context)

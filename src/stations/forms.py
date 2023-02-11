@@ -50,7 +50,7 @@ class StopForm(ModelForm):
                 Column('code', css_class='col-sm-1 col-3'),
                 Column('name', css_class='col-sm-11 col-6')
             ),
-            Field('lines', css_class='form-select'),
+            Field('lines'),
             Row(
                 'level'
             ),
@@ -79,7 +79,10 @@ class StopForm(ModelForm):
                        css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
             ),
             Row(
-                Column('outside_station_unique_id')
+                Column('outside_station_unique_id'),
+            ),
+            Row(
+                Column('image'),
             ),
             Field('wifi', css_class="form-check-input",
                   wrapper_class="form-check form-switch"),
@@ -225,13 +228,13 @@ class LineForm(ModelForm):
             Row(
                 Column('name', 'color')
             ),
-            HTML(
-            '<div class="d-flex align-items-center "><label for="color_pick ">Pick a color</label><div class="" id="defaults"></div> <input class="form-control form-control-color" type="color" id="picker"/> </div>'
-            )
         )
 
     class Meta:
         model = Line
+        widgets = {
+            'color': forms.TextInput(attrs={'type':'color', 'list':'presetColors'})
+        }
         fields = '__all__'
 
 

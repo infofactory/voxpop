@@ -11,35 +11,11 @@
     </a>
 </div>
 
-
-<script>
-const colors = 
-[
-    '#ff5141',
-    '#67eb69',
-    '#ffed00',
-    '#060bfb'
-]
-
-const picker = document.getElementById('picker')
-const defaults = document.getElementById('defaults')
-const colorTextInput = document.getElementById('id_color')
-
-
-colors.forEach(c => {
-    let box = document.createElement('div')
-    box.className = 'box-color'
-    box.style.backgroundColor = c
-    box.addEventListener('click', function(){
-        colorTextInput.value = c
-    })
-    defaults.append(box)
-})
-
-picker.addEventListener('input', function(){
-    colorTextInput.value = picker.value
-})
-
-</script>
+<datalist id="presetColors">
+    <option>#ff5141</option>/>
+    <option>#67eb69</option>
+    <option>#ffed00</option>
+    <option>#060bfb</option>
+</datalist>
 
 {% endblock content %}

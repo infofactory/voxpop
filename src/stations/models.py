@@ -35,10 +35,10 @@ class Stop(models.Model):
 
     code = models.CharField(max_length=20, blank=True)
     name = models.CharField(max_length=100)
-    lines = models.ManyToManyField('stations.Line', related_name='stations', blank=True, null=True)
+    lines = models.ManyToManyField('stations.Line', related_name='stations', blank=True)
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
     lat = models.FloatField(verbose_name="Latitude", blank=True, null=True)
-    lon = models.FloatField(blank=True, null=True)
+    lon = models.FloatField(verbose_name="Longitude", blank=True, null=True)
     location_type = models.IntegerField(choices=LOCATION_TYPES, default=1)
     level = models.IntegerField(blank=True, null=True)
     parent_station = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
@@ -56,6 +56,7 @@ class Stop(models.Model):
     taxi_ranks_outside_station = models.BooleanField(default=False)
     bus_stop_outside_station = models.BooleanField(default=False)
     train_station = models.BooleanField(default=False)
+    image = models.ImageField(blank=True, upload_to='stops')
 
     def __str__(self) -> str:
         return self.name
@@ -116,6 +117,7 @@ class Lift(models.Model):
     handrail_height = models.FloatField(default=False, help_text='height in centimeters')                       #solo per stair
     steps = models.IntegerField(choices=STEPS, default=0)       #solo per strair e escalator
     lift_notes = models.TextField(blank=True, null=True)
+    image = models.ImageField(blank=True, upload_to='lifts')
 
     def __str__(self) -> str:
         return  self.name
@@ -154,7 +156,7 @@ class Services(models.Model):
 
 class Line(models.Model):
     name = models.CharField(max_length=50)
-    color = models.CharField(max_length=20, help_text='Insert the color code: es. #DF0101', blank=True, null=True)
+    color = models.CharField(max_length=7, blank=True)
 
     def __str__(self) -> str:
         return self.name

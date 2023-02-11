@@ -5,8 +5,8 @@
 
 <!-- header: title and edit button -->
 
-<div class="row justify-content-between py-4">
-    <div class="col d-flex align-items-center">
+<div class="d-flex justify-content-between py-4">
+    <div class="d-flex align-items-center">
         <h4 class="fw-bold fs-2">{{station}}</h4>
 
         {% if station.location_type == 1 %}
@@ -30,10 +30,9 @@
     </div>
 
 
-    <div class="col d-flex justify-content-end align-items-center">
+    <div>
         <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
-            <i class="fa-solid fa-pencil"></i>
-            <p>Edit</p>
+            <i class="fa-solid fa-pencil"></i> Edit
         </a>
     </div>
 </div>
@@ -69,59 +68,61 @@
             <h4>{{location_group.name}}</h4>
         </div>
         {% if location_group.items %}
-        <ul class="titles">
-            <li>Name</li>
-            <li>Level</li>
-            <li>Action</li>
-        </ul>
-        <ul class="children_list">
+
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Actions</th>
+            </tr>
             {% for location in location_group.items %}
-            <li>
-                <a
-                    href="{% if location.location_type == 0 %} {% url 'station_detail' location.pk %} {% else %} # {% endif %}">
-                    <p>{{location.name}}</p>
-                </a>
-                <p>{{location.level}}</p>
-                <div class="d-flex align-items-center">
+            <tr>
+                <td><a
+                    href="{% if location.location_type == 0 %} {% url 'station_detail' location.pk %} {% else %} # {% endif %}">{{location.name}}</a>
+                </td>
+                <td>{{location.level|default:''}}</td>
+                <td>
                     <a href="{% url 'station_edit' location.pk %}"><i
-                            class="fa-solid fa-pencil second-btn-reverse"></i></a>
+                        class="fa-solid fa-pencil second-btn-reverse"></i></a>
                     {% if location.location_type == 0 %}
                     <a href="{% url 'station_detail' location.pk %}">
                         <i class="fa-solid fa-arrow-up-right-from-square second-btn-reverse ms-2"></i>
                     </a>
                     {% endif %}
-                </div>
-            </li>
+                </td>
+            </tr>
             {% endfor %}
+        </table>
+
 
             {% if location_group.type == 5 %}
-            <div class="d-flex align-items-center pt-4">
-                <a href="{% url 'ramp_add' station.pk %}">
-                    <div class="second-btn">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                </a>
-                    <h5 class="pb-0 mt-2">
-                        Same level paths
-                    </h5>
-            </div>
-            <ul class="titles">
-                <li>From</li>
-                <li>To</li>
-                <li>Actions</li>
-            </ul>
-            <ul class="children_list">
-                {% for path in station.ramps.all %}
-                <li>
-                    <p>{{path.from_area}}</p>
-                    <p>{{path.to_area}}</p>
-                    <a href="{% url 'ramp_edit' path.pk %}">
-                        <i class="fa-solid fa-pencil"></i>
+                <div class="d-flex align-items-center pt-4">
+                    <a href="{% url 'ramp_add' station.pk %}">
+                        <div class="second-btn">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
                     </a>
-                </li>
-                {% endfor %}
-            </ul>
-            {%endif%}
+                        <h5 class="pb-0 mt-2">Same level paths</h5>
+                </div>
+                {% if station.ramps.all %}
+                <table class="table">
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Actions</th>
+                    </tr>
+                    {% for path in station.ramps.all %}
+                    <tr>
+                        <td>{{path.from_area}}</td>
+                        <td>{{path.to_area}}</td>
+                        <td><a href="{% url 'ramp_edit' path.pk %}">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            {% endif %}
         </ul>
         {% endif %}
     </div>
@@ -148,27 +149,20 @@ visibile solo se il modello è di tipo "Station"-->
             <h4>{{lift_group.name}}</h4>
         </div>
         {% if lift_group.items %}
-        <ul class="titles titles-lift">
-            <li>Name</li>
-            <li>From</li>
-            <li>To</li>
-            <li>Actions</li>
-        </ul>
-        <ul class="children_list">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>From</th>
+                <th>To</th>
+            </tr>
             {% for lift in lift_group.items %}
-            <li>
-                <a
-                    href="{% if location.location_type == 0 %} {% url 'station_detail' location.pk %} {% else %} # {% endif %}">
-                    <p>{{lift.name}}</p>
-                </a>
-                <p>{{lift.from_areas}}</p>
-                <p>{{lift.to_areas}}</p>
-                <div class="d-flex align-items-center">
-                    <a href="{% url 'lift_edit' lift.pk %}"><i class="fa-solid fa-pencil second-btn-reverse"></i></a>
-                </div>
-            </li>
+            <tr>
+                <td><a href="{% url 'lift_edit' lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a></td>
+                <td>{{lift.from_areas}}</td>
+                <td>{{lift.to_areas}}</td>
+            </tr>
             {% endfor %}
-        </ul>
+        </table>
         {% endif %}
     </div>
 
