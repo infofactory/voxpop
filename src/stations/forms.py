@@ -20,35 +20,39 @@ class StopForm(ModelForm):
         # 4=boarding area
         # 5=area
 
-        if self.instance.location_type != 1:
+        if self.instance.location_type != Stop.STATION:
             del self.fields['lines']
 
-        if self.instance.location_type == 0:
+        if self.instance.location_type == Stop.STOP_PLATFORM:
             self.fields['platform_code'].required = True
             self.fields['cardinal_direction'].required = True
             doors = Stop.objects.filter(
                 location_type=2, parent_station=self.instance.parent_station)
 
-            self.fields['accessible_entrance_id'].queryset = doors
-            self.fields['accessible_exit_id'].queryset = doors
+            self.fields['accessible_entrance'].queryset = doors
+            self.fields['accessible_exit'].queryset = doors
 
-        if self.instance.location_type != 0:
-            del self.fields['accessible_entrance_id']
-            del self.fields['accessible_exit_id']
-            # del self.fields['step_free_route_information_available']
-        if self.instance.location_type in [0, 1, 2]:
+        if self.instance.location_type != Stop.STOP_PLATFORM:
+            del self.fields['accessible_entrance']
+            del self.fields['accessible_exit']
+            del self.fields['platform_code']
+            del self.fields['cardinal_direction']
+        if self.instance.location_type != Stop.GENERIC_NODE:
             self.fields['lat'].required = True
             self.fields['lon'].required = True
-        if self.instance.location_type == 2:
+        if self.instance.location_type == Stop.ENTRANCE_EXIT:
             del self.fields['wifi']
-        if self.instance.location_type not in [0, 2]:
+
+        if self.instance.location_type not in [Stop.STOP_PLATFORM, Stop.ENTRANCE_EXIT]:
             del self.fields['outside_station_unique_id']
+        else:
+            self.fields['outside_station_unique_id'].initial = 'vv'
 
         self.helper = FormHelper()
         self.helper.layout = Layout( 
             Row(
-                Column('code', css_class='col-sm-1 col-3'),
-                Column('name', css_class='col-sm-11 col-6')
+                Column('code', css_class='col-sm-2 col-3'),
+                Column('name', css_class='col-sm-10 col-6')
             ),
             Field('lines'),
             Row(
@@ -73,9 +77,9 @@ class StopForm(ModelForm):
                 Column('cardinal_direction',
                        css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
 
-                Column('accessible_entrance_id',
+                Column('accessible_entrance',
                        css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
-                Column('accessible_exit_id',
+                Column('accessible_exit',
                        css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
             ),
             Row(
@@ -125,32 +129,38 @@ class LiftForm(ModelForm):
             Submit('delete', 'Delete', css_class='btn btn-danger'))
 
         areas = Stop.objects.filter(
-            location_type=5, parent_station=self.instance.stop_id.pk)
+            location_type=5, parent_station=self.instance.stop.pk)
         if areas:
-            self.fields['from_areas'].queryset = areas
-            self.fields['intermediate_areas'].queryset = areas
-            self.fields['intermediate_areas_two'].queryset = areas
-            self.fields['to_areas'].queryset = areas
+            self.fields['from_area'].queryset = areas
+            self.fields['intermediate_area1'].queryset = areas
+            self.fields['intermediate_area2'].queryset = areas
+            self.fields['to_area'].queryset = areas
 
-        if self.instance.type == 0:
+        if self.instance.type == Lift.LIFT:
             self.fields['lift_width'].required = True
-            self.fields['lift_heigth'].required = True
+            self.fields['lift_height'].required = True
         else:
             del self.fields['lift_width']
-            del self.fields['lift_heigth']
+            del self.fields['lift_height']
+            del self.fields['intermediate_area1']
+            del self.fields['intermediate_area2']
+            del self.fields['visually_impaired_ok']
 
-        if self.instance.type != 2:
+        if self.instance.type != Lift.STAIR:
             del self.fields['number_of_steps']
             del self.fields['steps_height']
             del self.fields['handrail']
             del self.fields['handrail_height']
 
-        if self.instance.type != 3:
+        if self.instance.type != Lift.ESCALATOR:
             del self.fields['steps']
+
+        if self.instance.type != Lift.STAIRLIFT:
+            del self.fields['assistance_required']
 
     class Meta:
         model = Lift
-        exclude = ['stop_id', 'type']
+        exclude = ['stop', 'type']
 
 
 class ServicesForm(ModelForm):
@@ -169,13 +179,13 @@ class ServicesForm(ModelForm):
         self.fields['min_step'].label = 'Min step(cm)'
         self.fields['max_step'].label = 'Max step(cm)'
         
-        lines = self.instance.platform_id.parent_station.lines.all()
+        lines = self.instance.platform.parent_station.lines.all()
         stations = Stop.objects.filter(location_type = 1)
 
         self.fields['line'].queryset = lines
         self.fields['direction_towards'].queryset = stations
     
-        locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform_id.pk)
+        locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform.pk)
         self.fields['location_of_level_access'].queryset = locations
 
         self.helper.layout = Layout(
@@ -208,7 +218,7 @@ class ServicesForm(ModelForm):
         )
     class Meta:
         model = Services
-        exclude = ['platform_id']
+        exclude = ['platform']
         widgets = {
             'additional_accessibility_info': forms.Textarea(attrs={
                 'rows': 2

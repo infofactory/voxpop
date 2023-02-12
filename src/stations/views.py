@@ -60,11 +60,16 @@ def station_edit(request, id=None, parent=None):
     if id:
         station = Stop.objects.get(pk=id)
     elif parent:
-        station = Stop(parent_station_id=parent, location_type = loc_type)
+        station = Stop(parent_station=parent, location_type = loc_type)
     else:
         station = Stop(location_type = loc_type)
 
-    form = StopForm(request.POST or None, request.FILES or None, instance=station)
+    # campo outside_station_unique_id calcolato
+    initial = None
+    if station.location_type not in [Stop.STOP_PLATFORM, Stop.ENTRANCE_EXIT]:
+        initial = {'outside_station_unique_id':'cacca'}
+
+    form = StopForm(request.POST or None, request.FILES or None, instance=station, initial=initial)
 
 
     if request.method == 'POST':
@@ -102,7 +107,7 @@ def lift_edit(request, id=None, parent=None):
         lift = Lift.objects.get(pk=id)
     elif parent:
         lift_type = int(request.GET.get('type'))
-        lift = Lift(stop_id_id=parent, type = lift_type)
+        lift = Lift(stop=parent, type = lift_type)
     else:
         lift = Lift()
 
@@ -110,12 +115,12 @@ def lift_edit(request, id=None, parent=None):
 
     if request.POST:
         if 'delete' in request.POST:
-            parent = lift.stop_id.pk
+            parent = lift.stop.pk
             lift.delete()
             return redirect(reverse('station_detail', args=[parent]))
         if form.is_valid():
             lift = form.save()
-            return redirect(reverse('station_detail', kwargs={'id':lift.stop_id_id}))
+            return redirect(reverse('station_detail', kwargs={'id':lift.stop_id}))
 
     context={'form':form, 'lift': lift}
     return render(request, 'lifts/edit.html',context)
@@ -126,26 +131,26 @@ def services_edit(request, platform=None, id=None):
     # if platform add services
     if platform:
         parent = Stop.objects.get(id = platform)
-        services = Services(platform_id = parent)
+        services = Services(platform = parent)
         form = ServicesForm(request.POST or None, instance=services)
     # if id edit services
     elif id:
         services = Services.objects.get(pk = id)
-        parent = Stop.objects.get(id = services.platform_id.pk)
+        parent = Stop.objects.get(id = services.platform.pk)
         form = ServicesForm(request.POST or None, instance=services)
     
-    lines = services.platform_id.parent_station.lines.all()
+    lines = services.platform.parent_station.lines.all()
     for line in lines:
         print(line.stations.all())
 
     if request.POST:
         if 'delete' in request.POST:
-            parent_platform = services.platform_id
+            parent_platform = services.platform
             services.delete()
             return redirect(reverse('station_detail', args=[parent_platform.pk]))
         if form.is_valid():
             services = form.save()
-            return redirect(reverse('station_detail', args=[services.platform_id.pk]))
+            return redirect(reverse('station_detail', args=[services.platform.pk]))
 
     context = {'form': form, 'services': services, 'parent': parent}
     return render(request, 'stations/services/edit.html', context)
@@ -161,7 +166,7 @@ def download_csv(request):
 
     writer = csv.writer(response)
     # fields = Stop._meta.get_fields()
-    fields_name = ['name','code' ,'location_type', 'level' ,'parent_station','line', 'platform_code', 'lat', 'lon', 'wheelchair_boarding','visually_impaired_path', 'cardinal_direction','accessible_entrance_id', 'accessible_exit_id','step_free_route_information_available','wifi', 'outside_station_unique_id','blue_badge_car_parking','blue_badge_car_park_spaces', 'taxi_ranks_outside_station','bus_stop_outside_station','train_station' ]
+    fields_name = ['name','code' ,'location_type', 'level' ,'parent_station','line', 'platform_code', 'lat', 'lon', 'wheelchair_boarding','visually_impaired_path', 'cardinal_direction','accessible_entrance', 'accessible_exit','step_free_route_information_available','wifi', 'outside_station_unique_id','blue_badge_car_parking','blue_badge_car_park_spaces', 'taxi_ranks_outside_station','bus_stop_outside_station','train_station' ]
 
     writer.writerow(fields_name)
     stations = Stop.objects.all().order_by('parent_station')

@@ -4,17 +4,25 @@ from django.urls import reverse
 
 
 class Stop(models.Model):
+
+    STOP_PLATFORM = 0
+    STATION = 1
+    ENTRANCE_EXIT = 2
+    GENERIC_NODE = 3
+    BOARDING_AREA = 4
+    AREA = 5
+
     LOCATION_TYPES = (
-        (0, "Stop or platform"),
-        (1, "Station"),
-        (2, "Entrance/Exit"),
-        (3, "Generic node"),
-        (4, "Boarding area"),
-        (5, "Area"),
+        (STOP_PLATFORM, "Stop or platform"),
+        (STATION, "Station"),
+        (ENTRANCE_EXIT, "Entrance/Exit"),
+        (GENERIC_NODE, "Generic node"),
+        (BOARDING_AREA, "Boarding area"),
+        (AREA, "Area"),
     )
 
     CARDINAL_DIRECTIONS = (
-        ("N", "Nord"),
+        ("N", "North"),
         ("E", "East"),
         ("W", "West"),
         ("S", "South"),
@@ -33,7 +41,7 @@ class Stop(models.Model):
         (3, 'Only in some areas')
     )
 
-    code = models.CharField(max_length=20, blank=True)
+    code = models.CharField(verbose_name='Stop ID', max_length=20, blank=True)
     name = models.CharField(max_length=100)
     lines = models.ManyToManyField('stations.Line', related_name='stations', blank=True)
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
@@ -44,13 +52,13 @@ class Stop(models.Model):
     parent_station = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
     wheelchair_boarding = models.IntegerField(choices=WHEELCHAIR_BOARDING, default=0)
     visually_impaired_path = models.IntegerField(choices=VISUALLY_IMPAIRED_PATH, default=0)
-    platform_code = models.CharField(max_length=20, blank=True, null=True)
-    cardinal_direction = models.CharField(max_length=1, blank=True, null=True, choices=CARDINAL_DIRECTIONS )
-    accessible_entrance_id = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="+")
-    accessible_exit_id = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="+")
+    platform_code = models.CharField(max_length=20, blank=True)
+    cardinal_direction = models.CharField(max_length=1, blank=True, choices=CARDINAL_DIRECTIONS )
+    accessible_entrance = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="+")
+    accessible_exit = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="+")
     step_free_route_information_available = models.BooleanField(default=False)
     wifi = models.BooleanField(default=False)
-    outside_station_unique_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+    outside_station_unique_id = models.CharField(max_length=50, blank=True)
     blue_badge_car_parking = models.BooleanField(default=False)
     blue_badge_car_park_spaces = models.BooleanField(default=False)
     taxi_ranks_outside_station = models.BooleanField(default=False)
@@ -92,31 +100,36 @@ class Lift(models.Model):
 
     STEPS = ((0, 'No'), (1, 'tapis roulant'))
 
+    LIFT = 0
+    STAIRLIFT = 1
+    STAIR = 2
+    ESCALATOR = 3
+
     LIFT_TYPES = (
-        (0, 'Lift'),
-        (1, 'Stairlift'),
-        (2, 'Stair'),
-        (3, 'Escalator'),
+        (LIFT, 'Lift'),
+        (STAIRLIFT, 'Stairlift'),
+        (STAIR, 'Stair'),
+        (ESCALATOR, 'Escalator'),
     )
 
     type = models.IntegerField(choices=LIFT_TYPES)
-    stop_id = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
+    stop = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
     name = models.CharField(max_length=100)
     friendly_name = models.CharField(max_length=100, blank=True, null=True)
-    from_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
-    intermediate_areas = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    intermediate_areas_two = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    to_areas = models.ForeignKey(Stop, on_delete=models.CASCADE)
-    lift_width = models.FloatField(blank=True, null=True, help_text='width in centimeters')    #solo per lift
-    lift_heigth = models.FloatField(blank=True, null=True, help_text='height in centimeters')   #solo per lift
+    from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
+    intermediate_area1 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+    intermediate_area2 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+    to_area = models.ForeignKey(Stop, on_delete=models.CASCADE)
+    lift_width = models.PositiveIntegerField(blank=True, null=True, help_text='width in millimeters')    #solo per lift
+    lift_height = models.PositiveIntegerField(blank=True, null=True, help_text='height in millimeters')   #solo per lift
     visually_impaired_ok = models.BooleanField(default=False)
-    assistance_requested = models.BooleanField(default=False) #solo per strair 
+    assistance_required = models.BooleanField(default=False) #solo per stair 
     number_of_steps = models.PositiveIntegerField(default=0)    #solo per stair
     steps_height = models.FloatField(default=0, help_text='height in centimeters')                          #solo per stair
     handrail = models.IntegerField(choices=HANDRAIL, default=0) #solo per stair
     handrail_height = models.FloatField(default=False, help_text='height in centimeters')                       #solo per stair
     steps = models.IntegerField(choices=STEPS, default=0)       #solo per strair e escalator
-    lift_notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     image = models.ImageField(blank=True, upload_to='lifts')
 
     def __str__(self) -> str:
@@ -136,7 +149,7 @@ class StepFreeInterchangeInfo(RampRoutes):
     distance = models.IntegerField(blank=True, null=True)
 
 class Services(models.Model):
-    platform_id = models.OneToOneField('stations.Stop', on_delete=models.CASCADE, primary_key=True)
+    platform = models.OneToOneField('stations.Stop', on_delete=models.CASCADE, primary_key=True)
     line = models.ForeignKey('stations.Line', on_delete=models.CASCADE, blank=True, null=True, related_name='platforms')
     direction_towards = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
     min_gap = models.IntegerField(null=True, blank=True)
@@ -151,8 +164,7 @@ class Services(models.Model):
     additional_accessibility_info = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
-        name = "%s %s" % (self.platform_id, 'services')
-        return name
+        return "%s services" % self.platform
 
 class Line(models.Model):
     name = models.CharField(max_length=50)

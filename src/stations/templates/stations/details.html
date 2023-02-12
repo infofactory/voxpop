@@ -73,7 +73,7 @@
             <tr>
                 <th>Name</th>
                 <th>Level</th>
-                <th>Actions</th>
+                <th>Edit</th>
             </tr>
             {% for location in location_group.items %}
             <tr>
@@ -84,11 +84,6 @@
                 <td>
                     <a href="{% url 'station_edit' location.pk %}"><i
                         class="fa-solid fa-pencil second-btn-reverse"></i></a>
-                    {% if location.location_type == 0 %}
-                    <a href="{% url 'station_detail' location.pk %}">
-                        <i class="fa-solid fa-arrow-up-right-from-square second-btn-reverse ms-2"></i>
-                    </a>
-                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
