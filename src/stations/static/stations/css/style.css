@@ -416,4 +416,27 @@ thead:first-child{
     font-weight: bold;
     border-radius: 50%;
 
+
+}
+
+
+
+
+#lines-schema i.fa {
+    font-size: 16px;
+}
+#lines-schema .line {
+    border-left: 5px solid var(--line-color);
+    padding-left: 10px;
+}
+.path a {
+    border: 3px solid var(--line-color);
+    border-radius: 99px;
+    padding: 5px 10px;
+    margin: 0 10px;
+    color: #000;
+    display: inline-block;
+}
+.path a:hover, .path a:focus {
+    background-color: var(--line-color);
 }

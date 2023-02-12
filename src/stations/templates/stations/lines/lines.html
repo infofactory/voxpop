@@ -12,67 +12,37 @@
 
 
 <div class="container">
-    <div class="row justify-content-between py-3">
-        <div class="col">
-            <h1>Lines</h1>
-        </div>
-        <div class="col d-flex justify-content-end">
+    <div class="d-flex justify-content-between py-3">
+        <h1>Lines</h1>
+        <div class="text-end">
             <a class="add_btn shadow-sm " href="{% url 'line_add' %}">
-                <i class="fa-solid fa-plus"></i>
-                Add line
+                <i class="fa-solid fa-plus"></i> line
+            </a>
+            <a class="add_btn shadow-sm " href="{% url 'route_add' %}">
+                <i class="fa-solid fa-plus"></i> route
             </a>
         </div>
     </div>
 
     
-    <ul class="lines_row">
+    <div id="lines-schema">
     {% for line in lines %}
-        <li class="line_wrapper shadow">
-            <div style="background-color: {{line.color | default:"#d3d3d3"}};" class="color_badge"></div>
-            <i class="icon fa-solid fa-chevron-down"></i>
-            <div class="station-name_wrapper">
-                <a class="w-50 line_link" href="{% url 'line_edit' line.pk %}">
-                    {{line}}
-                </a>
-            </div>
-            <ul class="d-flex flex-column station_list ">
-                {% for station in line.stations.all %}
-                <a href="{% url 'station_detail' station.pk %}">
-                    <li>
-                        {{station}}     
-                    </li>
-                </a>
-                {% endfor %}
-            </ul>
-        </li>
-        {% endfor %}
-    </ul>
+    <div class="line" style="--line-color: {{line.color}}">
+    <h2 class="mt-4"><a href="{% url 'line_edit' line.pk %}"><i class="fa fa-pencil"></i></a> {{line}}</h2>
+        {% for route in line.routes.all %}
+        <div class="route ps-5">
+            <h3 class="mt-2"><a href="{% url 'route_edit' route.pk %}"><i class="fa fa-pencil"></i></a> {{route}}</h3>
+                <div class="path">
+                    {% for station in route.stations.all %}
+                        <a href="{% url 'station_detail' station.station.pk %}">{{station.station}}</a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    </div>
 </div>
-
-<script>
-    const icons = document.querySelectorAll('.icon')
-    const stationLists = document.querySelectorAll('.line_wrapper')
-
-    stationLists.forEach(list => {
-        const children = list.childNodes
-
-        children.forEach(child => {
-            if(child.nodeName == 'I'){
-
-                child.addEventListener('click', function(){
-                    const parent = child.parentNode.childNodes
-
-                    parent.forEach(el => {
-                        if(el.nodeName == 'UL'){
-                            el.classList.toggle('active')
-                        }
-                    })
-                })
-            }
-        })
-       
-    })
-    
-</script>
+ 
 
 {% endblock content %}

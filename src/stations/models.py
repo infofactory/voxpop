@@ -43,7 +43,6 @@ class Stop(models.Model):
 
     code = models.CharField(verbose_name='Stop ID', max_length=20, blank=True)
     name = models.CharField(max_length=100)
-    lines = models.ManyToManyField('stations.Line', related_name='stations', blank=True)
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
     lat = models.FloatField(verbose_name="Latitude", blank=True, null=True)
     lon = models.FloatField(verbose_name="Longitude", blank=True, null=True)
@@ -166,12 +165,37 @@ class Services(models.Model):
     def __str__(self) -> str:
         return "%s services" % self.platform
 
+
+
 class Line(models.Model):
     name = models.CharField(max_length=50)
     color = models.CharField(max_length=7, blank=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
     
     class Meta:
         ordering = ('name',)
+
+
+class Route(models.Model):
+    name = models.CharField(max_length=50)
+    line = models.ForeignKey(Line, on_delete=models.PROTECT, related_name='routes')
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ('name',)
+
+
+class RouteStation(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='stations')
+    station = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='lines')
+    order = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.station} - {self.route}'
+    
+    class Meta:
+        ordering = ('route', 'order',)

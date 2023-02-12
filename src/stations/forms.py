@@ -20,9 +20,6 @@ class StopForm(ModelForm):
         # 4=boarding area
         # 5=area
 
-        if self.instance.location_type != Stop.STATION:
-            del self.fields['lines']
-
         if self.instance.location_type == Stop.STOP_PLATFORM:
             self.fields['platform_code'].required = True
             self.fields['cardinal_direction'].required = True
@@ -226,6 +223,7 @@ class ServicesForm(ModelForm):
         }
 
 class LineForm(ModelForm):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -234,11 +232,6 @@ class LineForm(ModelForm):
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
         
-        self.helper.layout = Layout(
-            Row(
-                Column('name', 'color')
-            ),
-        )
 
     class Meta:
         model = Line
@@ -247,6 +240,22 @@ class LineForm(ModelForm):
         }
         fields = '__all__'
 
+
+class RouteForm(ModelForm):
+
+    stations = forms.ModelMultipleChoiceField(queryset=Stop.objects.filter(location_type=Stop.STATION))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('save', 'Save', css_class='btn btn-success me-4'))
+        self.helper.add_input(
+            Submit('delete', 'Delete', css_class='btn btn-danger'))
+        
+
+    class Meta:
+        model = Route
+        fields = '__all__'
 
 
 class SameLevelForm(ModelForm):
