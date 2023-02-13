@@ -104,7 +104,7 @@
         <div class="container ">
 
             <a href="{% url 'home' %}">Home</a> ›
-            <a href="{% url 'station_detail' lift.stop_id.pk %}">{{lift.stop_id}}</a> ›
+            <a href="{% url 'station_detail' lift.stop.pk %}">{{lift.stop}}</a> ›
             {%if lift.name%}
             <strong>{{lift.name}}</strong>
             {%else%}

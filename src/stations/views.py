@@ -107,7 +107,7 @@ def lift_edit(request, id=None, parent=None):
         lift = Lift.objects.get(pk=id)
     elif parent:
         lift_type = int(request.GET.get('type'))
-        lift = Lift(stop=parent, type = lift_type)
+        lift = Lift(stop_id=parent, type = lift_type)
     else:
         lift = Lift()
 

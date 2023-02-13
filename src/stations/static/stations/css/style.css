@@ -433,9 +433,22 @@ thead:first-child{
     border: 3px solid var(--line-color);
     border-radius: 99px;
     padding: 5px 10px;
-    margin: 0 10px;
+    margin-right: 20px;
+    margin-bottom: 15px;
     color: #000;
     display: inline-block;
+    position: relative;
+}
+.path a:after {
+    content: "";
+    height: 3px;
+    width: 28px;
+    display: block;
+    background-color: var(--line-color);
+    position: absolute;
+    right: -28px;
+    top: 50%;
+    margin-top: -2px;
 }
 .path a:hover, .path a:focus {
     background-color: var(--line-color);
