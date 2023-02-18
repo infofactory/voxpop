@@ -175,8 +175,8 @@ visibili solo se il modello è di tipo "Platform"-->
     <h4 class="d-inline-block fw-bold fs-3">
         Platform info
     </h4>
-    {%if station.services%}
-    <a class="btn bg-primary ms-3 mb-2 ms-auto" href="{% url 'services_edit' station.services.platform_id.pk %}">
+    {% if station.services.platform %}
+    <a class="btn bg-primary ms-3 mb-2 ms-auto" href="{% url 'services_edit' station.services.platform.pk %}">
         <i class="fa-solid fa-pencil text-light"></i>
         <p class="text-light d-none d-sm-inline-block ms-1">Edit</p>
     </a>
@@ -184,7 +184,7 @@ visibili solo se il modello è di tipo "Platform"-->
 </div>
 {% endif %}
 
-{%if station.services%}
+{% if station.services %}
 
 <!-- alerts and additional platform info -->
 <div class="card shadow border-0 mb-4">
