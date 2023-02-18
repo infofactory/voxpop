@@ -22,9 +22,8 @@ class StopForm(ModelForm):
 
         if self.instance.location_type == Stop.STOP_PLATFORM:
             self.fields['platform_code'].required = True
-            self.fields['cardinal_direction'].required = True
-            doors = Stop.objects.filter(
-                location_type=2, parent_station=self.instance.parent_station)
+          #  self.fields['cardinal_direction'].required = True
+            doors = Stop.objects.filter(location_type=Stop.ENTRANCE_EXIT, parent_station=self.instance.parent_station)
 
             self.fields['accessible_entrance'].queryset = doors
             self.fields['accessible_exit'].queryset = doors
@@ -34,9 +33,9 @@ class StopForm(ModelForm):
             del self.fields['accessible_exit']
             del self.fields['platform_code']
             del self.fields['cardinal_direction']
-        if self.instance.location_type != Stop.GENERIC_NODE:
-            self.fields['lat'].required = True
-            self.fields['lon'].required = True
+        # if self.instance.location_type != Stop.GENERIC_NODE:
+        #     self.fields['lat'].required = True
+        #     self.fields['lon'].required = True
         if self.instance.location_type == Stop.ENTRANCE_EXIT:
             del self.fields['wifi']
 

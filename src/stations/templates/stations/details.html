@@ -38,7 +38,7 @@
 </div>
 
     <!--Direzione binario  -->
-{% if station.location_type == 0 and station.services %}
+{% if station.location_type == 0 and station.services.direction_towards %}
 <div class="pb-4 d-flex align-items-center">
     <p class="me-2">
         Direction: <a  class="fw-bold" href="{% url 'station_detail' station.services.direction_towards.pk %}">
@@ -46,9 +46,9 @@
         </a>
     </p>
 
-    <div style="background-color: {{station.services.line.color}}" class="line_badge">
+    <!-- <div style="background-color: {{station.services.line.color}}" class="line_badge">
         <p>M</p>
-    </div>
+    </div> -->
 </div>
 {% endif %}
 
