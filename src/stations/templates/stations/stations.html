@@ -14,7 +14,10 @@
             <i class="fa-solid fa-plus"></i> Line
         </a>
         {% endif %}
-        <a class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
+        <a title="Map" class="add_btn_reverse shadow-sm" href="{% url 'stations_map' %}">
+            <i class="fa-solid fa-map"></i>
+        </a>
+        <a title="Download CSV" class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
             <i class="fa-solid fa-file-arrow-down"></i>
         </a>
     </div>

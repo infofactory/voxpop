@@ -1,0 +1,60 @@
+{% extends 'base.html'%}
+{%block page_title%}Lisbona - Map{%endblock%}
+
+{% block header_js %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNVxw8FdB3VDaPE1XXSpJ1hCAamhmD3o"></script>
+{% endblock %}
+
+{%block content%}
+
+<div id="map">
+
+</div>
+
+
+
+<style>
+    #map {
+        margin-top: 10px;
+        height: 80vh;
+        background: #ccc;
+    }
+</style>
+
+{{ markers|json_script:"markers" }}
+
+<script>
+
+    const ISONTINA = new google.maps.LatLng(45.823208, 13.498904)
+    const map_div = document.getElementById('map')
+    const options = {
+        zoom : 10,
+        center : ISONTINA,
+        scrollwheel : false,
+        scaleControl : true,
+        mapTypeControl : false,
+        mapTypeId : google.maps.MapTypeId.ROADMAP
+    }
+
+    const infoWindow = new google.maps.InfoWindow()
+    const map = new google.maps.Map(map_div, options)
+    const markers = JSON.parse(document.getElementById('markers').textContent)
+    const bounds = new google.maps.LatLngBounds()
+    for (const marker of markers) {
+        const gMarker = new google.maps.Marker({
+            position: {lat:marker.lat, lng:marker.lng},
+            map,
+            title: marker.name,
+        })
+        gMarker.addListener('click', ({ domEvent, latLng }) => {
+            const { target } = domEvent;
+            infoWindow.close()
+            infoWindow.setContent('<a href="/stops/' + marker.pk + '">' + gMarker.title + '</a>')
+            infoWindow.open(gMarker.map, gMarker)
+        })
+        bounds.extend({lat:marker.lat, lng:marker.lng})
+    }
+    map.fitBounds(bounds)
+
+</script>
+{% endblock content %}

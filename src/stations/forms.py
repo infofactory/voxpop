@@ -41,8 +41,27 @@ class StopForm(ModelForm):
 
         if self.instance.location_type not in [Stop.STOP_PLATFORM, Stop.ENTRANCE_EXIT]:
             del self.fields['outside_station_unique_id']
+      
+
+        if self.instance.location_type == Stop.ENTRANCE_EXIT:
+            self.fields['wheelchair_boarding'].choices = (
+                (0, "Inherit from {}".format(self.instance.parent_station)),
+                (1, "Station entrance is wheelchair accessible"),
+                (2, "No accessible path from station entrance to stops/platforms"),
+            )
+        elif self.instance.parent_station:
+            self.fields['wheelchair_boarding'].choices = (
+                (0, "Inherit from {}".format(self.instance.parent_station)),
+                (1, "There exists some accessible path from outside the station to the specific stop/platform"),
+                (2, "There exists no accessible path from outside the station to the specific stop/platform"),
+            )
         else:
-            self.fields['outside_station_unique_id'].initial = 'vv'
+            self.fields['wheelchair_boarding'].choices = (
+                (0, "No accessibility information for the stop"),
+                (1, "Some vehicles at this stop can be boarded by a rider in a wheelchair"),
+                (2, "Wheelchair boarding is not possible at this stop"),
+            )
+            
 
         self.helper = FormHelper()
         self.helper.layout = Layout( 
@@ -50,7 +69,6 @@ class StopForm(ModelForm):
                 Column('code', css_class='col-sm-2 col-3'),
                 Column('name', css_class='col-sm-10 col-6')
             ),
-            Field('lines'),
             Row(
                 'level'
             ),
@@ -64,19 +82,20 @@ class StopForm(ModelForm):
             ),
             Row(
                 Column('wheelchair_boarding',
-                       css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                       css_class='col-sm-6 col-12'),
                 Column('visually_impaired_path',
-                       css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
-
+                       css_class='col-sm-6 col-12'),
+            ),
+            Row(
                 Column('platform_code',
-                       css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                       css_class='col-sm-4 col-md-3 col-12'),
                 Column('cardinal_direction',
-                       css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                       css_class='col-sm-4 col-md-3 col-12'),
 
                 Column('accessible_entrance',
-                       css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                       css_class='col-sm-4 col-md-3 col-12'),
                 Column('accessible_exit',
-                       css_class='col-sm-4 col-md-3 col-lg-2 col-12'),
+                       css_class='col-sm-4 col-md-3 col-12'),
             ),
             Row(
                 Column('outside_station_unique_id'),
@@ -111,7 +130,7 @@ class StopForm(ModelForm):
             'desc': forms.Textarea(attrs={
                 'rows': 2
             }),
-            'lines': forms.CheckboxSelectMultiple
+            'wheelchair_boarding': forms.RadioSelect,
         }
 
 
@@ -119,25 +138,69 @@ class LiftForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+
+        self.helper.layout = Layout( 
+            Row(
+                Column('name', css_class='col-md-6'),
+                Column('friendly_name', css_class='col-md-6'),
+            ),
+            Row(
+                Column('from_area', css_class='col-md-6'),
+                Column('to_area', css_class='col-md-6'),
+            ),
+            Row(
+                Column('intermediate_area1', css_class='col-md-6'),
+                Column('intermediate_area2', css_class='col-md-6'),
+            ),
+            Row(
+                Column('lift_width', css_class='col-md-6'),
+                Column('lift_depth', css_class='col-md-6'),
+            ),
+            Row(
+                Column('visually_impaired_ok', css_class='col-md-6'),
+                Column('assistance_required', css_class='col-md-6'),
+            ),
+            Row(
+                Column('number_of_steps', css_class='col-md-4'),
+                Column('steps_height', css_class='col-md-4'),
+                Column('pathway_mode', css_class='col-md-4'),
+            ),
+            Row(
+                Column('handrail', css_class='col-md-6'),
+                Column('handrail_height', css_class='col-md-6'),
+            ),
+            Row(
+                Column('notes', css_class='col-12'),
+                Column('image', css_class='col-12'),
+            ),
+                    
+        )
+
         self.helper.add_input(
             Submit('save', 'Save', css_class='btn btn-success me-4'))
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
 
         areas = Stop.objects.filter(
-            location_type=5, parent_station=self.instance.stop.pk)
+            location_type=Stop.AREA, parent_station=self.instance.stop.pk)
         if areas:
             self.fields['from_area'].queryset = areas
             self.fields['intermediate_area1'].queryset = areas
             self.fields['intermediate_area2'].queryset = areas
             self.fields['to_area'].queryset = areas
+        else:
+            del self.fields['intermediate_area1']
+            del self.fields['intermediate_area2']
+            del self.fields['to_area']
+            del self.fields['from_area']
 
         if self.instance.type == Lift.LIFT:
-            self.fields['lift_width'].required = True
-            self.fields['lift_height'].required = True
-        else:
+            pass
+           # self.fields['lift_width'].required = True
+           # self.fields['lift_depth'].required = True
+        elif areas:
             del self.fields['lift_width']
-            del self.fields['lift_height']
+            del self.fields['lift_depth']
             del self.fields['intermediate_area1']
             del self.fields['intermediate_area2']
             del self.fields['visually_impaired_ok']
@@ -145,11 +208,17 @@ class LiftForm(ModelForm):
         if self.instance.type != Lift.STAIR:
             del self.fields['number_of_steps']
             del self.fields['steps_height']
+
+        if self.instance.type not in (Lift.STAIR, Lift.ESCALATOR):
             del self.fields['handrail']
             del self.fields['handrail_height']
 
         if self.instance.type != Lift.ESCALATOR:
-            del self.fields['steps']
+            del self.fields['pathway_mode']
+        else:
+            self.fields['handrail'].choices = (
+                (3, "Both"),
+            )
 
         if self.instance.type != Lift.STAIRLIFT:
             del self.fields['assistance_required']
@@ -167,14 +236,7 @@ class ServicesForm(ModelForm):
             Submit('save', 'Save', css_class='btn btn-success me-4'))
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
-        
-        self.fields['min_gap'].label = 'Min Gap(cm)'
-        self.fields['max_gap'].label = 'Max Gap(cm)'
-        self.fields['avarage_gap'].label = 'Avarage Gap(cm)'
-        self.fields['avarage_step'].label = 'Avarage step(cm)'
-        self.fields['min_step'].label = 'Min step(cm)'
-        self.fields['max_step'].label = 'Max step(cm)'
-        
+    
         lines = self.instance.platform.parent_station.lines.all()
         stations = Stop.objects.filter(location_type = 1)
 
@@ -191,19 +253,19 @@ class ServicesForm(ModelForm):
             ),
             Row(
                 HTML(
-                    '<p class=" text-secondary pt-4 pb-2">Gap means distance between the platform and the train entrance</p>'
+                    '<p class=" text-secondary mb-1 mt-4">Gap means distance between the platform and the train entrance</p>'
                 ),
                 Column('min_gap', css_class='col-6 col-sm-4 flex-grow-1'),
                 Column('max_gap', css_class='col-6 col-sm-4 flex-grow-1'), 
-                Column('avarage_gap', css_class='col-6 col-sm-4 flex-grow-1')
+                Column('average_gap', css_class='col-6 col-sm-4 flex-grow-1')
             ),
             Row(
                 HTML(
-                    '<p class="text-secondary pt-4 pb-2">Step means height between the platform and the train entrance</p>'
+                    '<p class="text-secondary mb-1 mt-4">Step means height between the platform and the train entrance</p>'
                 ),
                 Column('min_step', css_class='col-6 col-sm-4 flex-grow-1'), 
                 Column('max_step', css_class='col-6 col-sm-4 flex-grow-1'), 
-                Column('avarage_step', css_class='col-6 col-sm-4 flex-grow-1')
+                Column('average_step', css_class='col-6 col-sm-4 flex-grow-1')
             ),
             Row(
                 Column('designated_level_acces_point', css_class='form-check form-switch'),

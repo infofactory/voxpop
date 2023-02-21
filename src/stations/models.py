@@ -29,9 +29,9 @@ class Stop(models.Model):
     )
 
     WHEELCHAIR_BOARDING = (
-        (0,"No info"),
-        (1,"Yes, there is"),
-        (2,"No"),
+        (0, "No info"),
+        (1, "Yes"),
+        (2, "No"),
     )
 
     VISUALLY_IMPAIRED_PATH = (
@@ -83,6 +83,7 @@ class Stop(models.Model):
             return reverse('station_detail', args=[self.pk])
         else:
             return reverse('home')
+
     class Meta:
         ordering=('name',)
     
@@ -91,13 +92,16 @@ class Stop(models.Model):
 
 class Lift(models.Model):
     HANDRAIL = (
-        (0, 'no'),
-        (1, 'right'),
-        (2, 'left'),
-        (3, 'both'),
+        (0, 'No'),
+        (1, 'Right'),
+        (2, 'Left'),
+        (3, 'Both'),
     )
 
-    STEPS = ((0, 'No'), (1, 'tapis roulant'))
+    PATHWAY_MODES = (
+        (3, 'No (Moving walkway)'),
+        (4, 'Yes (Escalator)'),
+    )
 
     LIFT = 0
     STAIRLIFT = 1
@@ -115,19 +119,20 @@ class Lift(models.Model):
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
     name = models.CharField(max_length=100)
     friendly_name = models.CharField(max_length=100, blank=True, null=True)
-    from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+')
+    from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+', blank=True, null=True)
     intermediate_area1 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
     intermediate_area2 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    to_area = models.ForeignKey(Stop, on_delete=models.CASCADE)
-    lift_width = models.PositiveIntegerField(blank=True, null=True, help_text='width in millimeters')    #solo per lift
-    lift_height = models.PositiveIntegerField(blank=True, null=True, help_text='height in millimeters')   #solo per lift
+    to_area = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True)
+    lift_width = models.PositiveIntegerField(blank=True, null=True, help_text='in millimeters')    #solo per lift
+    lift_depth = models.PositiveIntegerField(blank=True, null=True, help_text='in millimeters')   #solo per lift
     visually_impaired_ok = models.BooleanField(default=False)
-    assistance_required = models.BooleanField(default=False) #solo per stair 
-    number_of_steps = models.PositiveIntegerField(default=0)    #solo per stair
-    steps_height = models.FloatField(default=0, help_text='height in centimeters')                          #solo per stair
+    assistance_required = models.BooleanField(default=False) #solo per stairlift
+
+    number_of_steps = models.PositiveIntegerField(blank=True, null=True)    #solo per stair
+    steps_height = models.PositiveIntegerField(default=0, help_text='in millimeters', blank=True, null=True) #solo per stair
     handrail = models.IntegerField(choices=HANDRAIL, default=0) #solo per stair
-    handrail_height = models.FloatField(default=False, help_text='height in centimeters')                       #solo per stair
-    steps = models.IntegerField(choices=STEPS, default=0)       #solo per strair e escalator
+    handrail_height = models.PositiveIntegerField(help_text='in millimeters', blank=True, null=True) #solo per stair
+    pathway_mode = models.IntegerField(choices=PATHWAY_MODES, default=0) #solo per escalator
     notes = models.TextField(blank=True, null=True)
     image = models.ImageField(blank=True, upload_to='lifts')
 
@@ -151,13 +156,13 @@ class Services(models.Model):
     platform = models.OneToOneField('stations.Stop', on_delete=models.CASCADE, primary_key=True)
     line = models.ForeignKey('stations.Line', on_delete=models.CASCADE, blank=True, null=True, related_name='platforms')
     direction_towards = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    min_gap = models.IntegerField(null=True, blank=True)
-    max_gap = models.IntegerField(null=True, blank=True)
-    avarage_gap = models.IntegerField(null=True, blank=True)
-    min_step = models.IntegerField(null=True, blank=True)
-    max_step = models.IntegerField(null=True, blank=True)
-    avarage_step = models.IntegerField(null=True, blank=True)
-    designated_level_acces_point = models.BooleanField(default=False)
+    min_gap = models.IntegerField(verbose_name="Min gap (mm)", null=True, blank=True)
+    max_gap = models.IntegerField(verbose_name="Max gap (mm)", null=True, blank=True)
+    average_gap = models.IntegerField(verbose_name="Average gap (mm)", null=True, blank=True)
+    min_step = models.IntegerField(verbose_name="Min step (mm)", null=True, blank=True)
+    max_step = models.IntegerField(verbose_name="Min step (mm)", null=True, blank=True)
+    average_step = models.IntegerField(verbose_name="Average step (mm)", null=True, blank=True)
+    designated_level_access_point = models.BooleanField(default=False)
     location_of_level_access = models.ForeignKey('stations.Stop', on_delete=models.CASCADE, related_name='+', null=True, blank=True)
     level_access_by_manual_ramp = models.BooleanField(default=False)
     additional_accessibility_info = models.TextField(blank=True, null=True)

@@ -11,8 +11,8 @@
         {% for item in parent.ancestors reversed %}
         <a href="{{item.url}}">{{item}}</a> ›
         {% endfor %}
-        <a href="{% url 'station_detail' parent.pk %}">{{parent}}</a>›
-        <strong>Servizi</strong>
+        <a href="{% url 'station_detail' parent.pk %}">{{parent}}</a> ›
+        <strong>Services</strong>
     </div>
 </div>
 

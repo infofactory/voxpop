@@ -6,7 +6,7 @@
 
 
 {% if station.pk %}
-<h4 class="my-3">Edit <strong>{{station}}</strong></h4>
+<h4 class="my-3">Edit <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> <strong>{{station}}</strong></h4>
 {% else %}
 <h4 class="my-3">Create a new {{station.get_location_type_display}}</h4>
 {% endif %}

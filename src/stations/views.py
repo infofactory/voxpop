@@ -7,13 +7,21 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 
 def index(request):
-    stations = Stop.objects.filter(location_type=1)
+    stations = Stop.objects.filter(location_type=Stop.STATION)
 
     context = {'stations':stations}
     return render(request, 'stations/stations.html', context)
 
+
+def stations_map(request):
+    stations = Stop.objects.filter(location_type=Stop.STATION)
+
+    markers = [{'lat':s.lat, 'lng':s.lon, 'pk':s.pk, 'name':s.name} for s in stations if s.lat and s.lon]
+    context = {'stations':stations, 'markers':markers}
+    return render(request, 'stations/map.html', context)
+
+
 def station_detail(request, id):
-    from .forms import StopForm
     station = Stop.objects.get(pk=id)
     children = station.children.all()
     lifts = station.lifts.all()
@@ -66,8 +74,8 @@ def station_edit(request, id=None, parent=None):
 
     # campo outside_station_unique_id calcolato
     initial = None
-    if station.location_type not in [Stop.STOP_PLATFORM, Stop.ENTRANCE_EXIT]:
-        initial = {'outside_station_unique_id':'cacca'}
+    if station.parent_station and station.location_type in [Stop.STOP_PLATFORM, Stop.ENTRANCE_EXIT]:
+        initial = {'outside_station_unique_id':station.parent_station.code + '_OUTSIDE'}
 
     form = StopForm(request.POST or None, request.FILES or None, instance=station, initial=initial)
 

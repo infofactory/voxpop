@@ -7,7 +7,7 @@
 
 <div class="d-flex justify-content-between py-4">
     <div class="d-flex align-items-center">
-        <h4 class="fw-bold fs-2">{{station}}</h4>
+        <h4 class="fw-bold fs-2"><small class="fw-normal fs-5">{{station.get_location_type_display}}</small> {{station}}</h4>
 
         {% if station.location_type == 1 %}
         <div class="d-flex py-3">
@@ -73,18 +73,17 @@
             <tr>
                 <th>Name</th>
                 <th>Level</th>
-                <th>Edit</th>
+                {% if location_group.type == 0 %}<th>Edit</th>{% endif %}
             </tr>
             {% for location in location_group.items %}
             <tr>
                 <td><a
-                    href="{% if location.location_type == 0 %} {% url 'station_detail' location.pk %} {% else %} # {% endif %}">{{location.name}}</a>
+                    href="{% if location.location_type == 0 %}{% url 'station_detail' location.pk %}{% else %}{% url 'station_edit' location.pk %}{% endif %}">{{location.name}}</a>
                 </td>
                 <td>{{location.level|default:''}}</td>
-                <td>
-                    <a href="{% url 'station_edit' location.pk %}"><i
-                        class="fa-solid fa-pencil second-btn-reverse"></i></a>
-                </td>
+                {% if location_group.type == 0 %}<td>
+                    <a href="{% url 'station_edit' location.pk %}"><i class="fa-solid fa-pencil second-btn-reverse"></i></a>
+                </td>{% endif %}
             </tr>
             {% endfor %}
         </table>
@@ -137,7 +136,7 @@ visibile solo se il modello è di tipo "Station"-->
     <div class="location_wrapper shadow px-4">
 
         <div class="d-flex align-items-center btn_add">
-            <a class="lift_btn{% if not areas %} custom_disabled {% else %} third-btn  {% endif %}"
+            <a class="lift_btn third-btn"
                 href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
                 <i class="fa-solid fa-plus"></i>
             </a>
@@ -153,8 +152,8 @@ visibile solo se il modello è di tipo "Station"-->
             {% for lift in lift_group.items %}
             <tr>
                 <td><a href="{% url 'lift_edit' lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a></td>
-                <td>{{lift.from_areas}}</td>
-                <td>{{lift.to_areas}}</td>
+                <td>{{lift.from_area|default:''}}</td>
+                <td>{{lift.to_area|default:''}}</td>
             </tr>
             {% endfor %}
         </table>
@@ -237,9 +236,9 @@ visibili solo se il modello è di tipo "Platform"-->
             </thead>
             <tbody>
                 <tr>
-                    <td>{{station.services.min_gap|default:"Not given"}}</td>
-                    <td>{{station.services.max_gap|default:"Not given"}}</td>
-                    <td>{{station.services.avarage_gap|default:"Not given"}}</td>
+                    <td>{{station.services.min_gap|default:""}}</td>
+                    <td>{{station.services.max_gap|default:""}}</td>
+                    <td>{{station.services.avarage_gap|default:""}}</td>
                 </tr>
             </tbody>
         </table>
@@ -258,9 +257,9 @@ visibili solo se il modello è di tipo "Platform"-->
             </thead>
             <tbody>
                 <tr>
-                    <td>{{station.services.min_step|default:"Not given"}}</td>
-                    <td>{{station.services.max_step|default:"Not given"}}</td>
-                    <td>{{station.services.avarage_step|default:"Not given"}}</td>
+                    <td>{{station.services.min_step|default:""}}</td>
+                    <td>{{station.services.max_step|default:""}}</td>
+                    <td>{{station.services.avarage_step|default:""}}</td>
                 </tr>
             </tbody>
         </table>
