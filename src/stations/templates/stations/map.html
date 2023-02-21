@@ -22,14 +22,15 @@
 </style>
 
 {{ markers|json_script:"markers" }}
+{{ routes|json_script:"routes" }}
 
 <script>
 
-    const ISONTINA = new google.maps.LatLng(45.823208, 13.498904)
+    const GORIZIA = new google.maps.LatLng(45.823208, 13.498904)
     const map_div = document.getElementById('map')
     const options = {
         zoom : 10,
-        center : ISONTINA,
+        center : GORIZIA,
         scrollwheel : false,
         scaleControl : true,
         mapTypeControl : false,
@@ -55,6 +56,8 @@
         bounds.extend({lat:marker.lat, lng:marker.lng})
     }
     map.fitBounds(bounds)
+
+    const routes = JSON.parse(document.getElementById('routes').textContent)
 
 </script>
 {% endblock content %}

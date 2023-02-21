@@ -2,7 +2,12 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register(Stop)
+
+class StopAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'get_location_type_display']
+admin.site.register(Stop, StopAdmin)
+
+
 admin.site.register(Lift)
 admin.site.register(RampRoutes)
 admin.site.register(RampLevelPath)

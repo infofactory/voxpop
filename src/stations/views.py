@@ -15,9 +15,10 @@ def index(request):
 
 def stations_map(request):
     stations = Stop.objects.filter(location_type=Stop.STATION)
-
+    routes = Route.objects.all()
     markers = [{'lat':s.lat, 'lng':s.lon, 'pk':s.pk, 'name':s.name} for s in stations if s.lat and s.lon]
-    context = {'stations':stations, 'markers':markers}
+    routes = [{'name':r.name, 'color':r.line.color, 'pk':r.pk} for r in routes]
+    context = {'stations':stations, 'markers':markers, 'routes':routes}
     return render(request, 'stations/map.html', context)
 
 
