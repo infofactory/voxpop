@@ -268,7 +268,7 @@ class ServicesForm(ModelForm):
                 Column('average_step', css_class='col-6 col-sm-4 flex-grow-1')
             ),
             Row(
-                Column('designated_level_acces_point', css_class='form-check form-switch'),
+                Column('designated_level_access_point', css_class='form-check form-switch'),
                 Column('level_access_by_manual_ramp', css_class='form-check form-switch'),
             ),
             Row('location_of_level_access'),
