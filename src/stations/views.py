@@ -15,10 +15,11 @@ def index(request):
 
 def stations_map(request):
     stations = Stop.objects.filter(location_type=Stop.STATION)
-    routes = Route.objects.all()
     markers = [{'lat':s.lat, 'lng':s.lon, 'pk':s.pk, 'name':s.name} for s in stations if s.lat and s.lon]
-    routes = [{'name':r.name, 'color':r.line.color, 'pk':r.pk} for r in routes]
-    context = {'stations':stations, 'markers':markers, 'routes':routes}
+
+    lines = Line.objects.all()
+    lines = [{'name':l.name, 'color':l.color, 'pk':l.pk, 'path':[{'lat': s.station.lat, 'lng':s.station.lon} for s in l.stations.all()]} for l in lines]
+    context = {'stations':stations, 'markers':markers, 'lines':lines}
     return render(request, 'stations/map.html', context)
 
 
@@ -194,39 +195,16 @@ def lines_index(request):
     return render(request, 'stations/lines/lines.html', context)
 
 
-def lines_edit(request, id=None):
+
+def line_edit(request, id=None):
     from .forms import LineForm
 
     line = initial = None
     if id:
         line = Line.objects.get(pk = id)
+        initial = {'stations':line.stations.values_list('station', flat=True)}
 
     form = LineForm(request.POST or None, instance=line, initial=initial)
-
-    if request.method == 'POST':
-        if 'delete' in request.POST:
-            line.delete()
-            return redirect(reverse('lines'))
-        
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('lines'))
-
-    verbose_name = Line._meta.verbose_name
-    context= {'form': form, 'verbose_name':verbose_name}
-    return render(request, 'stations/lines/edit.html', context)
-
-
-
-def route_edit(request, id=None):
-    from .forms import RouteForm
-
-    route = initial = None
-    if id:
-        route = Route.objects.get(pk = id)
-        initial = {'stations':route.stations.values_list('station', flat=True)}
-
-    form = RouteForm(request.POST or None, instance=route, initial=initial)
 
     if request.method == 'POST':
         if 'delete' in request.POST:
@@ -235,16 +213,16 @@ def route_edit(request, id=None):
         
         if form.is_valid():
             stations = form.cleaned_data['stations']
-            route = form.save()
+            line = form.save()
 
             # Cancello stazioni già salvate
-            RouteStation.objects.filter(route=route).delete()
+            LineStation.objects.filter(line=line).delete()
 
             for i, station in enumerate(stations):
-                RouteStation.objects.create(route=route, station=station, order=i)
+                LineStation.objects.create(line=line, station=station, order=i)
             return redirect(reverse('lines'))
 
-    verbose_name = Route._meta.verbose_name
+    verbose_name = Line._meta.verbose_name
     context= {'form': form, 'verbose_name':verbose_name}
     return render(request, 'stations/lines/edit.html', context)
 

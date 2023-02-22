@@ -34,12 +34,9 @@ urlpatterns = [
     path('download/', views.download_csv, name='download'),
     path('map/', views.stations_map, name='stations_map'),
 
-    path('lines/add/', views.lines_edit, name='line_add'),
+    path('lines/add/', views.line_edit, name='line_add'),
     path('lines/', views.lines_index, name='lines'),
-    path('lines/<int:id>/edit/', views.lines_edit, name='line_edit'),
-
-    path('routes/add/', views.route_edit, name='route_add'),
-    path('routes/<int:id>/edit/', views.route_edit, name='route_edit'),
+    path('lines/<int:id>/edit/', views.line_edit, name='line_edit'),
 
     path('ramps/<int:parent>/add/', views.ramps_edit, name='ramp_add'),
     path('ramps/<int:id>/edit/', views.ramps_edit, name='ramp_edit')

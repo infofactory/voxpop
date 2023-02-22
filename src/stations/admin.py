@@ -13,18 +13,17 @@ admin.site.register(RampRoutes)
 admin.site.register(RampLevelPath)
 admin.site.register(StepFreeInterchangeInfo)
 admin.site.register(Services)
-admin.site.register(Line)
 
 
 
-class RouteStationInline(admin.TabularInline):
-    model = RouteStation
+class LineStationInline(admin.TabularInline):
+    model = LineStation
 
-class RouteAdmin(admin.ModelAdmin):
+class LineAdmin(admin.ModelAdmin):
     inlines = [
-        RouteStationInline,
+        LineStationInline,
     ]
-admin.site.register(Route, RouteAdmin)
+admin.site.register(Line, LineAdmin)
 
 admin.site.site_header = 'Accedi a Voxpop'
 admin.site.site_title = 'Voxpop'

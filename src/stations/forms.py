@@ -283,6 +283,7 @@ class ServicesForm(ModelForm):
         }
 
 class LineForm(ModelForm):
+    stations = forms.ModelMultipleChoiceField(queryset=Stop.objects.filter(location_type=Stop.STATION))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -300,22 +301,6 @@ class LineForm(ModelForm):
         }
         fields = '__all__'
 
-
-class RouteForm(ModelForm):
-
-    stations = forms.ModelMultipleChoiceField(queryset=Stop.objects.filter(location_type=Stop.STATION))
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.add_input(
-            Submit('save', 'Save', css_class='btn btn-success me-4'))
-        self.helper.add_input(
-            Submit('delete', 'Delete', css_class='btn btn-danger'))
-        
-
-    class Meta:
-        model = Route
-        fields = '__all__'
 
 
 class SameLevelForm(ModelForm):

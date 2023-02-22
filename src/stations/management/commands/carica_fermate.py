@@ -7,7 +7,7 @@ from django.template.defaultfilters import slugify
 FILENAME = 'stops.csv'
  
 class Command(BaseCommand):
-    help = 'Carica i corsi del biennio'
+    help = 'Carica le fermate'
 
     def handle(self, *args, **options):
         with open(FILENAME) as csvfile:

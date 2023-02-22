@@ -174,6 +174,7 @@ class Services(models.Model):
 
 class Line(models.Model):
     name = models.CharField(max_length=50)
+    code = models.CharField(max_length=50, unique=True)
     color = models.CharField(max_length=7, blank=True)
 
     def __str__(self):
@@ -183,24 +184,13 @@ class Line(models.Model):
         ordering = ('name',)
 
 
-class Route(models.Model):
-    name = models.CharField(max_length=50)
-    line = models.ForeignKey(Line, on_delete=models.PROTECT, related_name='routes')
-
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        ordering = ('name',)
-
-
-class RouteStation(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='stations')
+class LineStation(models.Model):
+    line = models.ForeignKey(Line, on_delete=models.CASCADE, related_name='stations')
     station = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='lines')
     order = models.IntegerField(default=1)
 
     def __str__(self):
-        return f'{self.station} - {self.route}'
+        return f'{self.station} - {self.line}'
     
     class Meta:
-        ordering = ('route', 'order',)
+        ordering = ('line', 'order',)

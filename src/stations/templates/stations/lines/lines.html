@@ -18,9 +18,6 @@
             <a class="add_btn shadow-sm " href="{% url 'line_add' %}">
                 <i class="fa-solid fa-plus"></i> line
             </a>
-            <a class="add_btn shadow-sm " href="{% url 'route_add' %}">
-                <i class="fa-solid fa-plus"></i> route
-            </a>
         </div>
     </div>
 
@@ -29,16 +26,11 @@
     {% for line in lines %}
     <div class="line" style="--line-color: {{line.color}}">
         <h2 class="mt-4"><a href="{% url 'line_edit' line.pk %}"><i class="fa fa-pencil"></i></a> {{line}}</h2>
-        {% for route in line.routes.all %}
-        <div class="route ps-5">
-            <h3 class="mt-2"><a href="{% url 'route_edit' route.pk %}"><i class="fa fa-pencil"></i></a> {{route}}</h3>
-                <div class="path">
-                    {% for station in route.stations.all %}
-                        <a href="{% url 'station_detail' station.station.pk %}">{{station.station}}</a>
-                    {% endfor %}
-                </div>
+        <div class="path">
+            {% for station in line.stations.all %}
+                <a href="{% url 'station_detail' station.station.pk %}">{{station.station}}</a>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
     {% endfor %}
     </div>
