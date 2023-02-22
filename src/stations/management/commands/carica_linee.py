@@ -12,6 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with open(FILENAME) as csvfile:
             reader = csv.reader(csvfile, delimiter=';')
+            LineStation.objects.all().delete()
             for row in reader:
                 print(row)
                 stop_id, line_id, order = row[:3]
