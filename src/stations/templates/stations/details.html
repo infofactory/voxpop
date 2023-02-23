@@ -80,7 +80,7 @@
                 <td><a
                     href="{% if location.location_type == 0 %}{% url 'station_detail' location.pk %}{% else %}{% url 'station_edit' location.pk %}{% endif %}">{{location.name}}</a>
                 </td>
-                <td>{{location.level|default:''}}</td>
+                <td>{{location.level|default_if_none:''}}</td>
                 {% if location_group.type == 0 %}<td>
                     <a href="{% url 'station_edit' location.pk %}"><i class="fa-solid fa-pencil second-btn-reverse"></i></a>
                 </td>{% endif %}

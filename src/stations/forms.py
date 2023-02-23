@@ -236,11 +236,12 @@ class ServicesForm(ModelForm):
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
     
-        lines = self.instance.platform.parent_station.lines.all()
-        stations = Stop.objects.filter(location_type = 1)
+        lines = Line.objects.filter(stations__station = self.instance.platform)
+
+       # stations = Stop.objects.filter(location_type = Stop.STATION)
 
         self.fields['line'].queryset = lines
-        self.fields['direction_towards'].queryset = stations
+       # self.fields['direction_towards'].queryset = stations
     
         locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform.pk)
         self.fields['location_of_level_access'].queryset = locations
@@ -248,7 +249,7 @@ class ServicesForm(ModelForm):
         self.helper.layout = Layout(
             Row(
                 Column('line', css_class='col-6 col-sm-4 flex-grow-1'),
-                Column('direction_towards', css_class='col-6 col-sm-4 flex-grow-1'),
+               # Column('direction_towards', css_class='col-6 col-sm-4 flex-grow-1'),
             ),
             Row(
                 HTML(
@@ -275,7 +276,7 @@ class ServicesForm(ModelForm):
         )
     class Meta:
         model = Services
-        exclude = ['platform']
+        exclude = ['platform', 'direction_towards']
         widgets = {
             'additional_accessibility_info': forms.Textarea(attrs={
                 'rows': 2
