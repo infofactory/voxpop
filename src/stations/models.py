@@ -85,7 +85,7 @@ class Stop(models.Model):
             return reverse('home')
 
     class Meta:
-        ordering=('location_type', 'name',)
+        ordering=('location_type', '-level', 'name',)
     
 
 

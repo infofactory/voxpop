@@ -24,28 +24,38 @@ def stations_map(request):
 
 
 def station_detail(request, id):
+
     station = Stop.objects.get(pk=id)
     children = station.children.all()
     lifts = station.lifts.all()
 
-    if station.location_type == 1:
+    # copia ascensori
+    if request.method == 'POST' and 'copy' in request.POST:
+        lift = Lift.objects.get(pk=request.POST['from'])
+        lift.pk = None
+        lift.name = f'Copy of {lift.name}'
+        lift.stop = station
+        lift.save()
+
+    locations = []
+    lift_list = []
+    if station.location_type == Stop.STATION:
         locations = [
             {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
-            for type_id, type_name in Stop.LOCATION_TYPES if type_id not in [station.location_type, 1 and 4]
+            for type_id, type_name in Stop.LOCATION_TYPES if type_id != station.location_type
         ]
         lift_list = [
-            {'type':type_id, 'name':type_name, 'items':lifts.filter(type=type_id)}
+            {'type':type_id, 'name':type_name, 'items':lifts.filter(type=type_id), 'others':Lift.objects.filter(type=type_id)}
             for type_id, type_name in Lift.LIFT_TYPES
         ]
-    elif station.location_type == 0:
+    elif station.location_type == Stop.STOP_PLATFORM:
         locations = [
-            {'type':type_id, 'name':type_name, 'items':children.filter(location_type=type_id)}
-            for type_id, type_name in Stop.LOCATION_TYPES if type_id == 4
+            {'type':Stop.BOARDING_AREA, 'name':'Boarding area', 'items':children.filter(location_type=Stop.BOARDING_AREA)}
         ]
-        lift_list = []
-    else:
-        locations = []
-        lift_list = []
+        
+
+
+
 
     #areas = station.children.filter(location_type=5)
 
@@ -208,7 +218,7 @@ def line_edit(request, id=None):
 
     if request.method == 'POST':
         if 'delete' in request.POST:
-            route.delete()
+            line.delete()
             return redirect(reverse('lines'))
         
         if form.is_valid():

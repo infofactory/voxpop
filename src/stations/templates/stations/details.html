@@ -135,12 +135,21 @@ visibile solo se il modello è di tipo "Station"-->
 
     <div class="location_wrapper shadow px-4">
 
-        <div class="d-flex align-items-center btn_add">
+        <div class="d-flex align-items-center btn_add justify-content-between">
             <a class="lift_btn third-btn"
                 href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
                 <i class="fa-solid fa-plus"></i>
             </a>
             <h4>{{lift_group.name}}</h4>
+            <form method="post">{% csrf_token %}
+                <select name="from">
+                    {% for elem in lift_group.others %}
+                    <option value="{{elem.pk}}">{{elem}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success btn-sm" name="copy"><i class="fa-regular fa-copy"></i> Copia</button>
+
+            </form>
         </div>
         {% if lift_group.items %}
         <table class="table">
