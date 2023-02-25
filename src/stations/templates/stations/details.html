@@ -12,18 +12,9 @@
         {% if station.location_type == 1 %}
         <div class="d-flex py-3">
             {% for line in station.lines.all %}
-            <a href="{% url 'lines' %}">
-
-                <div class="mx-2">
-                    {% if line.color %}
-                    <div style="background-color: {{line.color}};" class="line_badge rounded-circle">
-                        <p>M</p>
-                    </div>
-                    {% else %}
-                    <p>Line {{ line }}</p>
-                    {% endif %}
+                <div class="mx-4 mt-3 path" style="--line-color: {{line.line.color}}">
+                    <a>{{line.line.name}}</a>
                 </div>
-            </a>
             {% endfor %}
         </div>
         {% endif %}

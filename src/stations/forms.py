@@ -181,7 +181,7 @@ class LiftForm(ModelForm):
             Submit('delete', 'Delete', css_class='btn btn-danger'))
 
         areas = Stop.objects.filter(
-            location_type=Stop.AREA, parent_station=self.instance.stop.pk)
+            location_type__in=[Stop.AREA, Stop.ENTRANCE_EXIT, Stop.GENERIC_NODE], parent_station=self.instance.stop.pk)
         if areas:
             self.fields['from_area'].queryset = areas
             self.fields['intermediate_area1'].queryset = areas
@@ -236,12 +236,9 @@ class ServicesForm(ModelForm):
         self.helper.add_input(
             Submit('delete', 'Delete', css_class='btn btn-danger'))
     
-        lines = Line.objects.filter(stations__station = self.instance.platform)
 
-       # stations = Stop.objects.filter(location_type = Stop.STATION)
-
+        lines = Line.objects.filter(stations__station = self.instance.platform.parent_station)
         self.fields['line'].queryset = lines
-       # self.fields['direction_towards'].queryset = stations
     
         locations = Stop.objects.filter(location_type = 4, parent_station = self.instance.platform.pk)
         self.fields['location_of_level_access'].queryset = locations

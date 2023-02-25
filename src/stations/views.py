@@ -148,31 +148,26 @@ def lift_edit(request, id=None, parent=None):
 
 def services_edit(request, platform=None, id=None):
     from .forms import ServicesForm
-    # if platform add services
+    # add
     if platform:
-        parent = Stop.objects.get(id = platform)
-        services = Services(platform = parent)
-        form = ServicesForm(request.POST or None, instance=services)
-    # if id edit services
+        platform = Stop.objects.get(id = platform)
+        service = Services(platform = platform)
+    # edit
     elif id:
-        services = Services.objects.get(pk = id)
-        parent = Stop.objects.get(id = services.platform.pk)
-        form = ServicesForm(request.POST or None, instance=services)
+        service = Services.objects.get(pk = id)
+        platform = Stop.objects.get(id = service.platform.pk)
+    form = ServicesForm(request.POST or None, instance=service)
     
-    lines = services.platform.parent_station.lines.all()
-    for line in lines:
-        print(line.stations.all())
-
     if request.POST:
+        platform = service.platform
         if 'delete' in request.POST:
-            parent_platform = services.platform
-            services.delete()
-            return redirect(reverse('station_detail', args=[parent_platform.pk]))
+            service.delete()
+            return redirect(reverse('station_detail', args=[platform.pk]))
         if form.is_valid():
-            services = form.save()
-            return redirect(reverse('station_detail', args=[services.platform.pk]))
+            form.save()
+            return redirect(reverse('station_detail', args=[platform.pk]))
 
-    context = {'form': form, 'services': services, 'parent': parent}
+    context = {'form': form, 'services': service, 'platform': platform}
     return render(request, 'stations/services/edit.html', context)
 
 import csv

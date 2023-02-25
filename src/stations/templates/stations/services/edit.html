@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block page_title %}Voxpop - Station Services{% endblock page_title %}
+{% block page_title %}Voxpop - Station Service{% endblock page_title %}
 
 {% block content %}
 
@@ -8,25 +8,21 @@
     <div class="container ">
 
         <a href="{% url 'home' %}">Home</a> ›
-        {% for item in parent.ancestors reversed %}
+        {% for item in platform.ancestors reversed %}
         <a href="{{item.url}}">{{item}}</a> ›
         {% endfor %}
-        <a href="{% url 'station_detail' parent.pk %}">{{parent}}</a> ›
-        <strong>Services</strong>
+        <a href="{% url 'station_detail' platform.pk %}">{{platform}}</a> ›
+        <strong>Service</strong>
     </div>
 </div>
 
 <h4 class="fw-bold py-4">
-    {% if services %}
-    Edit {{parent.name}} services
-    {% else %}
-    Add {{parent.name}} services
-    {% endif %}
-
+    {% if service %}Edit{% else %}Add {% endif %}
+    {{platform.name}} service
 </h4>
 
 <div class="toolbar d-flex justify-content-center">
-    <a href="{% url 'station_detail' parent.pk %}">
+    <a href="{% url 'station_detail' platform.pk %}">
         Cancel
     </a>
     
