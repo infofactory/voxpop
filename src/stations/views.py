@@ -120,7 +120,7 @@ def lift_detail(request, id):
     context= {'lift': lift}
     return render(request, 'lifts/details.html', context)
 
-
+@login_required
 def lift_edit(request, id=None, parent=None):
     from .forms import LiftForm
     if id:
@@ -145,7 +145,7 @@ def lift_edit(request, id=None, parent=None):
     context={'form':form, 'lift': lift}
     return render(request, 'lifts/edit.html',context)
 
-
+@login_required
 def services_edit(request, platform=None, id=None):
     from .forms import ServicesForm
     # add
@@ -200,7 +200,7 @@ def lines_index(request):
     return render(request, 'stations/lines/lines.html', context)
 
 
-
+@login_required
 def line_edit(request, id=None):
     from .forms import LineForm
 
@@ -232,7 +232,7 @@ def line_edit(request, id=None):
     return render(request, 'stations/lines/edit.html', context)
 
 
-
+@login_required
 def ramps_edit(request, parent=None, id=None):
     from .forms import SameLevelForm
     if parent:
