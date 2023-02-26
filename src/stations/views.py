@@ -30,7 +30,7 @@ def station_detail(request, id):
     lifts = station.lifts.all()
 
     # copia ascensori
-    if request.method == 'POST' and 'copy' in request.POST:
+    if request.user.is_superuser and request.method == 'POST' and 'copy' in request.POST:
         lift = Lift.objects.get(pk=request.POST['from'])
         lift.pk = None
         lift.name = f'Copy of {lift.name}'

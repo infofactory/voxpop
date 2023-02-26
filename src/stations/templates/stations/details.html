@@ -132,15 +132,16 @@ visibile solo se il modello è di tipo "Station"-->
                 <i class="fa-solid fa-plus"></i>
             </a>
             <h4>{{lift_group.name}}</h4>
+            {% if request.user.is_superuser %}
             <form method="post">{% csrf_token %}
                 <select name="from">
                     {% for elem in lift_group.others %}
                     <option value="{{elem.pk}}">{{elem}}</option>
                     {% endfor %}
                 </select>
-                <button type="submit" class="btn btn-success btn-sm" name="copy"><i class="fa-regular fa-copy"></i> Copia</button>
-
+                <button type="submit" class="btn btn-success btn-sm" name="copy"><i class="fa-regular fa-copy"></i> Copy</button>
             </form>
+            {% endif %}
         </div>
         {% if lift_group.items %}
         <table class="table">
