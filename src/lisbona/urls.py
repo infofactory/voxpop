@@ -38,6 +38,8 @@ urlpatterns = [
     path('lines/', views.lines_index, name='lines'),
     path('lines/<int:id>/edit/', views.line_edit, name='line_edit'),
 
+    path('lifts/', views.lifts_list, name='lifts'),
+
     path('ramps/<int:parent>/add/', views.ramps_edit, name='ramp_add'),
     path('ramps/<int:id>/edit/', views.ramps_edit, name='ramp_edit')
 ]

@@ -13,42 +13,13 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel=”stylesheet” href="{% static '/stations/css/style.css' %}">
     <link href="{% static '/stations/css/style.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://kit.fontawesome.com/51f11f635e.js" crossorigin="anonymous"></script>
     <title>{%block page_title%}Voxpop{%endblock%}</title>
     {% block header_js %}{% endblock %}
 </head>
 
 <body>
     <header>
-        <!-- {% comment %} <nav class="custom-nav">
-            <div class="container d-flex ">
-                <figure class="logo mb-0">
-                    <a href="{% url 'home' %}">
-                        <img src="{% static 'stations/img/logo.png' %}" alt="">
-                    </a>
-                </figure>
-            </div>
-
-
-        {% if request.user.is_authenticated %}
-            <div id="user">
-                <div class="d-flex align-items-center px-3">
-                    <i class="fa-solid fa-user text-light"></i>
-                    <p class="text-light ps-1">
-                        {{request.user}}
-                    </p>
-                </div>
-                <div id="user_card">
-                    <a href="{% url 'logout' %}">
-                        Logout
-                    </a>
-                </div>
-            </div>
-        {% endif %}
-        </nav> {% endcomment %} -->
-
         <nav style="background-color: #001d50 !important; " class="navbar justify-content-between navbar-dark bg-dark sticky-top  navbar-expand-lg ">
             <div class="container-fluid text-white">
               <a class="navbar-brand" href="{% url 'home' %}">
@@ -63,10 +34,13 @@
               <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav custom-nav">
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'home' %}">Stations</a>
+                    <a class="nav-link" href="{% url 'home' %}"><i class="fa-regular fa-train"></i> Stations</a>
                   </li>
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'lines' %}">Lines</a>
+                    <a class="nav-link" href="{% url 'lines' %}"><i class="fa-regular fa-road"></i> Lines</a>
+                  </li>
+                  <li class="nav-item mx-2">
+                    <a class="nav-link" href="{% url 'lifts' %}"><i class="fa-regular fa-escalator"></i> Lifts</a>
                   </li>
                   {% if request.user.is_authenticated %}
 
@@ -80,7 +54,7 @@
                     </ul>
                   </li>
                   {% else %}
-                    <li class="nav-item mx-2"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="{% url 'login' %}"><i class="fa-regular fa-sign-in"></i> Login</a></li>
                   {% endif %}
                 </ul>
               </div>

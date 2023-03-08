@@ -1,0 +1,42 @@
+{% extends 'base.html'%}
+{%block page_title%}Lisbona - Stations{%endblock%}
+
+{%block content%}
+
+    <h1 class="my-4">{{lifts.count}} Lifts</h1>
+
+{% if lifts %}
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+        <tr class="text-light">
+            <th>N.</th>
+            <th>Station</th>
+            <th>Name</th>
+            <th>Friendly name</th>
+            <th>From</th>
+            <th>To</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for lift in lifts %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>
+                {{lift.stop}}
+            </td>
+            <td class="text-nowrap">
+                <i class="fa-regular fa-fw fa-{% if lift.type == 0 %}elevator{% elif lift.type == 1 %}escalator{% elif lift.type == 2 %}stairs{% elif lift.type == 3 %}wheelchair{% endif %}" title="{{lift.get_type_display}}"></i>&nbsp;<a href="{% url 'lift_edit' lift.pk %}">{{lift}}</a>
+            </td>
+            <td>{{lift.friendly_name}}</td>
+            <td>{{lift.from_area}}</td>
+            <td>{{lift.to_area}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock content %}

@@ -258,3 +258,12 @@ def ramps_edit(request, parent=None, id=None):
     context = {'form': form}
     return render(request, 'stations/ramps/edit.html', context)
 
+
+
+def lifts_list(request):
+    lifts = Lift.objects.all()
+
+        
+    context = {'lifts': lifts}
+
+    return render(request, 'lifts/lifts.html', context)

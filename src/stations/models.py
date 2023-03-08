@@ -118,7 +118,7 @@ class Lift(models.Model):
     type = models.IntegerField(choices=LIFT_TYPES)
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
     name = models.CharField(max_length=100)
-    friendly_name = models.CharField(max_length=100, blank=True, null=True)
+    friendly_name = models.CharField(max_length=100, blank=True)
     from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+', blank=True, null=True)
     intermediate_area1 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
     intermediate_area2 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
@@ -139,7 +139,10 @@ class Lift(models.Model):
     def __str__(self) -> str:
         return  self.name
 
-        
+
+    class Meta:
+        ordering=('stop', 'type', 'name',)
+
 
 class RampRoutes(models.Model):
     station = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='ramps')
