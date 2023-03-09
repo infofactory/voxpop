@@ -48,10 +48,6 @@ thead:first-child{
     background-color: var(--brand) !important;
 }
 
-.badge{
-    background-color: var(--second) !important;
-}
-
 .text-light{
     color: lightgray;
 }

@@ -32,30 +32,43 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav custom-nav">
+                <ul class="navbar-nav custom-nav w-100">
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'home' %}"><i class="fa-regular fa-train"></i> Stations</a>
+                    <a class="nav-link" href="{% url 'home' %}"><i class="fa-fw fa-regular fa-train"></i> Stations and stops</a>
                   </li>
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'lines' %}"><i class="fa-regular fa-road"></i> Lines</a>
+                    <a class="nav-link" href="{% url 'lifts' %}"><i class="fa-fw fa-regular fa-escalator"></i> Lifts</a>
                   </li>
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'lifts' %}"><i class="fa-regular fa-escalator"></i> Lifts</a>
+                    <a class="nav-link" href="{% url 'lines' %}"><i class="fa-fw fa-regular fa-road"></i> Lines</a>
                   </li>
-                  {% if request.user.is_authenticated %}
 
-                  <li class="nav-item dropdown mx-2">
+
+                  <li class="nav-item mx-2">
+                    <a class="nav-link" href="{% url 'stations_map' %}">
+                        <i class="fa-fw fa-solid fa-map"></i> Map
+                    </a></li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
+                        <i class="fa-fw fa-solid fa-file-arrow-down"></i> Download CSV
+                    </a></li>
+
+                  {% if request.user.is_authenticated %}
+                  <li class="nav-item dropdown" style="margin-left: auto">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-fw fa-solid fa-user"></i>
                        {{request.user}}
                     </a>
                     <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fa-fw fa-regular fa-sign-out"></i> Logout</a></li>
                     </ul>
                   </li>
                   {% else %}
-                    <li class="nav-item mx-2"><a class="nav-link" href="{% url 'login' %}"><i class="fa-regular fa-sign-in"></i> Login</a></li>
+                    <li class="nav-item" style="margin-left: auto"><a class="nav-link" href="{% url 'login' %}"><i class="fa-fw fa-regular fa-sign-in"></i> Login</a></li>
                   {% endif %}
+
+
+
                 </ul>
               </div>
             </div>
@@ -64,7 +77,7 @@
 {% with stop=station %}
     {% if stop %}
     <div id="breadcrumbs" class="py-3 bg-light">
-        <div class="container ">
+        <div class="container-fluid">
 
             <a href="{% url 'home' %}">Home</a> ›
             {% for item in stop.ancestors reversed %}
@@ -75,7 +88,7 @@
     </div>
     {% elif lift %}
     <div id="breadcrumbs" class="py-3 bg-light">
-        <div class="container ">
+        <div class="container-fluid">
 
             <a href="{% url 'home' %}">Home</a> ›
             <a href="{% url 'station_detail' lift.stop.pk %}">{{lift.stop}}</a> ›

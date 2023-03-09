@@ -262,8 +262,23 @@ def ramps_edit(request, parent=None, id=None):
 
 def lifts_list(request):
     lifts = Lift.objects.all()
-
-        
+    if request.GET.get('type'):
+        lifts = lifts.filter(type=request.GET.get('type'))
     context = {'lifts': lifts}
-
     return render(request, 'lifts/lifts.html', context)
+
+def stops_list(request):
+    stops = Stop.objects.order_by('parent_station', 'name')
+    location_type = request.GET.get('type')
+    if location_type:
+        if location_type == '3':
+            stops = stops.filter(location_type__in='345')
+        else:
+            stops = stops.filter(location_type=location_type)
+
+    # Sort stops by parent station name
+    stops=list(stops)
+    stops.sort(key=lambda x: (x.parent_station and x.parent_station.name or '') + x.name)
+
+    context = {'stops': stops}
+    return render(request, 'stations/stops.html', context)

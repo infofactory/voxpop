@@ -1,0 +1,76 @@
+{% extends 'base.html'%}
+{%block page_title%}Stations{%endblock%}
+
+{%block content%}
+
+    <div class="row my-4">
+        <div class="col-md-6">
+            <h1>{{stops|length}} {% if request.GET.type %}{{stops.0.get_location_type_display}}s{% else %}stops, stations, platforms, etc.{% endif %}</h1>
+        </div>
+        <div class="col-md-6">
+            <form>
+                <select name="type" class="form-control w-50 d-inline">
+                    <option value="">All</option>
+                    <option{% if request.GET.type == '1' %} selected{% endif %} value="1">Stations</option>
+                    <option{% if request.GET.type == '0' %} selected{% endif %} value="0">Stops and platforms</option>
+                    <option{% if request.GET.type == '2' %} selected{% endif %} value="2">Entrances and exits</option>
+                    <option{% if request.GET.type == '3' %} selected{% endif %} value="3">Areas and generic nodes</option>
+                </select>
+                <input type="submit" value="Show" class="ms-4 btn btn-success">
+            </form>
+        </div>
+    </div>
+
+{% if stops %}
+
+
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+        <tr class="text-light">
+            <th>N.</th>
+            {% if request.GET.type != '1' %}
+            <th>Station</th>
+            {% endif %}
+            <th>Name/Stop ID</th>
+            {% if request.GET.type == '1' or not request.GET.type %}
+                <th width="8%">Exits, platforms, etc.</th>
+                <th width="5%">Lifts</th>
+            {% endif %}
+            <th>Coords</th>
+            <th>Level</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for stop in stops %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            {% if request.GET.type != '1' %}
+            <td>
+                <a href="{% url 'station_detail' stop.pk %}">{{stop.ancestors.0|default:stop}}</a>
+            </td>
+            {% endif %}
+            <td>
+                {% if stop.location_type == 1 %}
+                <span class="badge rounded-pill bg-{% if stop.status == 2 %}success{% elif stop.status == 1 %}warning{% else %}danger{% endif %}">{{stop.get_status_display }}</span>
+                {% endif %}
+                {% if request.GET.type == '3' or not request.GET.type %}<i>{{stop.get_location_type_display}}</i> {% endif %}<strong><a href="{% if stop.location_type == 1 or stop.location_type == 0 %}{% url 'station_detail' stop.pk %}{% else %}{% url 'station_edit' stop.pk %}{% endif %}">{{stop.name}}</a></strong><br>
+                <small>{{stop.code}}</small>
+            </td>
+            {% if request.GET.type == '1' or not request.GET.type %}
+                <td><span class="badge bg-primary">{{stop.children.count|default:''}}</span></td>
+                <td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>
+            {% endif %}
+            <td class="small">{{stop.lat|floatformat:5|default_if_none:''}}<br>
+                {{stop.lon|floatformat:5|default_if_none:''}}</td>
+            <td>{{stop.level|default_if_none:''}}</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock content %}

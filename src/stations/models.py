@@ -41,6 +41,16 @@ class Stop(models.Model):
         (3, 'Only in some areas')
     )
 
+    TODO = 0
+    WORKING = 1
+    COMPLETED = 2
+
+    STATUSES = (
+        (TODO, "To do"),
+        (WORKING, "Working"),
+        (COMPLETED, "Completed"),
+    )
+
     code = models.CharField(verbose_name='Stop ID', max_length=20, blank=True)
     name = models.CharField(max_length=100)
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
@@ -64,6 +74,7 @@ class Stop(models.Model):
     bus_stop_outside_station = models.BooleanField(default=False)
     train_station = models.BooleanField(default=False)
     image = models.ImageField(blank=True, upload_to='stops')
+    status = models.IntegerField(choices=STATUSES, default=TODO)
 
     def __str__(self) -> str:
         return self.name

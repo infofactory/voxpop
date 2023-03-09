@@ -3,11 +3,17 @@
 
 {%block content%}
 
-<!-- header: title and edit button -->
 
-<div class="d-flex justify-content-between py-4">
     <div class="d-flex align-items-center">
-        <h4 class="fw-bold fs-2"><small class="fw-normal fs-5">{{station.get_location_type_display}}</small> {{station}}</h4>
+        <h4 class="fw-bold fs-2">
+            <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> 
+            
+            <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
+                <i class="fa-solid fa-pencil"></i>{{station}}</a></h4>
+
+        {% if station.location_type == 1 %}
+        <span class="mx-3 badge rounded-pill bg-{% if station.status == 2 %}success{% elif station.status == 1 %}warning{% else %}danger{% endif %}">{{station.get_status_display }}</span>
+        {% endif %}
 
         {% if station.location_type == 1 %}
         <div class="d-flex py-3">
@@ -19,14 +25,6 @@
         </div>
         {% endif %}
     </div>
-
-
-    <div>
-        <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
-            <i class="fa-solid fa-pencil"></i> Edit
-        </a>
-    </div>
-</div>
 
     <!--Direzione binario  -->
 {% if station.location_type == 0 and station.services.direction_towards %}
@@ -64,17 +62,15 @@
             <tr>
                 <th>Name</th>
                 <th>Level</th>
-                {% if location_group.type == 0 %}<th>Edit</th>{% endif %}
             </tr>
             {% for location in location_group.items %}
             <tr>
-                <td><a
-                    href="{% if location.location_type == 0 %}{% url 'station_detail' location.pk %}{% else %}{% url 'station_edit' location.pk %}{% endif %}">{{location.name}}</a>
+                <td>
+                    <a
+                    href="{% if location.location_type == 0 or location.location_type == 1 %}{% url 'station_detail' location.pk %}{% else %}{% url 'station_edit' location.pk %}{% endif %}">{{location.name}}</a>
                 </td>
                 <td>{{location.level|default_if_none:''}}</td>
-                {% if location_group.type == 0 %}<td>
-                    <a href="{% url 'station_edit' location.pk %}"><i class="fa-solid fa-pencil second-btn-reverse"></i></a>
-                </td>{% endif %}
+
             </tr>
             {% endfor %}
         </table>

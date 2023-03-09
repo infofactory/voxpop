@@ -20,6 +20,10 @@ class StopForm(ModelForm):
         # 4=boarding area
         # 5=area
 
+        if self.instance.location_type != Stop.STATION:
+            del self.fields['status']
+
+
         if self.instance.location_type == Stop.STOP_PLATFORM:
             self.fields['platform_code'].required = True
           #  self.fields['cardinal_direction'].required = True
@@ -116,6 +120,11 @@ class StopForm(ModelForm):
                   wrapper_class="form-check form-switch"),
             Field('train_station', css_class="form-check-input",
                   wrapper_class="form-check form-switch"),
+
+            Row(
+                Column('status', css_class='col-12'),
+            ),
+
             StrictButton('<i class="fas fa-paper-plane"></i> Save',
                          type="submit", name="save", css_class='btn btn-success me-4'),
             StrictButton('<i class="fas fa-trash"></i> Delete',

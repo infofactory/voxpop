@@ -5,7 +5,6 @@
 {% block content %}
 
 <div id="breadcrumbs" class="py-3 bg-light">
-    <div class="container ">
 
         <a href="{% url 'home' %}">Home</a> ›
         {% for item in platform.ancestors reversed %}
@@ -13,7 +12,6 @@
         {% endfor %}
         <a href="{% url 'station_detail' platform.pk %}">{{platform}}</a> ›
         <strong>Service</strong>
-    </div>
 </div>
 
 <h4 class="fw-bold py-4">
