@@ -44,11 +44,13 @@ class Stop(models.Model):
     TODO = 0
     WORKING = 1
     COMPLETED = 2
+    VALIDATED = 3
 
     STATUSES = (
         (TODO, "To do"),
         (WORKING, "Working"),
         (COMPLETED, "Completed"),
+        (VALIDATED, "Validated"),
     )
 
     code = models.CharField(verbose_name='Stop ID', max_length=20, blank=True)

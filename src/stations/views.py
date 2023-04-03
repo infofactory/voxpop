@@ -269,12 +269,15 @@ def lifts_list(request):
 
 def stops_list(request):
     stops = Stop.objects.order_by('parent_station', 'name')
-    location_type = request.GET.get('type')
-    if location_type:
-        if location_type == '3':
-            stops = stops.filter(location_type__in='345')
-        else:
-            stops = stops.filter(location_type=location_type)
+    location_type = request.GET.get('type', '1')
+    if location_type == '3':
+        stops = stops.filter(location_type__in='345')
+    else:
+        stops = stops.filter(location_type=location_type)
+
+    status = request.GET.get('status')
+    if status and location_type == '1':
+        stops = stops.filter(status=status)
 
     # Sort stops by parent station name
     stops=list(stops)

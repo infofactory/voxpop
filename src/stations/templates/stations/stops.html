@@ -5,22 +5,43 @@
 
     <div class="row my-4">
         <div class="col-md-6">
-            <h1>{{stops|length}} {% if request.GET.type %}{{stops.0.get_location_type_display}}s{% else %}stops, stations, platforms, etc.{% endif %}</h1>
+            <h1>{{stops|length}} {% if request.GET.type %}{{stops.0.get_location_type_display}}s{% else %}Stations{% endif %}</h1>
         </div>
         <div class="col-md-6">
             <form>
                 <select name="type" class="form-control w-50 d-inline">
-                    <option value="">All</option>
-                    <option{% if request.GET.type == '1' %} selected{% endif %} value="1">Stations</option>
+                    <option{% if request.GET.type == '1' or not request.GET.type %} selected{% endif %} value="1">Stations</option>
                     <option{% if request.GET.type == '0' %} selected{% endif %} value="0">Stops and platforms</option>
                     <option{% if request.GET.type == '2' %} selected{% endif %} value="2">Entrances and exits</option>
                     <option{% if request.GET.type == '3' %} selected{% endif %} value="3">Areas and generic nodes</option>
+                </select>
+                <select name="status" class="form-control w-auto" style="display: {% if request.GET.type == '1' or not request.GET.type %}inline{% else %}none{% endif %}">
+                    <option{% if not request.GET.status %} selected{% endif %} value="">All</option>
+                    <option{% if request.GET.status == '0' %} selected{% endif %} value="0">To do</option>
+                    <option{% if request.GET.status == '1' %} selected{% endif %} value="1">Working</option>
+                    <option{% if request.GET.status == '2' %} selected{% endif %} value="2">Completed</option>
+                    <option{% if request.GET.status == '3' %} selected{% endif %} value="3">Validated</option>
                 </select>
                 <input type="submit" value="Show" class="ms-4 btn btn-success">
             </form>
         </div>
     </div>
 
+    <script>
+
+        const typeSelector = document.querySelector('select[name="type"]');
+        typeSelector.addEventListener('change', showStatus);
+
+        function showStatus() {
+            const status = document.querySelector('select[name="status"]');
+            if (typeSelector.value == '1') {
+                status.style.display = 'inline';
+            } else {
+                status.style.display = 'none';
+            }
+             
+        }
+    </script>
 {% if stops %}
 
 
@@ -34,8 +55,15 @@
             {% endif %}
             <th>Name/Stop ID</th>
             {% if request.GET.type == '1' or not request.GET.type %}
-                <th width="8%">Exits, platforms, etc.</th>
+            <th width="8%">Exits, platforms, etc.</th>
                 <th width="5%">Lifts</th>
+            {% comment %}<th width="8%">Stop/Platform</th>
+                <th width="5%">Entrance/Exits</th>
+                <th width="5%">Area/Generic node</th>
+                <th width="5%">Lifts</th>
+                <th width="5%">Escalator</th>
+                <th width="5%">Stairlifts</th>
+                <th width="5%">Stairs</th>{% endcomment %}
             {% endif %}
             <th>Coords</th>
             <th>Level</th>
@@ -61,6 +89,11 @@
             {% if request.GET.type == '1' or not request.GET.type %}
                 <td><span class="badge bg-primary">{{stop.children.count|default:''}}</span></td>
                 <td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>
+                {% comment %}<td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>
+                <td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>
+                <td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>
+                <td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>
+                <td><span class="badge bg-success">{{stop.lifts.count|default:''}}</span></td>{% endcomment %}
             {% endif %}
             <td class="small">{{stop.lat|floatformat:5|default_if_none:''}}<br>
                 {{stop.lon|floatformat:5|default_if_none:''}}</td>
