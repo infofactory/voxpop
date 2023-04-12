@@ -180,6 +180,7 @@ class LiftForm(ModelForm):
             Row(
                 Column('notes', css_class='col-12'),
                 Column('image', css_class='col-12'),
+                Column('status', css_class='col-12'),
             ),
                     
         )

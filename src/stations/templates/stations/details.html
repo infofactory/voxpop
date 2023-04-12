@@ -8,8 +8,13 @@
         <h4 class="fw-bold fs-2">
             <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> 
             
-            <a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
-                <i class="fa-solid fa-pencil"></i>{{station}}</a></h4>
+            {% if request.user.is_superuser %}<a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
+                <i class="fa-solid fa-pencil"></i>{{station}}</a>
+            {% else %}
+                {{station}}
+            {% endif %}
+        
+        </h4>
 
         {% if station.location_type == 1 %}
         <span class="mx-3 badge rounded-pill bg-{% if station.status == 2 %}success{% elif station.status == 1 %}warning{% else %}danger{% endif %}">{{station.get_status_display }}</span>
@@ -34,10 +39,6 @@
             {{station.services.direction_towards}}
         </a>
     </p>
-
-    <!-- <div style="background-color: {{station.services.line.color}}" class="line_badge">
-        <p>M</p>
-    </div> -->
 </div>
 {% endif %}
 
@@ -50,10 +51,10 @@
     <div class="location_wrapper flex_item shadow px-4">
 
         <div class="d-flex align-items-center btn_add">
-            <a class="second-btn "
+            {% if request.user.is_superuser %}<a class="second-btn"
                 href="{% url 'station_add_child' parent=station.pk %}?loc_type={{location_group.type}}">
                 <i class="fa-solid fa-plus"></i>
-            </a>
+            </a>{% endif %}
             <h4>{{location_group.name}}</h4>
         </div>
         {% if location_group.items %}
@@ -78,11 +79,11 @@
 
             {% if location_group.type == 5 %}
                 <div class="d-flex align-items-center pt-4">
-                    <a href="{% url 'ramp_add' station.pk %}">
+                    {% if request.user.is_superuser %}<a href="{% url 'ramp_add' station.pk %}">
                         <div class="second-btn">
                             <i class="fa-solid fa-plus"></i>
                         </div>
-                    </a>
+                    </a>{% endif %}
                         <h5 class="pb-0 mt-2">Same level paths</h5>
                 </div>
                 {% if station.ramps.all %}
@@ -113,8 +114,7 @@
 
 
 
-<!-- lifts list 
-visibile solo se il modello è di tipo "Station"-->
+{# lifts list visibile solo se il modello è di tipo "Station" #}
 
 <div class="mb-5 lists-wrapper">
     {% for lift_group in lift_list %}
@@ -123,10 +123,10 @@ visibile solo se il modello è di tipo "Station"-->
     <div class="location_wrapper shadow px-4">
 
         <div class="d-flex align-items-center btn_add justify-content-between">
-            <a class="lift_btn third-btn"
+            {% if request.user.is_superuser %}<a class="lift_btn third-btn"
                 href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
                 <i class="fa-solid fa-plus"></i>
-            </a>
+            </a>{% endif %}
             <h4>{{lift_group.name}}</h4>
             {% if request.user.is_superuser %}
             <form method="post">{% csrf_token %}
@@ -143,14 +143,27 @@ visibile solo se il modello è di tipo "Station"-->
         <table class="table">
             <tr>
                 <th>Name</th>
-                <th>From</th>
-                <th>To</th>
+                <th>From <i class="fa fa-arrow-right"></i> To</th>
+                {% if lift_group.type != 2 %}
+                <th title="Status" class="text-nowrap">Status
+                    {% comment %}
+                    <span class="badge bg-light text-dark">A</span>
+                    <span class="badge bg-dark">U</span>
+                    <span class="badge bg-success">W</span>
+                    <span class="badge bg-danger">N</span>
+                    {% endcomment %}
+                </th>
+                {% endif %}
             </tr>
             {% for lift in lift_group.items %}
             <tr>
-                <td><a href="{% url 'lift_edit' lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a></td>
-                <td>{{lift.from_area|default:''}}</td>
-                <td>{{lift.to_area|default:''}}</td>
+                <td class="text-nowrap">{% if request.user.is_superuser %}<a href="{% url 'lift_edit' lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a>{% else %}{{lift.name}}{% endif %}</td>
+                <td>{{lift.from_area|default:''}} <i class="fa fa-arrow-right"></i> {{lift.to_area|default:''}}</td>
+                {% if lift_group.type != 2 %}
+                <td>
+                    <span class="badge bg-{% if lift.status == None %}dark{% elif lift.status == True %}success{% else %}danger{% endif %}">{{lift.get_status_display}}</span>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
@@ -162,8 +175,7 @@ visibile solo se il modello è di tipo "Station"-->
 </div>
 
 
-<!-- platfrom info 
-visibili solo se il modello è di tipo "Platform"-->
+{# platform info visibili solo se il modello è di tipo "Platform" #}
 {% if station.location_type == 0 %}
 <div class="d-flex align-items-center mb-1 me-2">
 
@@ -181,8 +193,6 @@ visibili solo se il modello è di tipo "Platform"-->
 {% endif %}
 
 {% if station.services %}
-
-<!-- alerts and additional platform info -->
 <div class="card shadow border-0 mb-4">
     <div class="card-body border-0 shadow-sm">
         <h4 class="cart-title">

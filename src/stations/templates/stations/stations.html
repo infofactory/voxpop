@@ -51,7 +51,10 @@
                 <a href="{% url 'station_detail' station.pk %}">{{station}}</a>
             </td>
             <td>{% if station.children.count %}{{station.children.count}}{% endif %}</td>
-            <td>{% if station.lifts.count %}{{station.lifts.count}}{% endif %}</td>
+            <td>{% if station.lifts.count %}{{station.lifts.count}}{% endif %}
+
+                xxx{{station.summary}}
+            </td>
 
             <td>
                 {% if request.user.is_authenticated %}

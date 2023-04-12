@@ -2,6 +2,19 @@ from django.db import models
 from django.urls import reverse
 
 
+class City(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('city_detail', args=[self.slug])
+
+    class Meta:
+        verbose_name_plural = "Cities"
+
 
 class Stop(models.Model):
 
@@ -90,6 +103,15 @@ class Stop(models.Model):
             current = current.parent_station
         return ancestors
 
+
+    def summary(self):
+        from django.db.models import Count, Q
+        totals = dict(self.lifts.aggregate(stairs=Count('type', filter=Q(type=Lift.STAIR)), lifts=Count('type', filter=Q(type=Lift.LIFT)), escalators=Count('type', filter=Q(type=Lift.ESCALATOR)), stairlifts=Count('type', filter=Q(type=Lift.STAIRLIFT))))
+        totals.update(self.children.aggregate(stops=Count('id', filter=Q(location_type=Stop.STOP_PLATFORM)), entrances=Count('id', filter=Q(location_type=Stop.ENTRANCE_EXIT)), areas=Count('id', filter=Q(location_type=Stop.AREA) | Q(location_type=Stop.GENERIC_NODE))))
+    
+        return totals
+    
+
     @property
     def url(self):
         if self.pk:
@@ -128,9 +150,16 @@ class Lift(models.Model):
         (ESCALATOR, 'Escalator'),
     )
 
+    STATUSES = (
+        (None, 'Unknown'),
+        (0, 'Not working'),
+        (1, 'Working'),
+    )
+
     type = models.IntegerField(choices=LIFT_TYPES)
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
     name = models.CharField(max_length=100)
+    status = models.BooleanField(choices=STATUSES, null=True, default=None)
     friendly_name = models.CharField(max_length=100, blank=True)
     from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+', blank=True, null=True)
     intermediate_area1 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')

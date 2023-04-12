@@ -52,18 +52,6 @@ def station_detail(request, id):
         locations = [
             {'type':Stop.BOARDING_AREA, 'name':'Boarding area', 'items':children.filter(location_type=Stop.BOARDING_AREA)}
         ]
-        
-
-
-
-
-    #areas = station.children.filter(location_type=5)
-
-    #da rifinire e spostarkìla nei models: crea in automatico i level path
-    # same = [areas.filter(level = a.level) for a in areas]
-    # for area in same:
-    #     level_path = RampLevelPath(from_area = area[0], to_area = area[1])
-    #     level_path.save()
 
     areas = station.children.filter(location_type=5).exists()
 

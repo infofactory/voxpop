@@ -7,6 +7,11 @@ class StopAdmin(admin.ModelAdmin):
     list_display = ['code', 'name', 'get_location_type_display']
 admin.site.register(Stop, StopAdmin)
 
+class CityAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug']
+    prepopulated_fields = {'slug': ('name',)}
+
+admin.site.register(City, CityAdmin)
 
 admin.site.register(Lift)
 admin.site.register(RampRoutes)
