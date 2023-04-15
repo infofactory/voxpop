@@ -14,14 +14,13 @@
 </h2>
 
 <div class="toolbar d-flex justify-content-center">
-    <a href="{% url 'station_detail' lift.stop.pk %}">
+    <a href="{% url 'station_detail' city.slug lift.stop.pk %}">
         Cancel
     </a>
 </div>
 <div class="pb-5 bt-4">
-    {%crispy form%}
+    {% crispy form %}
 </div>
-
 
 <script>
     function showHandrailHeight() {

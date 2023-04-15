@@ -22,36 +22,38 @@
     <header>
         <nav style="background-color: #001d50 !important; " class="navbar justify-content-between navbar-dark bg-dark sticky-top  navbar-expand-lg ">
             <div class="container-fluid text-white">
-              <a class="navbar-brand" href="{% url 'home' %}">
-                <figure class="logo">
-
-                    <img src="{% static 'stations/img/logo.png' %}" alt="">
+              <a class="navbar-brand text-center fs-6" href="{% url 'home' %}">
+                <figure class="logo mb-0">
+                    <img src="{% static 'stations/img/logo.png' %}" alt="Voxpop">
                 </figure>
+                {{city}}
                 </a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav custom-nav w-100">
+                  {% if city %}
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'home' %}"><i class="fa-fw fa-regular fa-train"></i> Stations and stops</a>
+                    <a class="nav-link" href="{% url 'stops_list' city.slug %}"><i class="fa-fw fa-regular fa-train"></i> Stations and stops</a>
                   </li>
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'lifts' %}"><i class="fa-fw fa-regular fa-escalator"></i> Devices</a>
+                    <a class="nav-link" href="{% url 'lifts' city.slug %}"><i class="fa-fw fa-regular fa-escalator"></i> Devices</a>
                   </li>
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'lines' %}"><i class="fa-fw fa-regular fa-road"></i> Lines</a>
+                    <a class="nav-link" href="{% url 'lines' city.slug %}"><i class="fa-fw fa-regular fa-road"></i> Lines</a>
                   </li>
 
 
                   <li class="nav-item mx-2">
-                    <a class="nav-link" href="{% url 'stations_map' %}">
+                    <a class="nav-link" href="{% url 'stations_map' city.slug %}">
                         <i class="fa-fw fa-solid fa-map"></i> Map
                     </a></li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
-                        <i class="fa-fw fa-solid fa-file-arrow-down"></i> Download CSV
-                    </a></li>
+                  <li class="nav-item mx-2">
+                      <a class="nav-link" class="add_btn_reverse shadow-sm" href="{% url 'download' city.slug %}">
+                      <i class="fa-fw fa-solid fa-file-arrow-down"></i> Download CSV
+                  </a></li>
+                  {% endif %}
 
                   {% if request.user.is_authenticated %}
                   <li class="nav-item dropdown" style="margin-left: auto">
@@ -60,7 +62,7 @@
                        {{request.user}}
                     </a>
                     <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fa-fw fa-regular fa-sign-out"></i> Logout</a></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fa-fw fa-regular fa-sign-out"></i> Logout</a></li>
                     </ul>
                   </li>
                   {% else %}
@@ -78,9 +80,8 @@
     {% if stop %}
     <div id="breadcrumbs" class="py-3 bg-light">
         <div class="container-fluid">
-
-            <a href="{% url 'home' %}">Home</a> ›
-            {% for item in stop.ancestors reversed %}
+          <a href="{% url 'stops_list' city.slug %}">Home {{city}}</a> ›
+          {% for item in stop.ancestors reversed %}
             <a href="{{item.url}}">{{item}}</a> ›
             {% endfor %}
             <strong>{{stop.name|default:'New element'}}</strong>
@@ -89,14 +90,13 @@
     {% elif lift %}
     <div id="breadcrumbs" class="py-3 bg-light">
         <div class="container-fluid">
-
-            <a href="{% url 'home' %}">Home</a> ›
-            <a href="{% url 'station_detail' lift.stop.pk %}">{{lift.stop}}</a> ›
-            {%if lift.name%}
+            <a href="{% url 'stops_list' city.slug %}">Home {{city}}</a> ›
+            <a href="{% url 'station_detail' city.slug lift.stop.pk %}">{{lift.stop}}</a> ›
+            {% if lift.name %}
             <strong>{{lift.name}}</strong>
-            {%else%}
+            {% else %}
             <strong>New {{lift.get_type_display}}</strong>
-            {%endif%}
+            {% endif %}
         </div>
     </div>
     {% endif%}

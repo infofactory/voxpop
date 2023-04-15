@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class City(models.Model):
     name = models.CharField(max_length=100)
@@ -66,6 +66,7 @@ class Stop(models.Model):
         (VALIDATED, "Validated"),
     )
 
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True, related_name="stops")
     code = models.CharField(verbose_name='Stop ID', max_length=20, blank=True)
     name = models.CharField(max_length=100)
     desc = models.TextField(verbose_name="Description", blank=True, null=True)
@@ -115,7 +116,7 @@ class Stop(models.Model):
     @property
     def url(self):
         if self.pk:
-            return reverse('station_detail', args=[self.pk])
+            return reverse('station_detail', args=[self.city.slug, self.pk])
         else:
             return reverse('home')
 
@@ -152,14 +153,14 @@ class Lift(models.Model):
 
     STATUSES = (
         (None, 'Unknown'),
-        (0, 'Not working'),
-        (1, 'Working'),
+        (False, 'Not working'),
+        (True, 'Working'),
     )
 
     type = models.IntegerField(choices=LIFT_TYPES)
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name="lifts")
     name = models.CharField(max_length=100)
-    status = models.BooleanField(choices=STATUSES, null=True, default=None)
+    status = models.BooleanField(choices=STATUSES, null=True, blank=True, default=None)
     friendly_name = models.CharField(max_length=100, blank=True)
     from_area = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='+', blank=True, null=True)
     intermediate_area1 = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
@@ -201,12 +202,12 @@ class Services(models.Model):
     platform = models.OneToOneField('stations.Stop', on_delete=models.CASCADE, primary_key=True)
     line = models.ForeignKey('stations.Line', on_delete=models.CASCADE, blank=True, null=True, related_name='platforms')
     direction_towards = models.ForeignKey(Stop, on_delete=models.CASCADE, blank=True, null=True, related_name='+')
-    min_gap = models.IntegerField(verbose_name="Min gap (mm)", null=True, blank=True)
-    max_gap = models.IntegerField(verbose_name="Max gap (mm)", null=True, blank=True)
-    average_gap = models.IntegerField(verbose_name="Average gap (mm)", null=True, blank=True)
-    min_step = models.IntegerField(verbose_name="Min step (mm)", null=True, blank=True)
-    max_step = models.IntegerField(verbose_name="Min step (mm)", null=True, blank=True)
-    average_step = models.IntegerField(verbose_name="Average step (mm)", null=True, blank=True)
+    min_gap = models.IntegerField(verbose_name="Min gap (mm)", null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(500)])
+    max_gap = models.IntegerField(verbose_name="Max gap (mm)", null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(500)])
+    average_gap = models.IntegerField(verbose_name="Average gap (mm)", null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(500)])
+    min_step = models.IntegerField(verbose_name="Min step (mm)", null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(500)])
+    max_step = models.IntegerField(verbose_name="Min step (mm)", null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(500)])
+    average_step = models.IntegerField(verbose_name="Average step (mm)", null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(500)])
     designated_level_access_point = models.BooleanField(default=False)
     location_of_level_access = models.ForeignKey('stations.Stop', on_delete=models.CASCADE, related_name='+', null=True, blank=True)
     level_access_by_manual_ramp = models.BooleanField(default=False)
@@ -218,6 +219,7 @@ class Services(models.Model):
 
 
 class Line(models.Model):
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, related_name='lines', null=True, blank=True)
     name = models.CharField(max_length=50)
     code = models.CharField(max_length=50, unique=True)
     color = models.CharField(max_length=7, blank=True)

@@ -20,26 +20,32 @@ from users import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.stops_list, name="home"),
-    path('stops/<int:id>/', views.station_detail, name="station_detail"),
-    path('stops/<int:parent>/add/', views.station_edit, name="station_add_child"),
-    path('stops/<int:id>/edit/', views.station_edit, name="station_edit"),
-    path('stops/add/', views.station_edit, name="station_add"),
-    path('stops/lifts/<int:id>/', views.lift_detail, name="lift_detail"),
-    path('stops/<int:parent>/lift/add', views.lift_edit, name="lift_add"),
-    path('stops/lifts/<int:id>/edit', views.lift_edit, name="lift_edit"),
-    path('stops/<int:platform>/services/add', views.services_edit, name="services_add"),
-    path('stops/services/<int:id>/edit', views.services_edit, name="services_edit"),
+    path('', views.choose_city, name="home"),
+
     path('accounts/', include('users.urls')),
-    path('download/', views.download_csv, name='download'),
-    path('map/', views.stations_map, name='stations_map'),
+    path('<slug:city>/download/', views.download_csv, name='download'),
 
-    path('lines/add/', views.line_edit, name='line_add'),
-    path('lines/', views.lines_index, name='lines'),
-    path('lines/<int:id>/edit/', views.line_edit, name='line_edit'),
+    path('<slug:city>/', views.stops_list, name="stops_list"),
+    path('<slug:city>/stops/', views.stops_list, name="stops_prefix"),
 
-    path('lifts/', views.lifts_list, name='lifts'),
+    path('<slug:city>/stops/<int:id>/', views.station_detail, name="station_detail"),
+    path('<slug:city>/stops/<int:parent>/add/', views.station_edit, name="station_add_child"),
+    path('<slug:city>/stops/<int:id>/edit/', views.station_edit, name="station_edit"),
+    path('<slug:city>/stops/add/', views.station_edit, name="station_add"),
+    path('<slug:city>/stops/lifts/<int:id>/', views.lift_detail, name="lift_detail"),
+    path('<slug:city>/stops/<int:parent>/lift/add', views.lift_edit, name="lift_add"),
+    path('<slug:city>/stops/lifts/<int:id>/edit', views.lift_edit, name="lift_edit"),
+    path('<slug:city>/stops/<int:platform>/services/add', views.services_edit, name="services_add"),
+    path('<slug:city>/stops/services/<int:id>/edit', views.services_edit, name="services_edit"),
 
-    path('ramps/<int:parent>/add/', views.ramps_edit, name='ramp_add'),
-    path('ramps/<int:id>/edit/', views.ramps_edit, name='ramp_edit')
+    path('<slug:city>/map/', views.stations_map, name='stations_map'),
+
+    path('<slug:city>/lines/add/', views.line_edit, name='line_add'),
+    path('<slug:city>/lines/', views.lines_index, name='lines'),
+    path('<slug:city>/lines/<int:id>/edit/', views.line_edit, name='line_edit'),
+
+    path('<slug:city>/lifts/', views.lifts_list, name='lifts'),
+
+    path('<slug:city>/ramps/<int:parent>/add/', views.ramps_edit, name='ramp_add'),
+    path('<slug:city>/ramps/<int:id>/edit/', views.ramps_edit, name='ramp_edit')
 ]

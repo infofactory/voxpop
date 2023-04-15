@@ -6,11 +6,11 @@
 
 <div id="breadcrumbs" class="py-3 bg-light">
 
-        <a href="{% url 'home' %}">Home</a> ›
+        <a href="{% url 'stops_list' city.slug %}">Home</a> ›
         {% for item in platform.ancestors reversed %}
         <a href="{{item.url}}">{{item}}</a> ›
         {% endfor %}
-        <a href="{% url 'station_detail' platform.pk %}">{{platform}}</a> ›
+        <a href="{% url 'station_detail' city.slug platform.pk %}">{{platform}}</a> ›
         <strong>Service</strong>
 </div>
 
@@ -20,14 +20,14 @@
 </h4>
 
 <div class="toolbar d-flex justify-content-center">
-    <a href="{% url 'station_detail' platform.pk %}">
+    <a href="{% url 'station_detail' city.slug platform.pk %}">
         Cancel
     </a>
     
 </div>
 
 <div class="pb-5 bt-4">
-    {%crispy form%}
+    {% crispy form %}
 </div>
 
 {% endblock content %}

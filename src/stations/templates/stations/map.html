@@ -63,7 +63,7 @@
 
         google.maps.event.addListener(stationCircle, 'click', function(ev) {
             infoWindow.setPosition(ev.latLng)
-            infoWindow.setContent('<a href="/stops/' + marker.pk + '">' + marker.name + '</a>')
+            infoWindow.setContent('<a href="{% url 'stops_prefix' city.slug %}' + marker.pk + '">' + marker.name + '</a>')
             infoWindow.open(map)
         })
 

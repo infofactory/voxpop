@@ -1,14 +1,14 @@
 {% extends 'base.html'%}
 {%block page_title %}Voxpop - Stations{%endblock%}
 
-{%block content%}
+{% block content %}
 
 
     <div class="d-flex align-items-center">
         <h4 class="fw-bold fs-2">
             <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> 
             
-            {% if request.user.is_superuser %}<a class="add_btn shadow-sm" href="{% url 'station_edit' id=station.pk %}">
+            {% if request.user.is_superuser %}<a class="add_btn shadow-sm" href="{% url 'station_edit' city.slug station.pk %}">
                 <i class="fa-solid fa-pencil"></i>{{station}}</a>
             {% else %}
                 {{station}}
@@ -35,7 +35,7 @@
 {% if station.location_type == 0 and station.services.direction_towards %}
 <div class="pb-4 d-flex align-items-center">
     <p class="me-2">
-        Direction: <a  class="fw-bold" href="{% url 'station_detail' station.services.direction_towards.pk %}">
+        Direction: <a  class="fw-bold" href="{% url 'station_detail' city.slug station.services.direction_towards.pk %}">
             {{station.services.direction_towards}}
         </a>
     </p>
@@ -52,7 +52,7 @@
 
         <div class="d-flex align-items-center btn_add">
             {% if request.user.is_superuser %}<a class="second-btn"
-                href="{% url 'station_add_child' parent=station.pk %}?loc_type={{location_group.type}}">
+                href="{% url 'station_add_child' city=city.slug parent=station.pk %}?loc_type={{location_group.type}}">
                 <i class="fa-solid fa-plus"></i>
             </a>{% endif %}
             <h4>{{location_group.name}}</h4>
@@ -68,7 +68,7 @@
             <tr>
                 <td>
                     <a
-                    href="{% if location.location_type == 0 or location.location_type == 1 %}{% url 'station_detail' location.pk %}{% else %}{% url 'station_edit' location.pk %}{% endif %}">{{location.name}}</a>
+                    href="{% if location.location_type == 0 or location.location_type == 1 %}{% url 'station_detail'  city.slug location.pk %}{% else %}{% url 'station_edit' city.slug location.pk %}{% endif %}">{{location.name}}</a>
                 </td>
                 <td>{{location.level|default_if_none:''}}</td>
 
@@ -79,7 +79,7 @@
 
             {% if location_group.type == 5 %}
                 <div class="d-flex align-items-center pt-4">
-                    {% if request.user.is_superuser %}<a href="{% url 'ramp_add' station.pk %}">
+                    {% if request.user.is_superuser %}<a href="{% url 'ramp_add' city.slug station.pk %}">
                         <div class="second-btn">
                             <i class="fa-solid fa-plus"></i>
                         </div>
@@ -88,18 +88,9 @@
                 </div>
                 {% if station.ramps.all %}
                 <table class="table">
-                    <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Actions</th>
-                    </tr>
                     {% for path in station.ramps.all %}
                     <tr>
-                        <td>{{path.from_area}}</td>
-                        <td>{{path.to_area}}</td>
-                        <td><a href="{% url 'ramp_edit' path.pk %}">
-                            <i class="fa-solid fa-pencil"></i>
-                        </a></td>
+                        <td>{% if request.user.is_superuser %}<a href="{% url 'ramp_edit' city.slug path.pk %}"><i class="fa-solid fa-pencil"></i>{% endif %} {{path.from_area}} <i class="fa fa-arrow-right"></i> {{path.to_area}} {% if request.user.is_superuser %}</a>{% endif %}</td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -124,11 +115,11 @@
 
         <div class="d-flex align-items-center btn_add justify-content-between">
             {% if request.user.is_superuser %}<a class="lift_btn third-btn"
-                href="{% url 'lift_add' station.pk %}?type={{lift_group.type}}">
+                href="{% url 'lift_add' city.slug station.pk %}?type={{lift_group.type}}">
                 <i class="fa-solid fa-plus"></i>
             </a>{% endif %}
             <h4>{{lift_group.name}}</h4>
-            {% if request.user.is_superuser %}
+            {% if request.user.is_superuser and lift_group.others %}
             <form method="post">{% csrf_token %}
                 <select name="from">
                     {% for elem in lift_group.others %}
@@ -157,7 +148,7 @@
             </tr>
             {% for lift in lift_group.items %}
             <tr>
-                <td class="text-nowrap">{% if request.user.is_superuser %}<a href="{% url 'lift_edit' lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a>{% else %}{{lift.name}}{% endif %}</td>
+                <td class="text-nowrap">{% if request.user.is_superuser %}<a href="{% url 'lift_edit' city.slug lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a>{% else %}{{lift.name}}{% endif %}</td>
                 <td>{{lift.from_area|default:''}} <i class="fa fa-arrow-right"></i> {{lift.to_area|default:''}}</td>
                 {% if lift_group.type != 2 %}
                 <td>
@@ -184,7 +175,7 @@
         Platform info
     </h4>
     {% if station.services.platform %}
-    <a class="btn bg-primary ms-3 mb-2 ms-auto" href="{% url 'services_edit' station.services.platform.pk %}">
+    <a class="btn bg-primary ms-3 mb-2 ms-auto" href="{% url 'services_edit' city.slug station.services.platform.pk %}">
         <i class="fa-solid fa-pencil text-light"></i>
         <p class="text-light d-none d-sm-inline-block ms-1">Edit</p>
     </a>
@@ -195,29 +186,23 @@
 {% if station.services %}
 <div class="card shadow border-0 mb-4">
     <div class="card-body border-0 shadow-sm">
-        <h4 class="cart-title">
-            Level Access Info
-        </h4>
-        <div
-            class="col alert border-0 {% if station.services.designated_level_acces_point %} alert-success {%else%} alert-danger {% endif %}">
-            <p>
-                {% if station.services.designated_level_acces_point %}
-                <i class="fa-solid fa-check me-1"></i>This platform has a designed level access point
-                {%else%}
-                <i class="fa-solid fa-x me-1"></i>This platform hasn't a designed level access point
+        <h4>Level Access Info</h4>
+            <p class="my-3">
+                {% if station.services.designated_level_access_point %}
+                <i class="fa-solid fa-check me-1 text-success"></i>
+                {% else %}
+                <i class="fa-solid fa-x me-1 text-danger"></i>
                 {% endif %}
+                Designated level access point: {{station.services.designated_level_access_point|yesno:"Yes,No"}}
             </p>
-        </div>
-        <div
-            class="col alert border-0 {% if station.services.designated_level_acces_point %} alert-success {%else%} alert-danger {% endif %}">
-            <p>
+            <p class="my-3">
                 {% if station.services.level_access_by_manual_ramp %}
-                <i class="fa-solid fa-check me-1"></i>This platform has a level access by manual ramp
-                {%else%}
-                <i class="fa-solid fa-x me-1"></i>This platform hasn't a level access by manual ramp
+                <i class="fa-solid fa-check me-1 text-success"></i>
+                {% else %}
+                <i class="fa-solid fa-x me-1 text-danger"></i>
                 {% endif %}
+                Level access by manual ramp: {{station.services.level_access_by_manual_ramp|yesno:"Yes,No"}}
             </p>
-        </div>
         <div class="col border-0 {% if station.services.location_of_level_access %} alert alert-primary {% endif %} ">
             {% if station.services.location_of_level_access %}
             <i class="fa-solid fa-location-dot me-1"></i>
@@ -288,7 +273,7 @@
 
 {% elif not station.services and station.location_type == 0 %}
 <p class="d-inline-block">No info provided</p> <a class="badge bg-primary"
-    href="{% url 'services_add' station.pk %}">Add</a>
+    href="{% url 'services_add' city.slug station.pk %}">Add</a>
 {% endif %}
 
 {%endblock content%}

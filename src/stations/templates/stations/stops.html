@@ -5,7 +5,7 @@
 
     <div class="row my-4">
         <div class="col-md-6">
-            <h1>{{stops|length}} {% if request.GET.type %}{{stops.0.get_location_type_display}}s{% else %}Stations{% endif %}</h1>
+            <h1>{{stops|length}} {{location_type_name}}s</h1>
         </div>
         <div class="col-md-6">
             <form>
@@ -42,9 +42,18 @@
              
         }
     </script>
+
+
+
+{% if request.user.is_superuser %}
+<a class="btn btn-primary mb-4" href="{% url 'station_add' city.slug %}?loc_type=1">
+    <i class="fa-solid fa-plus"></i> Station
+</a>
+{% endif %}
+
+
+
 {% if stops %}
-
-
 <div class="table-responsive">
 <table class="table table-striped">
     <thead>
@@ -74,14 +83,14 @@
             <td>{{forloop.counter}}</td>
             {% if request.GET.type != '1' %}
             <td>
-                <a href="{% url 'station_detail' stop.pk %}">{{stop.ancestors.0|default:stop}}</a>
+                <a href="{% url 'station_detail' city.slug stop.pk %}">{{stop.ancestors.0|default:stop}}</a>
             </td>
             {% endif %}
             <td>
                 {% if stop.location_type == 1 %}
                 <span class="badge rounded-pill bg-{% if stop.status == 2 %}success{% elif stop.status == 1 %}warning{% else %}danger{% endif %}">{{stop.get_status_display }}</span>
                 {% endif %}
-                {% if request.GET.type == '3' or not request.GET.type %}<i>{{stop.get_location_type_display}}</i> {% endif %}<strong><a href="{% if stop.location_type == 1 or stop.location_type == 0 %}{% url 'station_detail' stop.pk %}{% else %}{% url 'station_edit' stop.pk %}{% endif %}">{{stop.name}}</a></strong><br>
+                {% if request.GET.type == '3' or not request.GET.type %}<i>{{stop.get_location_type_display}}</i> {% endif %}<strong><a href="{% if stop.location_type == 1 or stop.location_type == 0 %}{% url 'station_detail' city.slug stop.pk %}{% else %}{% url 'station_edit' city.slug stop.pk %}{% endif %}">{{stop.name}}</a></strong><br>
                 <small>{{stop.code}}</small>
             </td>
             {% if request.GET.type == '1' or not request.GET.type %}

@@ -8,6 +8,16 @@ from crispy_forms.bootstrap import StrictButton
 from django.forms.widgets import HiddenInput
 
 
+class CityForm(forms.Form):
+    city = forms.ModelChoiceField(queryset=City.objects.all(), label="Choose your city", empty_label=None)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'GET'
+        self.helper.add_input(
+            Submit('go', 'Go', css_class='btn btn-success me-4'))
+
 class StopForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -127,10 +137,12 @@ class StopForm(ModelForm):
 
             StrictButton('<i class="fas fa-paper-plane"></i> Save',
                          type="submit", name="save", css_class='btn btn-success me-4'),
-            StrictButton('<i class="fas fa-trash"></i> Delete',
-                         type="submit", name="delete", css_class='btn btn-danger'),
-        )
+            )
 
+        if self.instance.pk:
+            self.helper.layout.append(
+                StrictButton('<i class="fas fa-trash"></i> Delete', type="submit", name="delete", css_class='btn btn-danger'))
+        
     class Meta:
         model = Stop
         exclude = ['parent_station', 'location_type']
@@ -187,8 +199,9 @@ class LiftForm(ModelForm):
 
         self.helper.add_input(
             Submit('save', 'Save', css_class='btn btn-success me-4'))
-        self.helper.add_input(
-            Submit('delete', 'Delete', css_class='btn btn-danger'))
+        if self.instance.pk:
+            self.helper.add_input(
+                Submit('delete', 'Delete', css_class='btn btn-danger'))
 
         areas = Stop.objects.filter(
             location_type__in=[Stop.AREA, Stop.ENTRANCE_EXIT, Stop.GENERIC_NODE], parent_station=self.instance.stop.pk)
@@ -317,8 +330,9 @@ class SameLevelForm(ModelForm):
         self.helper = FormHelper()
         self.helper.add_input(
             Submit('save', 'Save', css_class='btn btn-success me-4'))
-        self.helper.add_input(
-            Submit('delete', 'Delete', css_class='btn btn-danger'))
+        if self.instance.pk:
+            self.helper.add_input(
+                Submit('delete', 'Delete', css_class='btn btn-danger'))
         
         areas = Stop.objects.filter(location_type = 5, parent_station = self.instance.station)
 
