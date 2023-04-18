@@ -6,7 +6,7 @@
 <div id="breadcrumbs" class="py-3 bg-light">
     <div class="container-fluid">
         <fa class="fa-solid fa-chevron-left"></fa>
-        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'stops_list' city.slug %}">Home</a>
     </div>
 </div>
 
@@ -25,10 +25,10 @@
     <div id="lines-schema">
     {% for line in lines %}
     <div class="line" style="--line-color: {{line.color}}">
-        <h2 class="mt-4"><a href="{% url 'line_edit' line.pk %}"><i class="fa fa-pencil"></i></a> {{line}}</h2>
+        <h2 class="mt-4"><a href="{% url 'line_edit' city.slug line.pk %}"><i class="fa fa-pencil"></i></a> {{line}}</h2>
         <div class="path">
             {% for station in line.stations.all %}
-                <a href="{% url 'station_detail' station.station.pk %}">{{station.station}}</a>
+                <a href="{% url 'station_detail' city.slug station.station.pk %}">{{station.station}}</a>
             {% endfor %}
         </div>
     </div>
