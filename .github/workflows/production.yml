@@ -13,11 +13,10 @@ jobs:
 
       - name: Copia codice via scp
         uses: appleboy/scp-action@master
-        env:
+        with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.SSHKEY }}
-        with:
           source: "src/."
           target: "/home/polesello/voxpop_env/lisbona"
           strip_components: 1
