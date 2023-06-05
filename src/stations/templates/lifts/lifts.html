@@ -44,7 +44,7 @@
                 {{lift.stop}}
             </td>
             <td class="text-nowrap">
-                <i class="fa-regular fa-fw fa-{% if lift.type == 0 %}elevator{% elif lift.type == 1 %}wheelchair{% elif lift.type == 2 %}stairs{% elif lift.type == 3 %}escalator{% endif %}" title="{{lift.get_type_display}}"></i>&nbsp;<a href="{% url 'lift_edit' lift.pk %}">{{lift}}</a>
+                <i class="fa-regular fa-fw fa-{% if lift.type == 0 %}elevator{% elif lift.type == 1 %}wheelchair{% elif lift.type == 2 %}stairs{% elif lift.type == 3 %}escalator{% endif %}" title="{{lift.get_type_display}}"></i>&nbsp;<a href="{% url 'lift_edit' city.slug lift.pk %}">{{lift}}</a>
             </td>
             <td>{% if lift.image %}<i class="fa-regular fa-image text-success"></i>{% endif %}</td>
             <td>{{lift.friendly_name}}</td>

@@ -300,3 +300,9 @@ def stops_list(request, city):
 
     context = {'stops': stops, 'city': city, 'location_type_name': location_type_name}
     return render(request, 'stations/stops.html', context)
+
+
+def lift_thumbnail(request, id):
+    from django.shortcuts import get_object_or_404
+    lift = get_object_or_404(Lift, pk=id)
+    return redirect(lift.get_thumbnail())

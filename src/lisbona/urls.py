@@ -47,5 +47,6 @@ urlpatterns = [
     path('<slug:city>/lifts/', views.lifts_list, name='lifts'),
 
     path('<slug:city>/ramps/<int:parent>/add/', views.ramps_edit, name='ramp_add'),
-    path('<slug:city>/ramps/<int:id>/edit/', views.ramps_edit, name='ramp_edit')
+    path('<slug:city>/ramps/<int:id>/edit/', views.ramps_edit, name='ramp_edit'),
+    path('lifts/<int:id>/thumbnail/', views.lift_thumbnail, name='lift_thumbnail'),
 ]

@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['voxpop.infofactory.it', 'localhost']
+ALLOWED_HOSTS = ['open.willeasy.app', 'voxpop.infofactory.it', 'localhost']
 
 
 # Database Postgresql

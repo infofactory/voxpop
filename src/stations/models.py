@@ -183,6 +183,13 @@ class Lift(models.Model):
         return  self.name
 
 
+    def get_thumbnail(self):
+        from sorl.thumbnail import get_thumbnail
+        if self.image:
+            im = get_thumbnail(self.image, '1000', crop='center', quality=99)
+            return im.url
+     
+
     class Meta:
         ordering=('stop', 'type', 'name',)
 
