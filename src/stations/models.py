@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 class City(models.Model):
     name = models.CharField(max_length=100)
@@ -248,3 +249,21 @@ class LineStation(models.Model):
     
     class Meta:
         ordering = ('line', 'order',)
+
+
+class Segnalazione(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    lift = models.ForeignKey(Lift, on_delete=models.CASCADE, related_name='segnalazioni')
+    working = models.BooleanField(default=True)
+    image = models.ImageField(blank=True, upload_to='segnalazioni')
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.lift} - {self.working}"
+    
+    class Meta:
+        verbose_name_plural = "Segnalazioni"
+        ordering = ('-created',)
+        db_table = "voxpop_segnalazione"
+
+

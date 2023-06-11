@@ -140,6 +140,12 @@ def lift_edit(request, city, id=None, parent=None):
     else:
         lift = Lift()
 
+    # Caricamento stato ascensore da I am a willer
+    ultima_segnalazione = lift.segnalazioni.order_by('-created').first()
+    if ultima_segnalazione:
+        lift.status = ultima_segnalazione.working
+
+
     form = LiftForm(request.POST or None, request.FILES or None, instance=lift)
 
     if request.POST:
