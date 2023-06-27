@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.list import ListView
+from django.db.models import Q, F
 from .models import *
 
 from django.contrib.auth.decorators import login_required
@@ -312,3 +313,93 @@ def lift_thumbnail(request, id):
     from django.shortcuts import get_object_or_404
     lift = get_object_or_404(Lift, pk=id)
     return redirect(lift.get_thumbnail())
+
+
+def download_gtfs(request, city_slug, filename=None):
+    import csv
+    import zipfile
+    from django.http import HttpResponse, HttpResponseNotFound
+
+    city = City.objects.get(slug=city_slug)
+    if not filename:
+        response = HttpResponse(
+            content_type='application/zip',
+            headers={'Content-Disposition': 'attachment; filename="%s-gtfs.zip"' % city_slug},
+        )
+    
+    elif filename.endswith('.txt'):
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="%s"' % filename},
+        )
+
+    else:
+        return HttpResponseNotFound()
+    
+    if filename == 'feed_info.txt':
+        keys = ['feed_publisher_name', 'feed_publisher_url', 'feed_lang', 'feed_start_date']
+        publisher = {
+            'feed_publisher_name': 'Willeasy srl',
+            'feed_publisher_url': 'https://www.willeasy.net',
+            'feed_lang': 'en',
+            'feed_start_date': '20230601',
+        }
+        writer = csv.writer(response)
+        writer.writerow(keys)
+        writer.writerow([publisher[k] for k in keys])
+    
+    if filename == 'levels.txt':
+        keys = ['level_id', 'level_index', 'level_name']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+        for level in range(-4, 2):
+            writer.writerow([level, level, ''])
+
+    
+    if filename == 'stops.txt':
+        keys = ['stop_id', 'stop_code', 'stop_name', 'stop_desc', 'stop_lat', 'stop_lon', 'location_type', 'parent_station', 'wheelchair_boarding', 'level_id', 'platform_code']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        mandatory_position = Q(location_type__in = [Stop.STOP_PLATFORM, Stop.STATION, Stop.ENTRANCE_EXIT])
+        for stop in Stop.objects.filter(mandatory_position & Q(lat__isnull=False) & Q(lon__isnull=False) | ~mandatory_position, city=city).exclude(code=''):
+            writer.writerow([
+                stop.code,
+                stop.code,
+                stop.name.title(),
+                stop.desc,
+                stop.lat,
+                stop.lon,
+                stop.location_type == 5 and 3 or stop.location_type,
+                stop.parent_station and stop.parent_station.code or '',
+                stop.wheelchair_boarding,
+                stop.level,
+                stop.platform_code,
+            ])
+    
+    if filename == 'pathways.txt':
+        keys = ['pathway_id', 'from_stop_id', 'to_stop_id', 'pathway_mode', 'is_bidirectional', 'stair_count', 'max_slope', 'min_width', 'signposted_as', 'reversed_signposted_as']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+        for lift in Lift.objects.filter(stop__city=city, from_area__isnull=False, to_area__isnull=False).exclude(from_area__code=F('to_area__code')):
+            writer.writerow([
+                lift.name,
+                lift.from_area.code,
+                lift.to_area.code,
+                2 if lift.type == Lift.STAIR else 5 if lift.type == Lift.LIFT else 4 if lift.type == Lift.ESCALATOR and lift.pathway_mode == 4 else 3 if lift.type == Lift.ESCALATOR and lift.pathway_mode == 3 else '',
+                1 if lift.type in [Lift.STAIR, Lift.LIFT] else 0,
+                lift.number_of_steps or '',
+                '',
+                '',
+                lift.notes or '',
+                '',
+            ])
+
+    if not filename:
+        filenames = ['stops.txt', 'feed_info.txt', 'levels.txt', 'pathways.txt']
+        with zipfile.ZipFile(response, 'w') as zip_file:
+            for filename in filenames:
+                r = download_gtfs(request, city_slug, filename)
+                zip_file.writestr(filename, r.getvalue())
+
+    return response
