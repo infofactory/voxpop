@@ -343,6 +343,9 @@ def download_gtfs(request, city_slug, filename=None):
             'feed_publisher_url': 'https://www.willeasy.net',
             'feed_lang': 'en',
             'feed_start_date': '20230601',
+            'feed_end_date': '20231231',
+            'feed_version': '1.0',
+            'feed_contact_email': 'info@willeasy.net',
         }
         writer = csv.writer(response)
         writer.writerow(keys)
@@ -381,7 +384,10 @@ def download_gtfs(request, city_slug, filename=None):
         keys = ['pathway_id', 'from_stop_id', 'to_stop_id', 'pathway_mode', 'is_bidirectional', 'stair_count', 'max_slope', 'min_width', 'signposted_as', 'reversed_signposted_as']
         writer = csv.writer(response)
         writer.writerow(keys)
-        for lift in Lift.objects.filter(stop__city=city, from_area__isnull=False, to_area__isnull=False).exclude(from_area__code=F('to_area__code')):
+        for lift in Lift.objects.filter(stop__city=city, from_area__isnull=False, to_area__isnull=False).exclude(from_area__code=F('to_area__code')).exclude(type=Lift.STAIRLIFT):
+            notes = lift.notes.replace('\r', ' ').replace('\n', ' ') or ''
+            if notes == notes.upper():
+                notes = notes.capitalize()
             writer.writerow([
                 lift.name,
                 lift.from_area.code,
@@ -391,7 +397,7 @@ def download_gtfs(request, city_slug, filename=None):
                 lift.number_of_steps or '',
                 '',
                 '',
-                lift.notes or '',
+                notes,
                 '',
             ])
 
