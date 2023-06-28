@@ -409,3 +409,187 @@ def download_gtfs(request, city_slug, filename=None):
                 zip_file.writestr(filename, r.getvalue())
 
     return response
+
+
+
+def download_custom(request, city_slug, filename=None):
+    import csv
+    import zipfile
+    from django.http import HttpResponse, HttpResponseNotFound
+
+    city = City.objects.get(slug=city_slug)
+    if not filename:
+        response = HttpResponse(
+            content_type='application/zip',
+            headers={'Content-Disposition': 'attachment; filename="%s-data.zip"' % city_slug},
+        )
+    
+    elif filename.endswith('.csv'):
+        response = HttpResponse(
+            content_type='text/plain',
+          #  headers={'Content-Disposition': 'attachment; filename="%s"' % filename},
+        )
+
+    else:
+        return HttpResponseNotFound()
+    
+    if filename == 'FeedInfo.csv':
+
+        keys = ['FeedPublisherName', 'FeedPublisherUrl', 'FeedLang', 'FeedStartDate']
+  
+        publisher = {
+            'FeedPublisherName': 'Willeasy srl',
+            'FeedPublisherUrl': 'https://www.willeasy.net',
+            'FeedLang': 'en',
+            'FeedStartDate': '2023-06-01T08:00+00:00',
+
+        }
+        writer = csv.writer(response)
+        writer.writerow(keys)
+        writer.writerow([publisher[k] for k in keys])
+    
+    if filename == 'PlatformServices.csv':
+        keys = ['PlatformUniqueId', 'Line', 'DirectionTowards', 'MinGap', 'MaxGap', 'AverageGap', 'MinStep', 'MaxStep', 'AverageStep', 'DesignatedLevelAccessPoint', 'LocationOfLevelAccess', 'LevelAccessByManualRamp', 'AdditionalAccessibilityInformation']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        for service in Services.objects.filter(platform__city=city):
+            writer.writerow([
+                service.platform.pk,
+                service.line,
+                service.direction_towards,
+                service.min_gap,
+                service.max_gap,
+                service.average_gap,
+                service.min_step,
+                service.max_step,
+                service.average_step,
+                int(service.designated_level_access_point),
+                service.location_of_level_access and service.location_of_level_access.name or '',
+                int(service.level_access_by_manual_ramp),
+                service.additional_accessibility_info,
+            ])
+    
+    if filename == 'Platforms.csv':
+
+        keys = ['UniqueId','StationUniqueId','PlatformNumber','CardinalDirection','FriendlyName','AccessibleEntranceName','HasStepFreeRouteInformation']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        for stop in Stop.objects.filter(location_type = Stop.STOP_PLATFORM, city=city):
+            writer.writerow([
+                stop.pk,
+                stop.parent_station.code,
+                stop.platform_code,
+                '',
+                stop.name,
+                stop.accessible_entrance and stop.accessible_entrance.name or '',
+                int(stop.step_free_route_information_available),
+            ])
+    
+    if filename == 'Lifts.csv':
+        keys = ['StationUniqueId', 'DeviceUniqueId', 'DeviceId', 'DeviceType', 'DeviceName', 'FriendlyName', 'FromAreas', 'IntermediateAreas', 'IntermediateAreas2', 'ToAreas', 'LimitedCapacityDevice', 'DeviceNotes']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+        for lift in Lift.objects.filter(stop__city=city):
+            notes = lift.notes.replace('\r', ' ').replace('\n', ' ') or ''
+            if notes == notes.upper():
+                notes = notes.capitalize()
+            writer.writerow([
+                lift.stop.code,
+                lift.pk,
+                lift.pk,
+                lift.type,
+                lift.name,
+                lift.friendly_name,
+                lift.from_area.code if lift.from_area else '',
+                lift.intermediate_area1.code if lift.intermediate_area1 else '',
+                lift.intermediate_area2.code if lift.intermediate_area2 else '',
+                lift.to_area.code if lift.to_area else '',
+                '',
+                notes,
+            ])
+
+    if filename == 'RampRoutes.csv':
+
+        keys = ['From', 'To']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        for ramp in RampRoutes.objects.filter(station__city=city):
+            writer.writerow([
+                ramp.from_area.code,
+                ramp.to_area.code,
+            ])
+
+
+    if filename == 'SameLevelPaths.csv':
+
+        keys = ['From', 'To']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+
+    if filename == 'StationPoints.csv':
+        keys = ['UniqueId','StationUniqueId','AreaName','AreaId','Level','Lat','Lon','FriendlyName']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        for area in Stop.objects.filter(city=city, location_type__in=[Stop.AREA, Stop.BOARDING_AREA]):
+            writer.writerow([
+                area.pk,
+                area.parent_station.code,
+                area.name,
+                area.code,
+                area.level,
+                area.lat,
+                area.lon,
+                area.name,
+            ])
+
+    if filename == 'Stations.csv':
+        keys = ['UniqueId','Name','Wifi','OutsideStationUniqueId','BlueBadgeCarParking','BlueBadgeCarParkSpaces','TaxiRanksOutsideStation','MainBusInterchange','PierInterchange','NationalRailInterchange','AirportInterchange']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        for station in Stop.objects.filter(city=city, location_type=Stop.STATION):
+            writer.writerow([
+                station.pk,
+                station.name,
+                int(station.wifi),
+                station.outside_station_unique_id,
+                int(station.blue_badge_car_parking),
+                station.blue_badge_car_park_spaces,
+                int(station.taxi_ranks_outside_station),
+                int(station.bus_stop_outside_station),
+                0, # pier
+                int(station.train_station),
+                0, #airport
+            ])
+
+
+
+    if filename == 'StepFreeInterchangeInfo.csv':
+        
+        keys = ['FromPlatformUniqueId','ToPlatformUniqueId','DistanceInMetres']
+        writer = csv.writer(response)
+        writer.writerow(keys)
+
+        for info in StepFreeInterchangeInfo.objects.filter(station__city=city):
+            writer.writerow([
+                info.from_area and info.from_area.code or '',
+                info.to_area and info.to_area.code or '',
+                info.distance,
+            ])
+
+
+
+
+    if not filename:
+        filenames = ['FeedInfo.csv', 'PlatformServices.csv', 'Platforms.csv', 'Lifts.csv', 'RampRoutes.csv', 'SameLevelPaths.csv', 'StationPoints.csv', 'Stations.csv', 'StepFreeInterchangeInfo.csv']
+        with zipfile.ZipFile(response, 'w') as zip_file:
+            for filename in filenames:
+                r = download_custom(request, city_slug, filename)
+                zip_file.writestr(filename, r.getvalue())
+
+    return response

@@ -23,7 +23,7 @@ urlpatterns = [
     path('', views.choose_city, name="home"),
 
     path('accounts/', include('users.urls')),
-    path('<slug:city>/download/', views.download_csv, name='download'),
+ #   path('<slug:city>/download/', views.download_csv, name='download'),
 
     path('<slug:city>/', views.stops_list, name="stops_list"),
     path('<slug:city>/stops/', views.stops_list, name="stops_prefix"),
@@ -51,6 +51,9 @@ urlpatterns = [
 
     path('<slug:city_slug>/gtfs/', views.download_gtfs, name='download_gtfs'),
     path('<slug:city_slug>/gtfs/<str:filename>/', views.download_gtfs, name='download_gtfs_file'),
+
+    path('<slug:city_slug>/download/', views.download_custom, name='download_custom'),
+    path('<slug:city_slug>/download/<str:filename>/', views.download_custom, name='download_custom_file'),
 
 
     path('lifts/<int:id>/thumbnail/', views.lift_thumbnail, name='lift_thumbnail'),
