@@ -1,0 +1,27 @@
+header {
+    gifs_realtime_version: "2.0"
+    incrementality: FULL_DATASET
+  
+    timestamp: {% now "U" %}
+  }
+
+{% for s in segnalazioni %}
+
+  entity {
+    id: "{{forloop.counter0}}" 
+    alert {
+      informed_entity {
+        stop_id: "{{s.lift.stop.code}}"
+      }
+    }
+  
+    header_text {
+        translation {
+            text: "Lift from {{s.lift.from_area.name}} to {{s.lift.to_area.name}} not working"
+            language: "en"
+        }
+    }
+}
+{% endfor %}
+  
+  
