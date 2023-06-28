@@ -19,7 +19,9 @@ admin.site.register(RampLevelPath)
 admin.site.register(StepFreeInterchangeInfo)
 admin.site.register(Services)
 
-
+class SegnalazioneAdmin(admin.ModelAdmin):
+    list_display = ['lift', 'user', 'working', 'created']
+admin.site.register(Segnalazione, SegnalazioneAdmin)
 
 class LineStationInline(admin.TabularInline):
     model = LineStation

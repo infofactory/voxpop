@@ -55,6 +55,8 @@ urlpatterns = [
     path('<slug:city_slug>/download/', views.download_custom, name='download_custom'),
     path('<slug:city_slug>/download/<str:filename>/', views.download_custom, name='download_custom_file'),
 
+    path('<slug:city_slug>/realtime/', views.download_realtime, name='download_realtime'),
+
 
     path('lifts/<int:id>/thumbnail/', views.lift_thumbnail, name='lift_thumbnail'),
 ]

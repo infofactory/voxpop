@@ -455,7 +455,7 @@ def download_custom(request, city_slug, filename=None):
 
         for service in Services.objects.filter(platform__city=city):
             writer.writerow([
-                service.platform.pk,
+                service.platform.code,
                 service.line,
                 service.direction_towards,
                 service.min_gap,
@@ -478,10 +478,10 @@ def download_custom(request, city_slug, filename=None):
 
         for stop in Stop.objects.filter(location_type = Stop.STOP_PLATFORM, city=city):
             writer.writerow([
-                stop.pk,
+                stop.code,
                 stop.parent_station.code,
                 stop.platform_code,
-                '',
+                stop.cardinal_direction,
                 stop.name,
                 stop.accessible_entrance and stop.accessible_entrance.name or '',
                 int(stop.step_free_route_information_available),
@@ -497,8 +497,8 @@ def download_custom(request, city_slug, filename=None):
                 notes = notes.capitalize()
             writer.writerow([
                 lift.stop.code,
-                lift.pk,
-                lift.pk,
+                lift.name,
+                lift.name,
                 lift.type,
                 lift.name,
                 lift.friendly_name,
@@ -516,19 +516,17 @@ def download_custom(request, city_slug, filename=None):
         writer = csv.writer(response)
         writer.writerow(keys)
 
-        for ramp in RampRoutes.objects.filter(station__city=city):
-            writer.writerow([
-                ramp.from_area.code,
-                ramp.to_area.code,
-            ])
-
-
     if filename == 'SameLevelPaths.csv':
 
         keys = ['From', 'To']
         writer = csv.writer(response)
         writer.writerow(keys)
 
+        for ramp in RampRoutes.objects.filter(station__city=city):
+            writer.writerow([
+                ramp.from_area.code,
+                ramp.to_area.code,
+            ])
 
     if filename == 'StationPoints.csv':
         keys = ['UniqueId','StationUniqueId','AreaName','AreaId','Level','Lat','Lon','FriendlyName']
@@ -537,7 +535,7 @@ def download_custom(request, city_slug, filename=None):
 
         for area in Stop.objects.filter(city=city, location_type__in=[Stop.AREA, Stop.BOARDING_AREA]):
             writer.writerow([
-                area.pk,
+                area.code,
                 area.parent_station.code,
                 area.name,
                 area.code,
@@ -554,7 +552,7 @@ def download_custom(request, city_slug, filename=None):
 
         for station in Stop.objects.filter(city=city, location_type=Stop.STATION):
             writer.writerow([
-                station.pk,
+                station.code,
                 station.name,
                 int(station.wifi),
                 station.outside_station_unique_id,
@@ -593,3 +591,11 @@ def download_custom(request, city_slug, filename=None):
                 zip_file.writestr(filename, r.getvalue())
 
     return response
+
+
+def download_realtime(request, city_slug):
+    segnalazioni = Segnalazione.objects.filter(lift__stop__city__slug=city_slug, working=False)
+    context = {
+        'segnalazioni': segnalazioni,
+    }
+    return render(request, 'download_realtime.html', context, content_type='text/plain; charset=utf-8')

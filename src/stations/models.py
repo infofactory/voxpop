@@ -221,9 +221,12 @@ class Services(models.Model):
     level_access_by_manual_ramp = models.BooleanField(default=False)
     additional_accessibility_info = models.TextField(blank=True, null=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return "%s services" % self.platform
 
+
+    class Meta:
+        verbose_name_plural = 'Services'
 
 
 class Line(models.Model):
