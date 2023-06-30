@@ -25,7 +25,7 @@ ul{
 }
 
 img{
-    width: 100% !important;
+    max-width: 100%;
 }
 
 .navbar{ 
@@ -448,4 +448,24 @@ thead:first-child{
 }
 .path a:hover, .path a:focus {
     background-color: var(--line-color);
+}
+
+footer {
+    background-color: var(--brand);
+    padding: 20px 0;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 50px;
+}
+
+footer a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+footer img {
+    width: auto;
+    max-height: 50px;
 }
