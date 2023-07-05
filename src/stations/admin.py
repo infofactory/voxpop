@@ -32,6 +32,8 @@ class LineAdmin(admin.ModelAdmin):
     ]
 admin.site.register(Line, LineAdmin)
 
+admin.site.register(DownloadableFile)
+
 admin.site.site_header = 'Accedi a Voxpop'
 admin.site.site_title = 'Voxpop'
 admin.site.index_title = 'Voxpop'

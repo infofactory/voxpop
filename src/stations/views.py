@@ -122,10 +122,14 @@ def station_edit(request, city, id=None, parent=None):
     context = {'station':station, 'form':form, 'city':city}
     return render(request, 'stations/edit.html', context)
 
-def lift_detail(request, id):
-    lift = Lift.objects.get(pk=id)
+def lift_detail(request, city, id):
+    from .forms import LiftForm
 
-    context= {'lift': lift}
+    lift = Lift.objects.get(pk=id)
+    city = City.objects.get(slug=city)
+    form = LiftForm(instance=lift)
+
+    context= {'lift': lift, 'city': city, 'form':form}
     return render(request, 'lifts/details.html', context)
 
 @login_required

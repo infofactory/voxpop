@@ -270,3 +270,15 @@ class Segnalazione(models.Model):
         db_table = "voxpop_segnalazione"
 
 
+class DownloadableFile(models.Model):
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='files')
+    order = models.IntegerField(default=1)
+
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Downloadable files"
+        ordering = ('order',)

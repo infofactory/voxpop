@@ -3,7 +3,6 @@
 
 {% block content %}
 
-
     <div class="d-flex align-items-center">
         <h4 class="fw-bold fs-2">
             <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> 
@@ -47,7 +46,7 @@
 
 <div class="mb-5 lists-wrapper ">
     {% for location_group in locations %}
-
+    {% if location_group.items or request.user.is_superuser %}
     <div class="location_wrapper flex_item shadow px-4">
 
         <div class="d-flex align-items-center btn_add">
@@ -100,6 +99,7 @@
         {% endif %}
     </div>
 
+    {% endif %}
     {% endfor %}
 </div>
 
@@ -109,8 +109,7 @@
 
 <div class="mb-5 lists-wrapper">
     {% for lift_group in lift_list %}
-
-
+    {% if lift_group.items or request.user.is_superuser %}
     <div class="location_wrapper shadow px-4">
 
         <div class="d-flex align-items-center btn_add justify-content-between">
@@ -137,18 +136,12 @@
                 <th>From <i class="fa fa-arrow-right"></i> To</th>
                 {% if lift_group.type != 2 %}
                 <th title="Status" class="text-nowrap">Status
-                    {% comment %}
-                    <span class="badge bg-light text-dark">A</span>
-                    <span class="badge bg-dark">U</span>
-                    <span class="badge bg-success">W</span>
-                    <span class="badge bg-danger">N</span>
-                    {% endcomment %}
                 </th>
                 {% endif %}
             </tr>
             {% for lift in lift_group.items %}
             <tr>
-                <td class="text-nowrap">{% if request.user.is_superuser %}<a href="{% url 'lift_edit' city.slug lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a>{% else %}{{lift.name}}{% endif %}</td>
+                <td class="text-nowrap">{% if request.user.is_superuser %}<a href="{% url 'lift_edit' city.slug lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a>{% else %}<a href="{% url 'lift_detail' city.slug lift.pk %}">{{lift.name}}</a>{% endif %}</td>
                 <td>{{lift.from_area|default:''}} <i class="fa fa-arrow-right"></i> {{lift.to_area|default:''}}</td>
                 {% if lift_group.type != 2 %}
                 <td>
@@ -161,7 +154,7 @@
         {% endif %}
     </div>
 
-
+    {% endif %}
     {% endfor %}
 </div>
 
@@ -174,7 +167,7 @@
     <h4 class="d-inline-block fw-bold fs-3">
         Platform info
     </h4>
-    {% if station.services.platform %}
+    {% if station.services.platform and request.user.is_superuser %}
     <a class="btn bg-primary ms-3 mb-2 ms-auto" href="{% url 'services_edit' city.slug station.services.platform.pk %}">
         <i class="fa-solid fa-pencil text-light"></i>
         <p class="text-light d-none d-sm-inline-block ms-1">Edit</p>

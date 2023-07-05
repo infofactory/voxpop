@@ -51,16 +51,23 @@
                     </a></li>
                   <li class="nav-item mx-2">
                       <a class="nav-link" href="{% url 'download_custom' city.slug %}">
-                      <i class="fa-fw fa-solid fa-file-arrow-down"></i> Download CSV
+                      <i class="fa-fw fa-solid fa-file-csv"></i>  CSV
                   </a></li>
                   <li class="nav-item mx-2">
                     <a class="nav-link" href="{% url 'download_gtfs' city.slug %}">
-                    <i class="fa-fw fa-solid fa-file-arrow-down"></i> Download GTFS
+                    <i class="fa-fw fa-solid fa-file-arrow-down"></i> GTFS
                   </a></li>
                   <li class="nav-item mx-2">
                     <a class="nav-link" href="{% url 'download_realtime' city.slug %}">
                     <i class="fa-fw fa-solid fa-clock"></i> Realtime
                   </a></li>
+
+                  {% for file in files %}
+                  <li class="nav-item mx-2">
+                    <a class="nav-link" href="{{ file.file.url }}">
+                    <i class="fa-fw fa-solid fa-download"></i> {{file.name}}
+                  </a></li>
+                  {% endfor %}
                   {% endif %}
 
                   {% if request.user.is_authenticated %}
