@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block page_title %} Voxpop - {{city}} {%endblock%}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card card-body bg-light mt-4">
+
+            <h2>
+                <small class="fw-normal fs-5">{{lift.get_type_display}}</small> {{lift.name}} 
+            </h2>
+            
+            
+                <p>Status: <strong>{{lift.get_status_display}}</strong></p>
+                <p>Friendly name: <strong>{{lift.friendly_name}}</strong></p>
+                <p>Path: 
+                    <strong>{{lift.from_area}}</strong> &rarr; 
+                    {% if lift.intermediate_area1 %} <strong>{{lift.intermediate_area1}}</strong> &rarr; {% endif %}
+                    {% if lift.intermediate_area2 %} <strong>{{lift.intermediate_area2}}</strong> &rarr; {% endif %}
+                    <strong>{{lift.to_area}}</strong>
+                </p>
+                {% if lift.lift_width %} <p>Width: <strong>{{lift.lift_width}}</strong></p>{% endif %}
+                {% if lift.lift_height %} <p>Height: <strong>{{lift.lift_height}}</strong></p>{% endif %}
+                {% if lift.visually_impaired_ok %} <p>Visually impaired? <strong>{{lift.visually_impaired_ok}}</strong></p>{% endif %}
+                {% if lift.assistance_required %} <p>Assistance required: <strong>{{lift.assistance_required}}</strong></p>{% endif %}
+                {% if lift.number_of_steps %} <p>Number of steps: <strong>{{lift.number_of_steps}}</strong></p>{% endif %}
+                {% if lift.steps_height %} <p>Steps height: <strong>{{lift.steps_height}} mm</strong></p>{% endif %}
+                {% if lift.handrail %} <p>Handrail: <strong>{{lift.get_handrail_display}}</strong></p>{% endif %}
+                {% if lift.handrail_height %} <p>Handrail height: <strong>{{lift.handrail_height}} mm</strong></p>{% endif %}
+                {% if lift.pathway_mode %} <p>Pathway mode: <strong>{{lift.get_pathway_mode_display}}</strong></p>{% endif %}
+                {% if lift.notes %} <p>Notes: <strong>{{lift.notes}}</strong></p>{% endif %}
+                {% if lift.image %} <p>
+                    <img src="{{lift.image.url}}" alt="">
+                </p>{% endif %}
+            
+            
+            </div>
+
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block page_title %}Voxpop - Station Service{% endblock page_title %}
+
+{% block content %}
+
+<div id="breadcrumbs" class="py-3 bg-light">
+        <a href="{% url 'stops_list' city.slug %}">Home</a> ›
+        <a href="{% url 'station_detail' city.slug form.instance.station.pk %}">{{form.instance.station}}</a> ›
+        <strong>Same level path</strong>
+</div>
+
+<h4 class="fw-bold py-4">
+    {% if form.instance.pk %}Edit{% else %}Add {% endif %}
+    {{platform.name}} same level path
+</h4>
+
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'station_detail' city.slug form.instance.station.pk %}">
+        Cancel
+    </a>
+    
+</div>
+
+<div class="pb-5 bt-4">
+    {% crispy form %}
+</div>
+
+{% endblock content %}

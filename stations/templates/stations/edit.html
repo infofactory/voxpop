@@ -1,0 +1,57 @@
+{% extends 'base.html'%}
+{% load crispy_forms_tags %}
+{%block page_title%}Lisbona - Stations{%endblock%}
+
+{%block content%}
+
+
+{% if station.pk %}
+<h4 class="my-3">Edit <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> <strong>{{station}}</strong></h4>
+{% else %}
+<h4 class="my-3">Create a new {{station.get_location_type_display}}</h4>
+{% endif %}
+
+<div class="toolbar d-flex justify-content-center">
+    {% if station.parent_station %}
+    <a href="{% url 'station_detail' city.slug station.parent_station.pk %}">
+        Cancel
+    </a>
+    {% elif station.pk %}
+    <a href="{% url 'station_detail' city.slug station.pk %}">
+        Cancel
+    </a>
+    {% else %}
+    <a href="{% url 'stops_list' city.slug %}">
+        Cancel
+    </a>
+    {%endif%}
+</div>
+
+
+<div class="pb-5 bt-4">
+    {{form.errors}}
+    {% crispy form %}
+</div>
+
+<script>
+
+const field_lat = document.getElementById('id_lat')
+const field_lon = document.getElementById('id_lon')
+
+function success(pos) {
+    const auto_fill = (!field_lat.value || !field_lon.value || confirm('Are you sure?'))
+    if (auto_fill) {
+        field_lat.value = pos.coords.latitude
+        field_lon.value = pos.coords.longitude
+    }
+}
+
+
+document.getElementById('auto-locate').addEventListener('click', () => {
+    navigator.geolocation.getCurrentPosition(success)
+})
+
+
+</script>
+
+{%endblock content%}

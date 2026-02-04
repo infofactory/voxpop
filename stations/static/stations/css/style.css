@@ -1,0 +1,477 @@
+:root{
+    --brand: #001d50;
+    --second: #7a53ec;
+    --third: #4fcf80
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+h1, h2, h3, h4, h4{
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+p{
+    margin-bottom: 0 !important;
+}
+
+ul{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+img{
+    max-width: 100%;
+}
+
+.navbar{ 
+    background-color: var(--brand);
+}
+
+.navbar a.nav-link {
+    color: #fff;
+}
+
+a{
+    text-decoration: none;
+}
+
+table{
+    max-width: 100vw;
+}
+
+thead:first-child{
+    background-color: var(--brand) !important;
+}
+
+.text-light{
+    color: lightgray;
+}
+
+.form-label {
+    font-weight: 600;
+}
+
+
+
+.add_btn{
+    color: var(--brand);
+    padding: 8px 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: all 300ms ease-out;
+    white-space: nowrap;
+}
+.add_btn_reverse{
+    background-color: var(--brand);
+    color: whitesmoke;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+    display: inline-block;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 300ms ease-out;
+    margin-left: 1rem;
+}
+
+.add_btn:hover{
+    color: whitesmoke;
+    background-color: var(--brand);
+    transform: scale(1.05);
+}
+.add_btn_reverse:hover{
+    color: var(--brand);
+    background-color: white;
+    transform: scale(1.05);
+}
+
+.logo{
+    width: calc(100px + 4vw)  !important;
+}
+
+.custom_disabled{
+    color: lightslategray;
+    background-color: rgba(128, 128, 128, 0.622);
+    cursor:not-allowed;
+    position: relative;
+    height: 27px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 10px;
+    
+}
+
+.custom_disabled:hover{
+    color: lightslategray;
+    background-color: gray;
+    border: solid gray 1px;
+}
+
+.custom_disabled:active{
+    background-color: gray !important;
+    border: solid gray 1px !important;
+}
+
+.custom_disabled_txt{
+    opacity: .5;
+}
+
+.custom_disabled:hover::after, 
+.custom_disabled:active::after{
+    content: 'Add at least 1 area before adding a Lift';
+    display: block;
+    position: absolute;
+    height: 50px;
+    padding: 5px 10px 5px 75px;
+    background-color: rgba(0, 0, 0, 0.806);
+    color: white;
+    right: -180px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    clip-path: polygon(30% 0, 100% 0%, 100% 100%, 30% 100%, 30% 61%, 14% 50%, 30% 38%);
+}
+
+.toolbar a{
+    color: currentColor !important;
+}
+
+
+.toolbar{
+    padding: 20px 10px;
+    background-color: rgb(118, 141, 146);
+    color: white !important;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    position: fixed;
+    bottom: 0;
+    right: 5%;
+    animation: slidein 500ms ease-in-out ;
+}
+
+@keyframes slidein {
+    from{
+        transform: translateY(100px);
+    }
+    to{
+        transform: translateY(0px);
+    }
+}
+
+
+.wrapper-btn{
+    display: flex;
+    flex-basis: 10%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+.custom-table{
+    width: 100%;
+}
+
+.custom-table  th{
+    padding: 30px 5px;
+}
+
+.custom-table td{
+    padding: 10px 2px;
+}
+
+.custom-table tr:nth-child(even){
+    background-color: rgba(226, 224, 224, 0.1);
+}
+
+
+.second-btn{
+    color: rgb(243, 243, 243);
+    background-color: var(--second);
+    height: 27px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.second-btn-reverse{
+    color: var(--second);
+    transition: 400ms ease-in-out;
+}
+
+.second-btn-reverse:active,
+.second-btn-reverse:hover{
+    transform: scale(1.1);
+}
+
+.second-btn:active,
+.second-btn:hover{
+    background-color: rgba(211, 211, 211, 0.5);
+}
+
+.lists-wrapper{
+    display: flex;
+    flex-flow: row wrap;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+.location_wrapper{
+    border-radius: 20px;
+    padding: 25px 8px;
+    flex-basis: 600px;
+    flex-grow: 1;
+    align-items: flex-start;
+}
+
+#user{
+    position: relative;
+    cursor: pointer;
+}
+
+#user_card{
+    color: var(--brand);
+    border-radius: 12px;
+    background-color: whitesmoke;
+    position: absolute;
+    left: -110%;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all ease-in-out 400ms;
+    width: 0px;
+}
+
+#user_card:hover{
+    font-weight: 700;
+}
+
+#user_card > a {
+    text-decoration: none;
+    color: currentColor;
+}
+
+#user:hover #user_card{
+    width: fit-content;
+    padding: 10px 30px;
+}
+
+.login-wrapper{
+    width: 80%;
+    padding: 50px 20px;
+    margin: 35px auto;
+    border-radius: 20px;
+}
+
+.login-btn {
+    background-color: var(--second) !important;
+    border-radius: 999999px;
+}
+
+@media (min-width: 640px){
+    .login-wrapper{
+        width: 50%
+    }
+
+    .line_wrapper{
+        flex-basis: 100%;
+    }
+}
+
+.titles-lift > li {
+    flex-basis: calc(100% / 4);
+    font-weight: 700;
+    text-align: left;
+}
+
+.third-btn {
+    color: rgb(243, 243, 243);
+    background-color: var(--third);
+    height: 27px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+
+/* .debug{
+    max-height: 50px;
+    overflow-y: scroll;
+} */
+
+.box-color{
+    width: 40px;
+    aspect-ratio: 1;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 12px;
+    transition: all 300ms ease-in-out;
+}
+
+
+.box-color:hover{
+    transform: scale(1.1);
+}
+
+
+.lines_row{
+    flex-wrap: wrap;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+
+.line_wrapper{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    justify-content: flex-start;
+    padding-left: 2.5rem;
+    color: var(--brand) !important;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-basis: 200px;
+    height: fit-content;
+    min-height: 90px;
+    border-radius: 30px;
+    transition: all 400ms ease-out;
+}
+
+
+.color_badge{
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 35px;
+}
+
+.station_list{
+    margin: 12px 0px;
+    font-weight: 400;
+    font-size: 14px;
+    scale: 0;
+    height: 0px;
+    transition: all 400ms ease-out;
+    transform-origin: top center;
+}
+
+.icon{
+    position: absolute;
+    right: 10px;
+    top: 45px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.active{
+    display: block !important;
+    scale: 1;
+    height: fit-content;
+}
+
+.line_link{
+    line-height: 12px;
+}
+
+.station-name_wrapper{
+    height: 50px;
+    display: flex;
+    align-items: flex-end;
+}
+
+#picker{
+    height: 43px !important;
+}
+
+.line_badge{
+    width: 60px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: 50%;
+
+
+}
+
+
+
+
+#lines-schema i.fa {
+    font-size: 16px;
+}
+#lines-schema .line {
+    border-left: 5px solid var(--line-color);
+    padding-left: 10px;
+}
+.path a {
+    border: 3px solid var(--line-color);
+    border-radius: 99px;
+    padding: 5px 10px;
+    margin-right: 20px;
+    margin-bottom: 15px;
+    color: #000;
+    display: inline-block;
+    position: relative;
+}
+.path a:after {
+    content: "";
+    height: 3px;
+    width: 28px;
+    display: block;
+    background-color: var(--line-color);
+    position: absolute;
+    right: -28px;
+    top: 50%;
+    margin-top: -2px;
+}
+.path a:hover, .path a:focus {
+    background-color: var(--line-color);
+}
+
+footer {
+    background-color: var(--brand);
+    padding: 20px 0;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 50px;
+}
+
+footer a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+footer img {
+    width: auto;
+    max-height: 50px;
+}

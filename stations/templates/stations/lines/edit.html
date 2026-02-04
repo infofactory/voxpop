@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block page_title %}Voxpop - Lines{% endblock page_title %}
+
+{% block header_js %}
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sortable/0.9.13/jquery-sortable-min.js" integrity="sha512-9pm50HHbDIEyz2RV/g2tn1ZbBdiTlgV7FwcQhIhvykX6qbQitydd6rF19iLmOqmJVUYq90VL2HiIUHjUMQA5fw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+{% block content %}
+
+<h1 class="my-4">{% if form.instance.pk %}Edit {{form.instance}}{% else %}Add new {{verbose_name}}{% endif %}</h1>
+
+{% crispy form %}
+
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'lines' %}">
+        Cancel
+    </a>
+</div>
+
+<datalist id="presetColors">
+    <option>#FDB913</option>/>
+    <option>#EE2B74</option>
+    <option>#00AAA6</option>
+    <option>#4E84C4</option>
+</datalist>
+
+<script>
+    $(document).ready(function() {
+        $('#id_stations').select2()
+
+   //     $(".select2").select2({width: '400px'});
+
+        $("ul.select2-selection__rendered").sortable({
+        containment: 'parent',
+        stop: function(event, ui) {
+        // event target would be the <ul> which also contains a list item for searching (which has to be excluded)
+            var arr = Array.from($(event.target).find('li:not(.select2-search)').map(function () { 
+                return {name: $(this).data('data').text, value: $(this).data('data').id }; 
+            }))
+            console.log(arr);
+        }
+        });
+
+        // // $("ul.select2-selection__rendered").sortable({
+        // // containment: 'parent'
+        // // })
+
+        // // https://stackoverflow.com/questions/40763223/select2-multiselect-how-to-stop-automatic-sorting
+        // $("id_stations").on("select2:select", function (evt) {
+        //     const element = evt.params.data.element
+        //     const $element = $(element)
+
+        //     $element.detach()
+        //     $(this).append($element)
+        //     $(this).trigger("change")
+        // })
+
+    })
+</script>
+
+{% endblock content %}

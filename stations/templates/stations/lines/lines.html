@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Voxpop - Lines{% endblock page_title %}
+{% block content %}
+
+<div id="breadcrumbs" class="py-3 bg-light">
+    <div class="container-fluid">
+        <fa class="fa-solid fa-chevron-left"></fa>
+        <a href="{% url 'stops_list' city.slug %}">Home</a>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between py-3">
+        <h1>Lines</h1>
+        <div class="text-end">
+            <a class="add_btn shadow-sm " href="{% url 'line_add' city.slug %}">
+                <i class="fa-solid fa-plus"></i> line
+            </a>
+        </div>
+    </div>
+
+    
+    <div id="lines-schema">
+    {% for line in lines %}
+    <div class="line" style="--line-color: {{line.color}}">
+        <h2 class="mt-4"><a href="{% url 'line_edit' city.slug line.pk %}"><i class="fa fa-pencil"></i></a> {{line}}</h2>
+        <div class="path">
+            {% for station in line.stations.all %}
+                <a href="{% url 'station_detail' city.slug station.station.pk %}">{{station.station}}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+ 
+
+{% endblock content %}

@@ -1,0 +1,272 @@
+{% extends 'base.html'%}
+{%block page_title %}Voxpop - Stations{%endblock%}
+
+{% block content %}
+
+    <div class="d-flex align-items-center">
+        <h4 class="fw-bold fs-2">
+            <small class="fw-normal fs-5">{{station.get_location_type_display}}</small> 
+            
+            {% if request.user.is_superuser %}<a class="add_btn shadow-sm" href="{% url 'station_edit' city.slug station.pk %}">
+                <i class="fa-solid fa-pencil"></i>{{station}}</a>
+            {% else %}
+                {{station}}
+            {% endif %}
+        
+        </h4>
+
+        {% if station.location_type == 1 %}
+        <span class="mx-3 badge rounded-pill bg-{% if station.status == 2 %}success{% elif station.status == 1 %}warning{% else %}danger{% endif %}">{{station.get_status_display }}</span>
+        {% endif %}
+
+        {% if station.location_type == 1 %}
+        <div class="d-flex py-3">
+            {% for line in station.lines.all %}
+                <div class="mx-4 mt-3 path" style="--line-color: {{line.line.color}}">
+                    <a>{{line.line.name}}</a>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!--Direzione binario  -->
+{% if station.location_type == 0 and station.services.direction_towards %}
+<div class="pb-4 d-flex align-items-center">
+    <p class="me-2">
+        Direction: <a  class="fw-bold" href="{% url 'station_detail' city.slug station.services.direction_towards.pk %}">
+            {{station.services.direction_towards}}
+        </a>
+    </p>
+</div>
+{% endif %}
+
+
+<!-- main nodes list -->
+
+<div class="mb-5 lists-wrapper ">
+    {% for location_group in locations %}
+    {% if location_group.items or request.user.is_superuser %}
+    <div class="location_wrapper flex_item shadow px-4">
+
+        <div class="d-flex align-items-center btn_add">
+            {% if request.user.is_superuser %}<a class="second-btn"
+                href="{% url 'station_add_child' city=city.slug parent=station.pk %}?loc_type={{location_group.type}}">
+                <i class="fa-solid fa-plus"></i>
+            </a>{% endif %}
+            <h4>{{location_group.name}}</h4>
+        </div>
+        {% if location_group.items %}
+
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Level</th>
+            </tr>
+            {% for location in location_group.items %}
+            <tr>
+                <td>
+                    <a
+                    href="{% if location.location_type == 0 or location.location_type == 1 %}{% url 'station_detail'  city.slug location.pk %}{% else %}{% url 'station_edit' city.slug location.pk %}{% endif %}">{{location.name}}</a>
+                </td>
+                <td>{{location.level|default_if_none:''}}</td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+
+            {% if location_group.type == 5 %}
+                <div class="d-flex align-items-center pt-4">
+                    {% if request.user.is_superuser %}<a href="{% url 'ramp_add' city.slug station.pk %}">
+                        <div class="second-btn">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                    </a>{% endif %}
+                        <h5 class="pb-0 mt-2">Same level paths</h5>
+                </div>
+                {% if station.ramps.all %}
+                <table class="table">
+                    {% for path in station.ramps.all %}
+                    <tr>
+                        <td>{% if request.user.is_superuser %}<a href="{% url 'ramp_edit' city.slug path.pk %}"><i class="fa-solid fa-pencil"></i>{% endif %} {{path.from_area}} <i class="fa fa-arrow-right"></i> {{path.to_area}} {% if request.user.is_superuser %}</a>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            {% endif %}
+        </ul>
+        {% endif %}
+    </div>
+
+    {% endif %}
+    {% endfor %}
+</div>
+
+
+
+{# lifts list visibile solo se il modello è di tipo "Station" #}
+
+<div class="mb-5 lists-wrapper">
+    {% for lift_group in lift_list %}
+    {% if lift_group.items or request.user.is_superuser %}
+    <div class="location_wrapper shadow px-4">
+
+        <div class="d-flex align-items-center btn_add justify-content-between">
+            {% if request.user.is_superuser %}<a class="lift_btn third-btn"
+                href="{% url 'lift_add' city.slug station.pk %}?type={{lift_group.type}}">
+                <i class="fa-solid fa-plus"></i>
+            </a>{% endif %}
+            <h4>{{lift_group.name}}</h4>
+            {% if request.user.is_superuser and lift_group.others %}
+            <form method="post">{% csrf_token %}
+                <select name="from">
+                    {% for elem in lift_group.others %}
+                    <option value="{{elem.pk}}">{{elem}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success btn-sm" name="copy"><i class="fa-regular fa-copy"></i> Copy</button>
+            </form>
+            {% endif %}
+        </div>
+        {% if lift_group.items %}
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>From <i class="fa fa-arrow-right"></i> To</th>
+                {% if lift_group.type != 2 %}
+                <th title="Status" class="text-nowrap">Status
+                </th>
+                {% endif %}
+            </tr>
+            {% for lift in lift_group.items %}
+            <tr>
+                <td class="text-nowrap">{% if request.user.is_superuser %}<a href="{% url 'lift_edit' city.slug lift.pk %}"><i class="fa-solid fa-pencil"></i> {{lift.name}}</a>{% else %}<a href="{% url 'lift_detail' city.slug lift.pk %}">{{lift.name}}</a>{% endif %}</td>
+                <td>{{lift.from_area|default:''}} <i class="fa fa-arrow-right"></i> {{lift.to_area|default:''}}</td>
+                {% if lift_group.type != 2 %}
+                <td>
+                    <span class="badge bg-{% if lift.status == None %}dark{% elif lift.status == True %}success{% else %}danger{% endif %}">{{lift.get_status_display}}</span>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+
+    {% endif %}
+    {% endfor %}
+</div>
+
+
+{# platform info visibili solo se il modello è di tipo "Platform" #}
+{% if station.location_type == 0 %}
+<div class="d-flex align-items-center mb-1 me-2">
+
+
+    <h4 class="d-inline-block fw-bold fs-3">
+        Platform info
+    </h4>
+    {% if station.services.platform and request.user.is_superuser %}
+    <a class="btn bg-primary ms-3 mb-2 ms-auto" href="{% url 'services_edit' city.slug station.services.platform.pk %}">
+        <i class="fa-solid fa-pencil text-light"></i>
+        <p class="text-light d-none d-sm-inline-block ms-1">Edit</p>
+    </a>
+    {%endif%}
+</div>
+{% endif %}
+
+{% if station.services %}
+<div class="card shadow border-0 mb-4">
+    <div class="card-body border-0 shadow-sm">
+        <h4>Level Access Info</h4>
+            <p class="my-3">
+                {% if station.services.designated_level_access_point %}
+                <i class="fa-solid fa-check me-1 text-success"></i>
+                {% else %}
+                <i class="fa-solid fa-x me-1 text-danger"></i>
+                {% endif %}
+                Designated level access point: {{station.services.designated_level_access_point|yesno:"Yes,No"}}
+            </p>
+            <p class="my-3">
+                {% if station.services.level_access_by_manual_ramp %}
+                <i class="fa-solid fa-check me-1 text-success"></i>
+                {% else %}
+                <i class="fa-solid fa-x me-1 text-danger"></i>
+                {% endif %}
+                Level access by manual ramp: {{station.services.level_access_by_manual_ramp|yesno:"Yes,No"}}
+            </p>
+        <div class="col border-0 {% if station.services.location_of_level_access %} alert alert-primary {% endif %} ">
+            {% if station.services.location_of_level_access %}
+            <i class="fa-solid fa-location-dot me-1"></i>
+            {{station.services.location_of_level_access}}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- platform services tables -->
+<div class="row flex-column flex-sm-row flex-wrap g-0">
+    <div class="col">
+        <table class="table table-striped">
+            <thead>
+                <tr class="text-light text-center">
+                    <th class="border-end border-white" colspan="3">Gaps</th>
+                </tr>
+                <tr class="bg-white">
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Avg</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{station.services.min_gap|default:""}}</td>
+                    <td>{{station.services.max_gap|default:""}}</td>
+                    <td>{{station.services.avarage_gap|default:""}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col">
+        <table class="table table-striped">
+            <thead>
+                <tr class="text-light text-center">
+                    <th class="border-end border-white" colspan="3">Steps</th>
+                </tr>
+                <tr class="bg-white">
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Avg</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{station.services.min_step|default:""}}</td>
+                    <td>{{station.services.max_step|default:""}}</td>
+                    <td>{{station.services.avarage_step|default:""}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- additional notes -->
+
+{% if station.services.additional_accessibility_info %}
+<div class="card border-0 shadow mb-3">
+    <div class="card-body">
+        <p class="card-title fw-bold">Additional notes</p>
+        <p class="">
+            {{station.services.additional_accessibility_info}}
+        </p>
+    </div>
+</div>
+{% endif %}
+
+{% elif not station.services and station.location_type == 0 %}
+<p class="d-inline-block">No info provided</p> <a class="badge bg-primary"
+    href="{% url 'services_add' city.slug station.pk %}">Add</a>
+{% endif %}
+
+{%endblock content%}

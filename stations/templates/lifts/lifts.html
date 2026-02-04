@@ -1,0 +1,65 @@
+{% extends 'base.html'%}
+{% block page_title %}Lifts{% endblock %}
+
+{% block content %}
+
+<div class="row my-4">
+    <div class="col-md-6">
+        <h1>{{lifts.count}} {% if request.GET.type %}{{lifts.0.get_type_display}}s{% else %}lifts and other devices{% endif %}</h1>
+    </div>
+    <div class="col-md-6">
+        <form>
+            <select name="type" class="form-control w-50 d-inline">
+                <option value="">All</option>
+                <option{% if request.GET.type == '0' %} selected{% endif %} value="0">Lift</option>
+                <option{% if request.GET.type == '1' %} selected{% endif %} value="1">Stairlift</option>
+                <option{% if request.GET.type == '2' %} selected{% endif %} value="2">Stair</option>
+                <option{% if request.GET.type == '3' %} selected{% endif %} value="3">Escalator</option>
+            </select>
+            <input type="submit" value="Show" class="ms-4 btn btn-success">
+        </form>
+    </div>
+</div>
+
+{% if lifts %}
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+        <tr class="text-light">
+            <th>N.</th>
+            <th>Station</th>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Friendly name</th>
+            <th>From</th>
+            <th>To</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for lift in lifts %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>
+                {{lift.stop}}
+            </td>
+            <td class="text-nowrap">
+                <i class="fa-regular fa-fw fa-{% if lift.type == 0 %}elevator{% elif lift.type == 1 %}wheelchair{% elif lift.type == 2 %}stairs{% elif lift.type == 3 %}escalator{% endif %}" title="{{lift.get_type_display}}"></i>&nbsp;
+                {% if request.user.is_supervisor %}
+                    <a href="{% url 'lift_edit' city.slug lift.pk %}">{{lift}}</a>
+                {% else %}
+                    <a href="{% url 'lift_detail' city.slug lift.pk %}">{{lift}}</a>
+                {% endif %}
+            </td>
+            <td>{% if lift.image %}<i class="fa-regular fa-image text-success"></i>{% endif %}</td>
+            <td>{{lift.friendly_name}}</td>
+            <td>{{lift.from_area}}</td>
+            <td>{{lift.to_area}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock content %}

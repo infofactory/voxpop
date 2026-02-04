@@ -1,0 +1,101 @@
+{% extends 'base.html'%}
+{%block page_title%}Lisbona - Map{%endblock%}
+
+{% block header_js %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNVxw8FdB3VDaPE1XXSpJ1hCAamhmD3o"></script>
+{% endblock %}
+
+{%block content%}
+
+<div id="map">
+
+</div>
+
+
+
+<style>
+    #map {
+        margin-top: 10px;
+        height: 80vh;
+        background: #ccc;
+    }
+</style>
+
+{{ markers|json_script:"markers" }}
+{{ lines|json_script:"lines" }}
+
+<script>
+
+    const GORIZIA = new google.maps.LatLng(45.823208, 13.498904)
+    const map_div = document.getElementById('map')
+    const options = {
+        zoom : 10,
+        center : GORIZIA,
+        scrollwheel : false,
+        scaleControl : true,
+        mapTypeControl : false,
+        mapTypeId : google.maps.MapTypeId.ROADMAP
+    }
+
+    const infoWindow = new google.maps.InfoWindow()
+    const map = new google.maps.Map(map_div, options)
+    const markers = JSON.parse(document.getElementById('markers').textContent)
+    const bounds = new google.maps.LatLngBounds()
+    for (const marker of markers) {
+        // const gMarker = new google.maps.Marker({
+        //     position: {lat:marker.lat, lng:marker.lng},
+        //     map,
+        //     title: marker.name,
+        // })
+        const stationCircle = new google.maps.Circle({
+            strokeColor: "#000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#001d50",
+            fillOpacity: 0.35,
+            map,
+            center: {lat:marker.lat, lng:marker.lng},
+            radius: 100,
+            })
+
+
+
+
+        google.maps.event.addListener(stationCircle, 'click', function(ev) {
+            infoWindow.setPosition(ev.latLng)
+            infoWindow.setContent('<a href="{% url 'stops_prefix' city.slug %}' + marker.pk + '">' + marker.name + '</a>')
+            infoWindow.open(map)
+        })
+
+
+        bounds.extend({lat:marker.lat, lng:marker.lng})
+    }
+    map.fitBounds(bounds)
+
+    const lines = JSON.parse(document.getElementById('lines').textContent)
+
+    for (const line of lines) {
+        const blackPath = new google.maps.Polyline({
+            path: line.path,
+            geodesic: true,
+            strokeColor: '#000',
+            strokeOpacity: 1.0,
+            strokeWeight: 6,
+        })
+
+        blackPath.setMap(map)
+        
+        const linePath = new google.maps.Polyline({
+            path: line.path,
+            geodesic: true,
+            strokeColor: line.color,
+            strokeOpacity: 1.0,
+            strokeWeight: 4,
+        })
+
+        linePath.setMap(map)
+
+    }
+
+</script>
+{% endblock content %}

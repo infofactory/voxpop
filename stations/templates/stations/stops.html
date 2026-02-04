@@ -1,0 +1,118 @@
+{% extends 'base.html'%}
+{%block page_title%}Stations{%endblock%}
+
+{%block content%}
+
+    <div class="row my-4">
+        <div class="col-md-6">
+            <h1>{{stops|length}} {{location_type_name}}s</h1>
+        </div>
+        <div class="col-md-6">
+            <form>
+                <select name="type" class="form-control w-50 d-inline">
+                    <option{% if request.GET.type == '1' or not request.GET.type %} selected{% endif %} value="1">Stations</option>
+                    <option{% if request.GET.type == '0' %} selected{% endif %} value="0">Stops and platforms</option>
+                    <option{% if request.GET.type == '2' %} selected{% endif %} value="2">Entrances and exits</option>
+                    <option{% if request.GET.type == '3' %} selected{% endif %} value="3">Areas and generic nodes</option>
+                </select>
+                <select name="status" class="form-control w-auto" style="display: {% if request.GET.type == '1' or not request.GET.type %}inline{% else %}none{% endif %}">
+                    <option{% if not request.GET.status %} selected{% endif %} value="">All</option>
+                    <option{% if request.GET.status == '0' %} selected{% endif %} value="0">To do</option>
+                    <option{% if request.GET.status == '1' %} selected{% endif %} value="1">Working</option>
+                    <option{% if request.GET.status == '2' %} selected{% endif %} value="2">Completed</option>
+                    <option{% if request.GET.status == '3' %} selected{% endif %} value="3">Validated</option>
+                </select>
+                <input type="submit" value="Show" class="ms-4 btn btn-success">
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        const typeSelector = document.querySelector('select[name="type"]');
+        typeSelector.addEventListener('change', showStatus);
+
+        function showStatus() {
+            const status = document.querySelector('select[name="status"]');
+            if (typeSelector.value == '1') {
+                status.style.display = 'inline';
+            } else {
+                status.style.display = 'none';
+            }
+             
+        }
+    </script>
+
+
+
+{% if request.user.is_superuser %}
+<a class="btn btn-primary mb-4" href="{% url 'station_add' city.slug %}?loc_type=1">
+    <i class="fa-solid fa-plus"></i> Station
+</a>
+{% endif %}
+
+
+
+{% if stops %}
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+        <tr class="text-light">
+            <th>N.</th>
+            {% if request.GET.type != '1' %}
+            <th>Station</th>
+            {% endif %}
+            <th>Name/Stop ID</th>
+            {% if request.GET.type == '1' or not request.GET.type %}
+                <th width="8%">Stop/<br>Platform</th>
+                <th width="5%">Entrance/<br>Exits</th>
+                <th width="5%">Area/<br>Generic&nbsp;node</th>
+                <th width="5%">Stairs</th>
+                <th width="5%">Escalator</th>
+                <th width="5%">Lifts</th>
+                <th width="5%">Stairlifts</th>
+            {% endif %}
+            <th>Coords</th>
+            <th>Level</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for stop in stops %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            {% if request.GET.type != '1' %}
+            <td>
+                <a href="{% url 'station_detail' city.slug stop.pk %}">{{stop.ancestors.0|default:stop}}</a>
+            </td>
+            {% endif %}
+            <td>
+                {% if stop.location_type == 1 %}
+                <span class="badge rounded-pill bg-{% if stop.status == 2 %}success{% elif stop.status == 1 %}warning{% else %}danger{% endif %}">{{stop.get_status_display }}</span>
+                {% endif %}
+                {% if request.GET.type == '3' or not request.GET.type %}<i>{{stop.get_location_type_display}}</i> {% endif %}<strong><a href="{% if stop.location_type == 1 or stop.location_type == 0 %}{% url 'station_detail' city.slug stop.pk %}{% else %}{% url 'station_edit' city.slug stop.pk %}{% endif %}">{{stop.name}}</a></strong><br>
+                <small>{{stop.code}}</small>
+            </td>
+            {% if request.GET.type == '1' or not request.GET.type %}
+                <td>{% if stop.summary.stops %}<span class="badge bg-primary">{{stop.summary.stops}}</span>{% endif %}</td>
+                <td>{% if stop.summary.entrances %}<span class="badge bg-primary">{{stop.summary.entrances}}</span>{% endif %}</td>
+                <td>{% if stop.summary.areas %}<span class="badge bg-primary">{{stop.summary.areas}}</span>{% endif %}</td>
+
+
+                <td>{% if stop.summary.stairs %}<span class="badge bg-success">{{stop.summary.stairs}}</span>{% endif %}</td>
+                <td>{% if stop.summary.escalators %}<span class="badge bg-success">{{stop.summary.escalators}}</span>{% endif %}</td>
+                <td>{% if stop.summary.lifts %}<span class="badge bg-success">{{stop.summary.lifts}}</span>{% endif %}</td>
+                <td>{% if stop.summary.stairlifts %}<span class="badge bg-success">{{stop.summary.stairlifts}}</span>{% endif %}</td>
+            {% endif %}
+            <td class="small">{{stop.lat|floatformat:5|default_if_none:''}}<br>
+                {{stop.lon|floatformat:5|default_if_none:''}}</td>
+            <td>{{stop.level|default_if_none:''}}</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock content %}

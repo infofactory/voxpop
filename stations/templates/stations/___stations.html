@@ -1,0 +1,72 @@
+{% extends 'base.html'%}
+{%block page_title%}Lisbona - Stations{%endblock%}
+
+{%block content%}
+
+<div class="d-flex justify-content-between py-4">
+    <h1>Stations</h1>
+    <div class="text-end">
+        {% if request.user.is_authenticated %}
+        <a class="add_btn shadow-sm me-2" href="{% url 'station_add' %}?loc_type=1">
+            <i class="fa-solid fa-plus"></i> Station
+        </a>
+        <a class="add_btn shadow-sm" href="{% url 'line_add' %}">
+            <i class="fa-solid fa-plus"></i> Line
+        </a>
+        {% endif %}
+        <a title="Map" class="add_btn_reverse shadow-sm" href="{% url 'stations_map' %}">
+            <i class="fa-solid fa-map"></i>
+        </a>
+        <a title="Download CSV" class="add_btn_reverse shadow-sm" href="{% url 'download' %}">
+            <i class="fa-solid fa-file-arrow-down"></i>
+        </a>
+    </div>
+</div>
+
+{% if stations %}
+<table class="table table-striped">
+    <thead>
+        <tr class="text-light">
+            <th>
+                Code
+            </th>
+            <th>
+                Name
+            </th>
+            <th>Platforms, exits</th>
+            <th>Devices</th>
+            <th>
+                Edit
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for station in stations %}
+        <tr>
+            <td>
+                {{station.code}}
+            </td>
+            <td>
+                <a href="{% url 'station_detail' station.pk %}">{{station}}</a>
+            </td>
+            <td>{% if station.children.count %}{{station.children.count}}{% endif %}</td>
+            <td>{% if station.lifts.count %}{{station.lifts.count}}{% endif %}
+
+                xxx{{station.summary}}
+            </td>
+
+            <td>
+                {% if request.user.is_authenticated %}
+                <a class="me-4" href="{% url 'station_edit' station.pk %}">
+                        <i class="fa-solid fa-pencil"></i>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+{% endif %}
+{% endblock content %}

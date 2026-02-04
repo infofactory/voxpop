@@ -1,0 +1,34 @@
+{%extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block page_title %} Voxpop - Lifts {%endblock%}
+
+{%block content%}
+
+
+<h2 class="my-4">
+    {% if lift.name %}
+    <small class="fw-normal fs-5">{{lift.get_type_display}}</small> Edit {{lift.name}} 
+    {% else %}
+    Create a new {{lift.get_type_display}} 
+    {%endif%}
+</h2>
+
+<div class="toolbar d-flex justify-content-center">
+    <a href="{% url 'station_detail' city.slug lift.stop.pk %}">
+        Cancel
+    </a>
+</div>
+<div class="pb-5 bt-4">
+    {% crispy form %}
+</div>
+
+<script>
+    function showHandrailHeight() {
+        const value = document.getElementById('id_handrail').value
+        document.getElementById('div_id_handrail_height').style.display = value == 0 ? 'none' : 'initial'
+    }
+
+    document.getElementById('id_handrail').addEventListener('change', showHandrailHeight)
+    document.getElementById('id_handrail').dispatchEvent(new Event('change'))
+</script>
+{%endblock%}
