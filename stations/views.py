@@ -26,6 +26,7 @@ def index(request):
 
 
 def stations_map(request, city):
+    from django.conf import settings
     city = City.objects.get(slug=city)
 
     stations = Stop.objects.filter(location_type=Stop.STATION, city=city)
@@ -33,7 +34,7 @@ def stations_map(request, city):
 
     lines = Line.objects.all()
     lines = [{'name':l.name, 'color':l.color, 'pk':l.pk, 'path':[{'lat': s.station.lat, 'lng':s.station.lon} for s in l.stations.all()]} for l in lines]
-    context = {'stations':stations, 'markers':markers, 'lines':lines, 'city':city}
+    context = {'stations':stations, 'markers':markers, 'lines':lines, 'city':city, 'api_key': settings.GOOGLE_MAPS_API_KEY}
     return render(request, 'stations/map.html', context)
 
 

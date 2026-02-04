@@ -126,3 +126,5 @@ DATABASES = {
         'PORT': env.int('DB_PORT'),
     }
 }
+
+GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
